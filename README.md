@@ -6,10 +6,10 @@
 
 | STT | Họ và tên | MSSV | Vai trò |
 |-----|-----------|------|---------|
-| 1   | Trần Nhựt Huy      |3124411112  | Nhóm trưởng |
-| 2   | Nguyễn Hoàng Phúc       | 3124411236 | Thành viên |
-| 3   | Phùng Anh Vũ  | 3124411351 | Thành viên |
-| 4   | Bùi Nhật Hào     | 3124411077  | Thành viên |
+| 1   | Trần Nhựt Huy       |3124411112  | Nhóm Trưởng |
+| 2   | Nguyễn Hoàng Phúc   | 3124411236 | Thành viên |
+| 3   | Phùng Anh Vũ        | 3124411351 | Thành viên |
+| 4   | Bùi Nhật Hào        | 3124411077 | Thành viên |
 
 ## Giới thiệu
 
