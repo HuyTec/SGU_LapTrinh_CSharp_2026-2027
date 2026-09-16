@@ -4,6 +4,7 @@ class Program
     {
         //in3tamgiacvuong.run();
         //KiemTraSoHoanHao.run();
-        Tinhsopi.run();
+        // Tinhsopi.run();
+        Ngaytruoc.run();
     }
 }
