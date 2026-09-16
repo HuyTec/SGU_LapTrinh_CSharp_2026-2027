@@ -1,8 +1,5 @@
 ﻿using System;
-
-namespace NMLT.Buoi7
-{
-    class in3tamgiacvuong
+class in3tamgiacvuong
     {
         public static void inhinhtamgiacvuong(int h)
         {
@@ -30,7 +27,7 @@ namespace NMLT.Buoi7
 
             }
         }
-        public static void Main(String[] args)
+        public static void run()
         {
             Console.Write("nhap chieu cao h :");
             int h;
@@ -47,6 +44,5 @@ namespace NMLT.Buoi7
                 inhinhtamgiacvuong(hh);
                 Console.WriteLine();
             }
-        }
     }
 }
