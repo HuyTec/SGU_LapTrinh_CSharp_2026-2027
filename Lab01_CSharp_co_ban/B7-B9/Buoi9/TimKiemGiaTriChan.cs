@@ -29,7 +29,7 @@ class TimKiemGiaTriChan
         int viTriCuoi = -1;
         for (int i = n - 1; i >= 0; i--)
         {
-            if (a[i] % 2 == 0)
+            if (a[i] % 2 == 0 &&a[i] > 0)
             {
                 viTriCuoi = i;
                 break;

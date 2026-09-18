@@ -4,7 +4,8 @@ class Program
     {
         // lietkechan.run();
         // TimKiemGiaTriChan.run();
-        demdau.run();
+        // demdau.run();
+        timkiem.run();
     }
 
 }
