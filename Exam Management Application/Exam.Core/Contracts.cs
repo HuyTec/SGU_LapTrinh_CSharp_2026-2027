@@ -1,0 +1,32 @@
+namespace Exam.Core;
+
+public record LoginRequest(string UserName, string Password, string? Role = null);
+public record RegisterRequest(string UserName,string FullName,string? StudentCode,string Email,string Password,string AccountType="Student");
+public record RegisterStudentRequest(string UserName, string FullName, string StudentCode, string Email, string Password);
+public record LoginResponse(string Token, DateTime ExpiresAt, string DisplayName, string Role);
+public record ChoiceDto(string Value, string Label);
+public record FieldDto(string Name, string Label, string Type = "text", bool Required = false, IReadOnlyList<ChoiceDto>? Choices = null);
+public record ResourceDto(string Key, string Label, IReadOnlyList<FieldDto> Fields, bool CanCreate = true, bool CanDelete = true);
+public record AdminCatalogDto(string DisplayName, string Role, IReadOnlyList<ResourceDto> Resources);
+public record AdminPageDto(IReadOnlyList<Dictionary<string, object?>> Items, int Total, int Page, int PageSize);
+public record AdminSaveRequest(Dictionary<string, System.Text.Json.JsonElement> Values);
+public record ActionRequest(string Action);
+public record SessionDto(int Id, string Title, string Subject, DateTime OpensAt, DateTime ClosesAt, int DurationMinutes, string Status, long? AttemptId, bool Published, string ReviewPolicy);
+public record SessionListVm(IReadOnlyList<SessionDto> Sessions, string? Search = null, string? Status = null);
+public record SessionDetailVm(SessionDto Session, string Instructions);
+public record OptionDto(long Id, string Text, int Order);
+public record QuestionDto(long Id, string Text, int Order, decimal Points, IReadOnlyList<OptionDto> Options, long? SelectedOptionId, bool IsFlagged);
+public record AttemptVm(long Id, int SessionId, string Title, DateTime ServerNow, DateTime Deadline, string Status, IReadOnlyList<QuestionDto> Questions);
+public record SaveAnswerRequest(long QuestionId, long? OptionId, bool IsFlagged);
+public record AttemptStatusDto(long Id, DateTime ServerNow, DateTime Deadline, string Status);
+public record ReviewQuestionDto(string Text, string? SelectedAnswer, string? CorrectAnswer, bool? IsCorrect, decimal Points);
+public record ResultVm(long AttemptId, string Title, string Status, bool Published, decimal? Score, int? CorrectCount, int QuestionCount, DateTime? SubmittedAt, string ReviewPolicy, IReadOnlyList<ReviewQuestionDto> Questions);
+public record HistoryVm(IReadOnlyList<ResultVm> Results);
+public class BusinessException(string message, int status = 400) : Exception(message)
+{
+    public int Status { get; } = status;
+}
+public record ImportStudentsRequest(string Csv, bool Preview = false);
+
+
+

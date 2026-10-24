@@ -1,0 +1,24 @@
+{
+  "anonymousHelpNav": 1,
+  "helpMobile": {
+    "width": 360,
+    "scroll": 360
+  },
+  "registerMobile": {
+    "width": 360,
+    "scroll": 360
+  },
+  "mismatchText": "Mật khẩu xác nhận không khớp.",
+  "registrationRedirect": "/Account/Login",
+  "successNotice": [
+    "Đăng ký thành công. Hãy đăng nhập; cán bộ sẽ phân công đợt thi cho bạn."
+  ],
+  "newStudentEmpty": true,
+  "authenticatedHelpNav": 1,
+  "emptyMobile": {
+    "width": 360,
+    "scroll": 360
+  },
+  "pageErrors": [],
+  "userName": "web_mvm8uhm5"
+}

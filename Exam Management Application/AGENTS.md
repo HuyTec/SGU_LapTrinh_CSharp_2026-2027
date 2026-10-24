@@ -14,9 +14,9 @@ changing the topic scope.
 The finished system must contain two C# applications that serve the same
 business domain and use the same Microsoft SQL Server business data:
 
-1. **Desktop administration application** for Windows. The existing WinUI 3
-   project (`ExamApp`) is the administration client and is allowed as the
-   modern desktop option encouraged by the brief.
+1. **Desktop administration application** for Windows: `Exam.Desktop`, using
+   WinForms. The owner approved this choice on 24 October 2026 (DECISIONS.md).
+   Preserve the existing WinUI 3 `App1` as historical reference.
 2. **User-facing web application** in C#. Prefer ASP.NET Core MVC, Razor Pages,
    or Blazor. It must be responsive.
 3. **Shared backend and data access**. Use ASP.NET Core Web API where it makes
@@ -24,16 +24,16 @@ business domain and use the same Microsoft SQL Server business data:
    architecture. Do not create separate databases or duplicate business rules
    for Web and Desktop.
 
-Recommended future solution layout:
+Approved solution layout:
 
 ```text
-ExamApp.slnx
-|- ExamApp.Desktop       # existing WinUI 3 administrator application
-|- ExamApp.Web           # C# user-facing responsive web application
-|- ExamApp.Api           # business API and authentication boundary
-|- ExamApp.Application   # use cases, validation, DTOs, interfaces
-|- ExamApp.Domain        # entities and business rules
-`- ExamApp.Infrastructure # EF Core, SQL Server, repositories/migrations
+Exam Management Application.slnx
+|- Exam.Desktop          # WinForms, JWT API client
+|- Exam.Web              # MVC/Razor/Bootstrap and API in one host
+|- Exam.Core             # DTOs and shared business types
+|- Exam.Services         # all use cases and business rules
+|- Exam.Data             # Identity, EF Core, SQL Server, migrations
+`- Exam.Tests            # xUnit and isolated SQL Server tests
 ```
 
 Keep the structure proportionate. Do not add a project merely to imitate a
@@ -106,5 +106,8 @@ brief limits the maximum score if any of the following is missing:
 - State clearly whether a result is build-tested, database-tested, API-tested,
   or visually tested. Never infer one from another.
 - Keep documentation and diagrams synchronized with implemented behavior.
-- Do not remove the WinUI desktop project merely because a web client is added;
-  both are assessed deliverables.
+- Preserve App1; the assessed clients are now Exam.Desktop and Exam.Web.
+- Current acceptance source: docs/YEU_CAU_DU_AN_DE_TAI_18.md and DECISIONS.md.
+- UC-17 belongs to ExamOfficer. Identity maps to Users/Roles/UserRoles.
+- Approved scope includes xUnit and basic CSV/XLSX result export; other optional
+  features remain deferred. Never claim unexecuted runtime or visual checks.

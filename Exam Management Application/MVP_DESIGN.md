@@ -1,5 +1,7 @@
 # Thiết kế MVP - Hệ thống Thi Trắc Nghiệm Trực Tuyến
 
+> **Tài liệu thiết kế lịch sử, đã được thay thế ngày 24/10/2026.** Không dùng các vai trò, nhiều đáp án đúng, số lượt hoặc kiến trúc WinUI bên dưới làm hợp đồng triển khai. Nguồn hiện hành: `docs/YEU_CAU_DU_AN_DE_TAI_18.md`, `DECISIONS.md` và `CONTRACT.md`. Bản cũ được giữ để truy vết, không phải mô tả phần mềm hiện tại.
+
 ## 1. Quyết định phạm vi
 
 MVP cung cấp một luồng hoàn chỉnh từ quản trị dữ liệu đến thi và xem kết quả:

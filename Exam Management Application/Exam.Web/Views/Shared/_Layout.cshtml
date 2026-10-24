@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] · Exam</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <a class="skip-link" href="#main-content">Chuyển đến nội dung</a>
+    <header class="site-header">
+        <nav class="container app-nav" aria-label="Điều hướng chính">
+            <a class="brand" asp-controller="Home" asp-action="Index">Exam <span>Thi trắc nghiệm</span></a>
+            @if (User.Identity?.IsAuthenticated != true)
+            {
+                <a asp-controller="Help" asp-action="Index">Hướng dẫn sử dụng</a>
+            }
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                <div class="nav-links">
+                    <a asp-controller="Help" asp-action="Index">Hướng dẫn</a>
+                    <a asp-controller="Sessions" asp-action="Index">Đợt thi</a>
+                    <a asp-controller="Attempts" asp-action="History">Lịch sử &amp; kết quả</a>
+                    <form asp-controller="Account" asp-action="Logout" method="post">
+                        <button class="btn btn-outline-secondary btn-sm" type="submit">Đăng xuất</button>
+                    </form>
+                </div>
+            }
+        </nav>
+    </header>
+    <main id="main-content" class="container main-content" tabindex="-1">
+        @if (TempData["Error"] is string error)
+        { <div class="alert alert-danger" role="alert">@error</div> }
+        @if (TempData["Success"] is string success)
+        { <div class="alert alert-success" role="status">@success</div> }
+        @RenderBody()
+    </main>
+    <footer class="container site-footer">Hệ thống thi trắc nghiệm · Giờ hiển thị: Việt Nam (UTC+7)</footer>
+    <script src="~/js/site.js" asp-append-version="true" defer></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

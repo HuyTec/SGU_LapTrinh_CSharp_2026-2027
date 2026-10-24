@@ -1,0 +1,41 @@
+{
+  "loginMobile": {
+    "width": 360,
+    "scroll": 360
+  },
+  "sessionsMobile": {
+    "width": 360,
+    "scroll": 360
+  },
+  "emptySearch": true,
+  "sessionText": "Lập trình C#\n\nThi thử C#\n\n14:29 24/10/26 — 14:39 31/10/26\n\nThời lượng: 30 phút\n\nĐang mở\nXem chi tiết",
+  "detailsMobile": {
+    "width": 360,
+    "scroll": 360
+  },
+  "attemptUrl": "/Attempts/Take/1",
+  "saved": true,
+  "takeMobile": {
+    "width": 360,
+    "scroll": 360
+  },
+  "restored": true,
+  "queuedSaves": 2,
+  "submitted": true,
+  "resultMobile": {
+    "width": 360,
+    "scroll": 360
+  },
+  "unpublished": true,
+  "scoreHidden": true,
+  "historyMobile": {
+    "width": 360,
+    "scroll": 360
+  },
+  "homeMobile": {
+    "width": 360,
+    "scroll": 360
+  },
+  "pageErrors": [],
+  "failedResponses": []
+}

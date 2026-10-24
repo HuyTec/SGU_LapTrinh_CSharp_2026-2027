@@ -1,0 +1,326 @@
+[
+  {
+    "name": "login-1366x768",
+    "width": 1366,
+    "height": 768,
+    "deviceDpi": 120,
+    "simulated150Percent": false,
+    "visibleLabels": 14,
+    "path": "E:\\Project\\LapTrinh_CSharp_2026-2027\\Exam Management Application\\artifacts/desktop-redesign\\login-1366x768.png"
+  },
+  {
+    "name": "login-1366x768-sim150",
+    "width": 1366,
+    "height": 768,
+    "deviceDpi": 120,
+    "simulated150Percent": true,
+    "visibleLabels": 14,
+    "path": "E:\\Project\\LapTrinh_CSharp_2026-2027\\Exam Management Application\\artifacts/desktop-redesign\\login-1366x768-sim150.png"
+  },
+  {
+    "name": "login-1920x1080",
+    "width": 1878,
+    "height": 949,
+    "deviceDpi": 120,
+    "simulated150Percent": false,
+    "visibleLabels": 14,
+    "path": "E:\\Project\\LapTrinh_CSharp_2026-2027\\Exam Management Application\\artifacts/desktop-redesign\\login-1920x1080.png"
+  },
+  {
+    "name": "login-1920x1080-sim150",
+    "width": 1878,
+    "height": 949,
+    "deviceDpi": 120,
+    "simulated150Percent": true,
+    "visibleLabels": 14,
+    "path": "E:\\Project\\LapTrinh_CSharp_2026-2027\\Exam Management Application\\artifacts/desktop-redesign\\login-1920x1080-sim150.png"
+  },
+  {
+    "name": "login-validation",
+    "width": 1040,
+    "height": 680,
+    "deviceDpi": 120,
+    "simulated150Percent": false,
+    "visibleLabels": 15,
+    "path": "E:\\Project\\LapTrinh_CSharp_2026-2027\\Exam Management Application\\artifacts/desktop-redesign\\login-validation.png"
+  },
+  {
+    "name": "dashboard-admin-1366x768",
+    "width": 1366,
+    "height": 768,
+    "deviceDpi": 120,
+    "simulated150Percent": false,
+    "visibleLabels": 23,
+    "path": "E:\\Project\\LapTrinh_CSharp_2026-2027\\Exam Management Application\\artifacts/desktop-redesign\\dashboard-admin-1366x768.png"
+  },
+  {
+    "name": "dashboard-admin-compact",
+    "width": 1366,
+    "height": 768,
+    "deviceDpi": 120,
+    "simulated150Percent": false,
+    "visibleLabels": 21,
+    "path": "E:\\Project\\LapTrinh_CSharp_2026-2027\\Exam Management Application\\artifacts/desktop-redesign\\dashboard-admin-compact.png"
+  },
+  {
+    "name": "resource-admin-users",
+    "width": 1366,
+    "height": 768,
+    "deviceDpi": 120,
+    "simulated150Percent": false,
+    "visibleLabels": 9,
+    "path": "E:\\Project\\LapTrinh_CSharp_2026-2027\\Exam Management Application\\artifacts/desktop-redesign\\resource-admin-users.png"
+  },
+  {
+    "name": "editor-admin-users",
+    "width": 1100,
+    "height": 760,
+    "deviceDpi": 120,
+    "simulated150Percent": false,
+    "visibleLabels": 11,
+    "path": "E:\\Project\\LapTrinh_CSharp_2026-2027\\Exam Management Application\\artifacts/desktop-redesign\\editor-admin-users.png"
+  },
+  {
+    "name": "resource-admin-assignments",
+    "width": 1366,
+    "height": 768,
+    "deviceDpi": 120,
+    "simulated150Percent": false,
+    "visibleLabels": 9,
+    "path": "E:\\Project\\LapTrinh_CSharp_2026-2027\\Exam Management Application\\artifacts/desktop-redesign\\resource-admin-assignments.png"
+  },
+  {
+    "name": "editor-admin-assignments",
+    "width": 1100,
+    "height": 760,
+    "deviceDpi": 120,
+    "simulated150Percent": false,
+    "visibleLabels": 6,
+    "path": "E:\\Project\\LapTrinh_CSharp_2026-2027\\Exam Management Application\\artifacts/desktop-redesign\\editor-admin-assignments.png"
+  },
+  {
+    "name": "dashboard-admin-1920x1080",
+    "width": 1920,
+    "height": 1080,
+    "deviceDpi": 120,
+    "simulated150Percent": false,
+    "visibleLabels": 23,
+    "path": "E:\\Project\\LapTrinh_CSharp_2026-2027\\Exam Management Application\\artifacts/desktop-redesign\\dashboard-admin-1920x1080.png"
+  },
+  {
+    "name": "dashboard-admin-1366x768-sim150",
+    "width": 1366,
+    "height": 768,
+    "deviceDpi": 120,
+    "simulated150Percent": true,
+    "visibleLabels": 23,
+    "path": "E:\\Project\\LapTrinh_CSharp_2026-2027\\Exam Management Application\\artifacts/desktop-redesign\\dashboard-admin-1366x768-sim150.png"
+  },
+  {
+    "name": "dashboard-admin-1920x1080-sim150",
+    "width": 1920,
+    "height": 1080,
+    "deviceDpi": 120,
+    "simulated150Percent": true,
+    "visibleLabels": 23,
+    "path": "E:\\Project\\LapTrinh_CSharp_2026-2027\\Exam Management Application\\artifacts/desktop-redesign\\dashboard-admin-1920x1080-sim150.png"
+  },
+  {
+    "name": "dashboard-lecturer-1366x768",
+    "width": 1366,
+    "height": 768,
+    "deviceDpi": 120,
+    "simulated150Percent": false,
+    "visibleLabels": 22,
+    "path": "E:\\Project\\LapTrinh_CSharp_2026-2027\\Exam Management Application\\artifacts/desktop-redesign\\dashboard-lecturer-1366x768.png"
+  },
+  {
+    "name": "resource-lecturer-questions",
+    "width": 1366,
+    "height": 768,
+    "deviceDpi": 120,
+    "simulated150Percent": false,
+    "visibleLabels": 21,
+    "path": "E:\\Project\\LapTrinh_CSharp_2026-2027\\Exam Management Application\\artifacts/desktop-redesign\\resource-lecturer-questions.png"
+  },
+  {
+    "name": "editor-lecturer-questions",
+    "width": 1100,
+    "height": 760,
+    "deviceDpi": 120,
+    "simulated150Percent": false,
+    "visibleLabels": 14,
+    "path": "E:\\Project\\LapTrinh_CSharp_2026-2027\\Exam Management Application\\artifacts/desktop-redesign\\editor-lecturer-questions.png"
+  },
+  {
+    "name": "editor-lecturer-questions-bottom",
+    "width": 1100,
+    "height": 760,
+    "deviceDpi": 120,
+    "simulated150Percent": false,
+    "visibleLabels": 14,
+    "path": "E:\\Project\\LapTrinh_CSharp_2026-2027\\Exam Management Application\\artifacts/desktop-redesign\\editor-lecturer-questions-bottom.png"
+  },
+  {
+    "name": "resource-lecturer-exams",
+    "width": 1366,
+    "height": 768,
+    "deviceDpi": 120,
+    "simulated150Percent": false,
+    "visibleLabels": 9,
+    "path": "E:\\Project\\LapTrinh_CSharp_2026-2027\\Exam Management Application\\artifacts/desktop-redesign\\resource-lecturer-exams.png"
+  },
+  {
+    "name": "editor-lecturer-exams",
+    "width": 1100,
+    "height": 760,
+    "deviceDpi": 120,
+    "simulated150Percent": false,
+    "visibleLabels": 11,
+    "path": "E:\\Project\\LapTrinh_CSharp_2026-2027\\Exam Management Application\\artifacts/desktop-redesign\\editor-lecturer-exams.png"
+  },
+  {
+    "name": "editor-lecturer-exams-bottom",
+    "width": 1100,
+    "height": 760,
+    "deviceDpi": 120,
+    "simulated150Percent": false,
+    "visibleLabels": 11,
+    "path": "E:\\Project\\LapTrinh_CSharp_2026-2027\\Exam Management Application\\artifacts/desktop-redesign\\editor-lecturer-exams-bottom.png"
+  },
+  {
+    "name": "resource-lecturer-monitor",
+    "width": 1366,
+    "height": 768,
+    "deviceDpi": 120,
+    "simulated150Percent": false,
+    "visibleLabels": 9,
+    "path": "E:\\Project\\LapTrinh_CSharp_2026-2027\\Exam Management Application\\artifacts/desktop-redesign\\resource-lecturer-monitor.png"
+  },
+  {
+    "name": "dashboard-lecturer-1920x1080",
+    "width": 1920,
+    "height": 1080,
+    "deviceDpi": 120,
+    "simulated150Percent": false,
+    "visibleLabels": 22,
+    "path": "E:\\Project\\LapTrinh_CSharp_2026-2027\\Exam Management Application\\artifacts/desktop-redesign\\dashboard-lecturer-1920x1080.png"
+  },
+  {
+    "name": "dashboard-lecturer-1366x768-sim150",
+    "width": 1366,
+    "height": 768,
+    "deviceDpi": 120,
+    "simulated150Percent": true,
+    "visibleLabels": 22,
+    "path": "E:\\Project\\LapTrinh_CSharp_2026-2027\\Exam Management Application\\artifacts/desktop-redesign\\dashboard-lecturer-1366x768-sim150.png"
+  },
+  {
+    "name": "dashboard-lecturer-1920x1080-sim150",
+    "width": 1920,
+    "height": 1080,
+    "deviceDpi": 120,
+    "simulated150Percent": true,
+    "visibleLabels": 22,
+    "path": "E:\\Project\\LapTrinh_CSharp_2026-2027\\Exam Management Application\\artifacts/desktop-redesign\\dashboard-lecturer-1920x1080-sim150.png"
+  },
+  {
+    "name": "dashboard-officer-1366x768",
+    "width": 1366,
+    "height": 768,
+    "deviceDpi": 120,
+    "simulated150Percent": false,
+    "visibleLabels": 22,
+    "path": "E:\\Project\\LapTrinh_CSharp_2026-2027\\Exam Management Application\\artifacts/desktop-redesign\\dashboard-officer-1366x768.png"
+  },
+  {
+    "name": "resource-officer-sessions",
+    "width": 1366,
+    "height": 768,
+    "deviceDpi": 120,
+    "simulated150Percent": false,
+    "visibleLabels": 9,
+    "path": "E:\\Project\\LapTrinh_CSharp_2026-2027\\Exam Management Application\\artifacts/desktop-redesign\\resource-officer-sessions.png"
+  },
+  {
+    "name": "editor-officer-sessions",
+    "width": 1100,
+    "height": 760,
+    "deviceDpi": 120,
+    "simulated150Percent": false,
+    "visibleLabels": 7,
+    "path": "E:\\Project\\LapTrinh_CSharp_2026-2027\\Exam Management Application\\artifacts/desktop-redesign\\editor-officer-sessions.png"
+  },
+  {
+    "name": "editor-officer-sessions-step2",
+    "width": 1100,
+    "height": 760,
+    "deviceDpi": 120,
+    "simulated150Percent": false,
+    "visibleLabels": 12,
+    "path": "E:\\Project\\LapTrinh_CSharp_2026-2027\\Exam Management Application\\artifacts/desktop-redesign\\editor-officer-sessions-step2.png"
+  },
+  {
+    "name": "editor-officer-sessions-step3",
+    "width": 1100,
+    "height": 760,
+    "deviceDpi": 120,
+    "simulated150Percent": false,
+    "visibleLabels": 6,
+    "path": "E:\\Project\\LapTrinh_CSharp_2026-2027\\Exam Management Application\\artifacts/desktop-redesign\\editor-officer-sessions-step3.png"
+  },
+  {
+    "name": "resource-officer-candidates",
+    "width": 1366,
+    "height": 768,
+    "deviceDpi": 120,
+    "simulated150Percent": false,
+    "visibleLabels": 9,
+    "path": "E:\\Project\\LapTrinh_CSharp_2026-2027\\Exam Management Application\\artifacts/desktop-redesign\\resource-officer-candidates.png"
+  },
+  {
+    "name": "editor-officer-candidates",
+    "width": 1100,
+    "height": 760,
+    "deviceDpi": 120,
+    "simulated150Percent": false,
+    "visibleLabels": 6,
+    "path": "E:\\Project\\LapTrinh_CSharp_2026-2027\\Exam Management Application\\artifacts/desktop-redesign\\editor-officer-candidates.png"
+  },
+  {
+    "name": "resource-officer-monitor",
+    "width": 1366,
+    "height": 768,
+    "deviceDpi": 120,
+    "simulated150Percent": false,
+    "visibleLabels": 9,
+    "path": "E:\\Project\\LapTrinh_CSharp_2026-2027\\Exam Management Application\\artifacts/desktop-redesign\\resource-officer-monitor.png"
+  },
+  {
+    "name": "dashboard-officer-1920x1080",
+    "width": 1920,
+    "height": 1080,
+    "deviceDpi": 120,
+    "simulated150Percent": false,
+    "visibleLabels": 22,
+    "path": "E:\\Project\\LapTrinh_CSharp_2026-2027\\Exam Management Application\\artifacts/desktop-redesign\\dashboard-officer-1920x1080.png"
+  },
+  {
+    "name": "dashboard-officer-1366x768-sim150",
+    "width": 1366,
+    "height": 768,
+    "deviceDpi": 120,
+    "simulated150Percent": true,
+    "visibleLabels": 22,
+    "path": "E:\\Project\\LapTrinh_CSharp_2026-2027\\Exam Management Application\\artifacts/desktop-redesign\\dashboard-officer-1366x768-sim150.png"
+  },
+  {
+    "name": "dashboard-officer-1920x1080-sim150",
+    "width": 1920,
+    "height": 1080,
+    "deviceDpi": 120,
+    "simulated150Percent": true,
+    "visibleLabels": 22,
+    "path": "E:\\Project\\LapTrinh_CSharp_2026-2027\\Exam Management Application\\artifacts/desktop-redesign\\dashboard-officer-1920x1080-sim150.png"
+  }
+]

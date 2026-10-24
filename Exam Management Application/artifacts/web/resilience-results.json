@@ -1,0 +1,13 @@
+{
+  "passwordTabFocus": true,
+  "submitTabFocus": true,
+  "attemptUrl": "/Attempts/Take/2",
+  "timezone": "Asia/Saigon",
+  "deadlineUtc": "2026-10-24T08:13:27.2616874Z",
+  "remainingTime": "24:06",
+  "failureVisible": true,
+  "retrySaved": true,
+  "reloadedChoice": true,
+  "dialogCancelFocus": true,
+  "escapeClosed": true
+}

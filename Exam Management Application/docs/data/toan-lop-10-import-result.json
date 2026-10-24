@@ -1,0 +1,12 @@
+{
+  "checkedVia": "Lecturer API, comparing all 60 stems and 240 options to reviewed JSON",
+  "inserted": 60,
+  "topics": {
+    "Toan hinh": 30,
+    "Toan so 10": 30
+  },
+  "options": 240,
+  "correctAnswers": 60,
+  "allSourceComparisonsPassed": true,
+  "accountsCreated": 0
+}

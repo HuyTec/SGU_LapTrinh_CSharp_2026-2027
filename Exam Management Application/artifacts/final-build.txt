@@ -1,0 +1,14 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  Exam.Core -> E:\Project\LapTrinh_CSharp_2026-2027\Exam Management Application\.local\final-build\bin\Exam.Core\debug\Exam.Core.dll
+  Exam.Data -> E:\Project\LapTrinh_CSharp_2026-2027\Exam Management Application\.local\final-build\bin\Exam.Data\debug\Exam.Data.dll
+  Exam.Desktop -> E:\Project\LapTrinh_CSharp_2026-2027\Exam Management Application\.local\final-build\bin\Exam.Desktop\debug\Exam.Desktop.dll
+  Exam.Services -> E:\Project\LapTrinh_CSharp_2026-2027\Exam Management Application\.local\final-build\bin\Exam.Services\debug\Exam.Services.dll
+  Exam.Tests -> E:\Project\LapTrinh_CSharp_2026-2027\Exam Management Application\.local\final-build\bin\Exam.Tests\debug\Exam.Tests.dll
+  Exam.Web -> E:\Project\LapTrinh_CSharp_2026-2027\Exam Management Application\.local\final-build\bin\Exam.Web\debug\Exam.Web.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:27.00

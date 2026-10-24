@@ -1,0 +1,35 @@
+@model AttemptVm
+@{ ViewData["Title"] = "Làm bài · " + Model.Title; }
+<noscript><div class="noscript-alert">Cần bật JavaScript để lưu đáp án và làm bài. Hãy bật JavaScript rồi tải lại trang. Thời gian làm bài vẫn tiếp tục.</div></noscript>
+<div id="exam-app" data-attempt-id="@Model.Id" data-server-now="@DateTime.SpecifyKind(Model.ServerNow, DateTimeKind.Utc).ToString("O")" data-deadline="@DateTime.SpecifyKind(Model.Deadline, DateTimeKind.Utc).ToString("O")" data-status="@Model.Status" data-save-url="@Url.Action("Save", "Attempts", new { id=Model.Id })" data-status-url="@Url.Action("Status", "Attempts", new { id=Model.Id })" data-submit-url="@Url.Action("Submit", "Attempts", new { id=Model.Id })" data-result-url="@Url.Action("Result", "Attempts", new { id=Model.Id })">
+    @Html.AntiForgeryToken()
+    <div class="exam-header"><div><p class="uc-label">UC-06, UC-07</p><h1>@Model.Title</h1><p class="muted mb-0">@Model.Questions.Count câu hỏi · Chọn một đáp án cho mỗi câu</p></div><div class="exam-clock" role="timer" aria-label="Thời gian còn lại"><span>Còn lại</span><strong id="remaining-time">Đang đồng bộ…</strong></div></div>
+    <div id="exam-feedback" class="alert alert-danger exam-feedback" role="alert" hidden></div>
+    <div class="exam-grid">
+        <section aria-label="Nội dung bài thi">
+        @foreach(var question in Model.Questions.OrderBy(q=>q.Order))
+        {
+            <fieldset class="surface question-card" id="question-@question.Id" data-question-id="@question.Id">
+                <legend class="fs-6 fw-bold float-none w-auto">Câu @question.Order</legend><div class="question-topline"><span class="question-save" aria-live="polite">Đã tải dữ liệu đã lưu</span></div>
+                <p class="question-title">@question.Text</p>
+                @foreach(var option in question.Options.OrderBy(o=>o.Order))
+                {
+                    <label class="answer-option" for="answer-@option.Id"><input type="radio" name="question-@question.Id" id="answer-@option.Id" value="@option.Id" checked="@(question.SelectedOptionId==option.Id)" /><span>@option.Text</span></label>
+                }
+                <label class="flag-label"><input type="checkbox" class="flag-question" checked="@question.IsFlagged" />Đánh dấu để xem lại</label>
+            </fieldset>
+        }
+        </section>
+        <aside class="surface exam-sidebar" aria-label="Điều hướng và nộp bài">
+            <h2>Danh sách câu hỏi</h2><p id="answer-progress" aria-live="polite"></p>
+            <div class="question-navigator">@foreach(var q in Model.Questions.OrderBy(q=>q.Order)){<a class="question-nav-item @(q.SelectedOptionId.HasValue ? "answered" : "") @(q.IsFlagged ? "flagged" : "")" href="#question-@q.Id" data-nav-question="@q.Id" aria-label="Đến câu @q.Order">@q.Order</a>}</div>
+            <p class="small muted">Nền xanh: đã chọn đáp án.<br />Dấu chấm: đã đánh dấu xem lại.</p>
+            <hr /><p id="save-status" class="save-status saved" role="status" aria-live="polite">Dữ liệu đã được khôi phục</p>
+            <button id="retry-save" type="button" class="btn btn-outline-primary" hidden>Thử lưu lại</button>
+            <button id="submit-attempt" type="button" class="btn btn-primary">Nộp bài</button>
+            <p class="small muted mt-3 mb-0">Chỉ đáp án đã được máy chủ xác nhận mới được chấm. Mất mạng không kéo dài thời gian thi.</p>
+        </aside>
+    </div>
+    <dialog id="submit-dialog" aria-labelledby="submit-heading" aria-describedby="submit-description"><h2 id="submit-heading">Xác nhận nộp bài</h2><p id="submit-description"></p><p>Sau khi nộp, bạn không thể sửa đáp án.</p><div class="action-row"><button id="cancel-submit" type="button" class="btn btn-outline-secondary">Tiếp tục làm bài</button><button id="confirm-submit" type="button" class="btn btn-primary">Xác nhận nộp bài</button></div></dialog>
+</div>
+@section Scripts { <script src="~/js/attempt.js" asp-append-version="true" defer></script> }
