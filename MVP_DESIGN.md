@@ -169,16 +169,16 @@ erDiagram
 
 ### 3.2. Ràng buộc không được bỏ qua
 
-| Ràng buộc                                         | Cách bảo đảm                                                                  |
-| --------------------------------------------------- | --------------------------------------------------------------------------------- |
-| Tài khoản chỉ có một tên đăng nhập/email   | Unique index trên`TenDangNhap`, `Email`                                      |
-| Thành viên lớp không trùng                     | Khóa chính ghép`Lop_ThiSinh(MaLop, MaThiSinh)`                               |
-| Một lần thi chỉ sinh một bài làm              | Unique index`BaiLam(MaKyThi, MaThiSinh, LanThiThu)`                             |
-| Thí sinh thuộc lớp và chưa vượt số lần thi | API kiểm tra trong transaction trước khi tạo`BaiLam`                        |
-| Đề và lớp cùng môn học                       | API kiểm tra`DeThi.MaMon == Lop.MaMon` trước khi tạo `KyThi`              |
-| Câu một đáp án chọn đúng một; câu nhiều đáp án có từ hai đáp án đúng | Validation service theo `LoaiCauHoi` |
-| Bài làm lịch sử không đổi nghĩa             | Cấm sửa câu hỏi/đáp án đã được dùng; tạo câu hỏi phiên bản mới |
-| Điểm không bị sai số nhị phân                | Dùng`decimal`, không dùng `float`                                          |
+| Ràng buộc                                                                               | Cách bảo đảm                                                                  |
+| ----------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| Tài khoản chỉ có một tên đăng nhập/email                                         | Unique index trên`TenDangNhap`, `Email`                                      |
+| Thành viên lớp không trùng                                                           | Khóa chính ghép`Lop_ThiSinh(MaLop, MaThiSinh)`                               |
+| Một lần thi chỉ sinh một bài làm                                                    | Unique index`BaiLam(MaKyThi, MaThiSinh, LanThiThu)`                             |
+| Thí sinh thuộc lớp và chưa vượt số lần thi                                       | API kiểm tra trong transaction trước khi tạo`BaiLam`                        |
+| Đề và lớp cùng môn học                                                             | API kiểm tra`DeThi.MaMon == Lop.MaMon` trước khi tạo `KyThi`              |
+| Câu một đáp án chọn đúng một; câu nhiều đáp án có từ hai đáp án đúng | Validation service theo`LoaiCauHoi`                                             |
+| Bài làm lịch sử không đổi nghĩa                                                   | Cấm sửa câu hỏi/đáp án đã được dùng; tạo câu hỏi phiên bản mới |
+| Điểm không bị sai số nhị phân                                                      | Dùng`decimal`, không dùng `float`                                          |
 
 ## 4. Sửa báo cáo giải trình kiến trúc
 
@@ -247,14 +247,14 @@ flowchart TB
     Infra --> Db
 ```
 
-| Component | Trách nhiệm MVP | Không được làm |
-| --- | --- | --- |
-| Web App | danh sách kỳ thi, làm bài, nộp bài, xem kết quả của chính mình | tự chấm điểm hoặc tự quyết định còn lượt thi |
-| Desktop App | quản lý dữ liệu, câu hỏi, đề, kỳ thi, thống kê | truy cập SQL Server trực tiếp |
-| Auth module | xác thực và policy Admin/GiangVien/ThiSinh | cấp role Admin/GiangVien khi thí sinh tự đăng ký |
-| Exam Delivery | tạo/tiếp tục bài làm, lưu đáp án, xác nhận hạn nộp | tin thời gian do client gửi lên |
-| Background Worker | tự nộp bài quá hạn chưa nộp | thay thế validation khi người dùng nộp thủ công |
-| Infrastructure | EF Core, migration, SQL Server | chứa quy tắc nghiệp vụ giao diện |
+| Component         | Trách nhiệm MVP                                                         | Không được làm                                      |
+| ----------------- | ------------------------------------------------------------------------- | -------------------------------------------------------- |
+| Web App           | danh sách kỳ thi, làm bài, nộp bài, xem kết quả của chính mình | tự chấm điểm hoặc tự quyết định còn lượt thi |
+| Desktop App       | quản lý dữ liệu, câu hỏi, đề, kỳ thi, thống kê                 | truy cập SQL Server trực tiếp                         |
+| Auth module       | xác thực và policy Admin/GiangVien/ThiSinh                             | cấp role Admin/GiangVien khi thí sinh tự đăng ký   |
+| Exam Delivery     | tạo/tiếp tục bài làm, lưu đáp án, xác nhận hạn nộp           | tin thời gian do client gửi lên                       |
+| Background Worker | tự nộp bài quá hạn chưa nộp                                        | thay thế validation khi người dùng nộp thủ công   |
+| Infrastructure    | EF Core, migration, SQL Server                                            | chứa quy tắc nghiệp vụ giao diện                    |
 
 ## 7. Use case detail - nguồn triển khai chính
 
@@ -280,13 +280,13 @@ flowchart LR
 - **Summary:** Người dùng đăng nhập vào client phù hợp; API xác thực và cấp
   quyền theo vai trò.
 
-| Bước | Actor action | System response |
-| ---: | --- | --- |
-| 1 | Người dùng mở màn hình đăng nhập. | Client hiển thị biểu mẫu tên đăng nhập và mật khẩu. |
-| 2 | Người dùng nhập thông tin và chọn Đăng nhập. | Client gửi yêu cầu an toàn đến API. |
-| 3 | - | API tìm tài khoản đang hoạt động và so khớp password hash. |
-| 4 | - | API tạo phiên/token có `MaTK` và `VaiTro`, rồi trả thông tin tối thiểu. |
-| 5 | Người dùng tiếp tục sử dụng hệ thống. | Client hiển thị chức năng đúng vai trò; mọi API sau vẫn kiểm tra policy. |
+| Bước | Actor action                                           | System response                                                                     |
+| -----: | ------------------------------------------------------ | ----------------------------------------------------------------------------------- |
+|      1 | Người dùng mở màn hình đăng nhập.             | Client hiển thị biểu mẫu tên đăng nhập và mật khẩu.                      |
+|      2 | Người dùng nhập thông tin và chọn Đăng nhập. | Client gửi yêu cầu an toàn đến API.                                           |
+|      3 | -                                                      | API tìm tài khoản đang hoạt động và so khớp password hash.                 |
+|      4 | -                                                      | API tạo phiên/token có`MaTK` và `VaiTro`, rồi trả thông tin tối thiểu. |
+|      5 | Người dùng tiếp tục sử dụng hệ thống.         | Client hiển thị chức năng đúng vai trò; mọi API sau vẫn kiểm tra policy.  |
 
 **Alternative path**
 
@@ -318,13 +318,13 @@ flowchart TD
 - **Summary:** Admin duy trì dữ liệu nền để Giảng viên mở kỳ thi và Thí sinh có
   tư cách dự thi.
 
-| Bước | Actor action | System response |
-| ---: | --- | --- |
-| 1 | Admin mở Desktop và chọn một màn hình quản lý. | API xác nhận policy `Admin`. |
-| 2 | Admin tạo/sửa môn học hoặc tạo lớp cho một môn. | API kiểm tra mã duy nhất và lưu transaction. |
-| 3 | Admin tạo/cập nhật tài khoản Giảng viên hoặc Thí sinh. | API hash mật khẩu, gán vai trò hợp lệ và lưu tài khoản. |
-| 4 | Admin gán Giảng viên cho lớp và thêm Thí sinh vào lớp. | API kiểm tra vai trò, tránh trùng thành viên và lưu `Lop_ThiSinh`. |
-| 5 | Admin xem danh sách sau cập nhật. | Client tải lại dữ liệu đã được API lọc theo quyền. |
+| Bước | Actor action                                                    | System response                                                             |
+| -----: | --------------------------------------------------------------- | --------------------------------------------------------------------------- |
+|      1 | Admin mở Desktop và chọn một màn hình quản lý.          | API xác nhận policy`Admin`.                                             |
+|      2 | Admin tạo/sửa môn học hoặc tạo lớp cho một môn.        | API kiểm tra mã duy nhất và lưu transaction.                           |
+|      3 | Admin tạo/cập nhật tài khoản Giảng viên hoặc Thí sinh. | API hash mật khẩu, gán vai trò hợp lệ và lưu tài khoản.           |
+|      4 | Admin gán Giảng viên cho lớp và thêm Thí sinh vào lớp. | API kiểm tra vai trò, tránh trùng thành viên và lưu`Lop_ThiSinh`. |
+|      5 | Admin xem danh sách sau cập nhật.                            | Client tải lại dữ liệu đã được API lọc theo quyền.               |
 
 **Alternative path**
 
@@ -361,13 +361,13 @@ flowchart TD
 - **Summary:** Giảng viên tạo câu hỏi, đáp án, publish câu hỏi hợp lệ và lắp đề
   thi thủ công với thứ tự, điểm từng câu.
 
-| Bước | Actor action | System response |
-| ---: | --- | --- |
-| 1 | Giảng viên chọn môn học mình phụ trách. | API kiểm tra quyền quản lý môn/lớp tương ứng. |
-| 2 | Giảng viên nhập nội dung câu hỏi, loại câu hỏi và đáp án. | API kiểm tra nội dung, đáp án và loại câu hỏi. |
-| 3 | Giảng viên yêu cầu publish câu hỏi. | API xác nhận câu một đáp án có đúng một đáp án đúng; câu nhiều đáp án có từ hai đáp án đúng. |
-| 4 | Giảng viên tạo đề và chọn các câu hỏi đã publish. | API chỉ chấp nhận câu cùng môn, lưu `DeThi_CauHoi`, thứ tự và điểm tối đa. |
-| 5 | Giảng viên xác nhận đề. | API kiểm tra đề có ít nhất một câu và chuyển trạng thái `Published`. |
+| Bước | Actor action                                                           | System response                                                                                                          |
+| -----: | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+|      1 | Giảng viên chọn môn học mình phụ trách.                        | API kiểm tra quyền quản lý môn/lớp tương ứng.                                                                   |
+|      2 | Giảng viên nhập nội dung câu hỏi, loại câu hỏi và đáp án. | API kiểm tra nội dung, đáp án và loại câu hỏi.                                                                  |
+|      3 | Giảng viên yêu cầu publish câu hỏi.                              | API xác nhận câu một đáp án có đúng một đáp án đúng; câu nhiều đáp án có từ hai đáp án đúng. |
+|      4 | Giảng viên tạo đề và chọn các câu hỏi đã publish.          | API chỉ chấp nhận câu cùng môn, lưu`DeThi_CauHoi`, thứ tự và điểm tối đa.                                |
+|      5 | Giảng viên xác nhận đề.                                          | API kiểm tra đề có ít nhất một câu và chuyển trạng thái`Published`.                                        |
 
 **Alternative path**
 
@@ -406,13 +406,13 @@ flowchart TD
 - **Summary:** Giảng viên gán đề đã publish cho lớp cùng môn, cấu hình thời gian,
   lượt thi và chính sách công bố kết quả.
 
-| Bước | Actor action | System response |
-| ---: | --- | --- |
-| 1 | Giảng viên chọn lớp phụ trách. | API kiểm tra quyền Giảng viên đối với lớp. |
-| 2 | Giảng viên chọn đề, thời gian mở/đóng, lượt thi và công bố kết quả. | API kiểm tra môn của lớp/đề, tính hợp lệ thời gian và giá trị cấu hình. |
-| 3 | Giảng viên xác nhận tạo kỳ thi. | API lưu `KyThi` ở trạng thái `ChuaMo`. |
-| 4 | Đến thời gian mở theo server. | API trả kỳ thi vào danh sách đủ điều kiện của các Thí sinh trong lớp. |
-| 5 | Đến thời gian đóng hoặc Giảng viên đóng sớm. | API ngăn bắt đầu mới và kích hoạt xử lý bài đang làm theo chính sách tự nộp. |
+| Bước | Actor action                                                                        | System response                                                                               |
+| -----: | ----------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+|      1 | Giảng viên chọn lớp phụ trách.                                                | API kiểm tra quyền Giảng viên đối với lớp.                                            |
+|      2 | Giảng viên chọn đề, thời gian mở/đóng, lượt thi và công bố kết quả. | API kiểm tra môn của lớp/đề, tính hợp lệ thời gian và giá trị cấu hình.        |
+|      3 | Giảng viên xác nhận tạo kỳ thi.                                               | API lưu`KyThi` ở trạng thái `ChuaMo`.                                                 |
+|      4 | Đến thời gian mở theo server.                                                   | API trả kỳ thi vào danh sách đủ điều kiện của các Thí sinh trong lớp.            |
+|      5 | Đến thời gian đóng hoặc Giảng viên đóng sớm.                             | API ngăn bắt đầu mới và kích hoạt xử lý bài đang làm theo chính sách tự nộp. |
 
 **Alternative path**
 
@@ -448,14 +448,14 @@ flowchart TD
 - **Summary:** Thí sinh thực hiện bài thi hợp lệ; server lưu câu trả lời, tự nộp
   đúng hạn, chấm theo đáp án và chỉ công bố kết quả khi cấu hình cho phép.
 
-| Bước | Actor action | System response |
-| ---: | --- | --- |
-| 1 | Thí sinh mở danh sách kỳ thi. | API chỉ trả kỳ thi thuộc lớp, đang mở và còn lượt. |
-| 2 | Thí sinh chọn Bắt đầu. | API kiểm tra lại điều kiện trong transaction, tạo `BaiLam` và thứ tự hiển thị. |
-| 3 | Thí sinh chọn hoặc bỏ chọn đáp án. | API kiểm tra đáp án thuộc câu hỏi của bài, cập nhật `BaiLamChiTiet` và bảng đáp án chọn. |
-| 4 | Thí sinh chọn Nộp bài. | API kiểm tra hạn nộp theo server, khóa bài và bắt đầu chấm. |
-| 5 | - | API so khớp tập đáp án chọn với tập đáp án đúng, tính điểm `decimal`, lưu kết quả. |
-| 6 | Thí sinh mở kết quả. | API chỉ trả bài làm của chính thí sinh và chỉ khi kỳ thi đã công bố. |
+| Bước | Actor action                               | System response                                                                                            |
+| -----: | ------------------------------------------ | ---------------------------------------------------------------------------------------------------------- |
+|      1 | Thí sinh mở danh sách kỳ thi.          | API chỉ trả kỳ thi thuộc lớp, đang mở và còn lượt.                                              |
+|      2 | Thí sinh chọn Bắt đầu.                | API kiểm tra lại điều kiện trong transaction, tạo`BaiLam` và thứ tự hiển thị.                 |
+|      3 | Thí sinh chọn hoặc bỏ chọn đáp án. | API kiểm tra đáp án thuộc câu hỏi của bài, cập nhật`BaiLamChiTiet` và bảng đáp án chọn. |
+|      4 | Thí sinh chọn Nộp bài.                 | API kiểm tra hạn nộp theo server, khóa bài và bắt đầu chấm.                                      |
+|      5 | -                                          | API so khớp tập đáp án chọn với tập đáp án đúng, tính điểm`decimal`, lưu kết quả.     |
+|      6 | Thí sinh mở kết quả.                   | API chỉ trả bài làm của chính thí sinh và chỉ khi kỳ thi đã công bố.                         |
 
 **Alternative path**
 
@@ -469,7 +469,6 @@ flowchart TD
 **Exception path**
 
 - **AF-04 (B4-Không):** Kỳ thi chưa công bố kết quả; Web thông báo chờ công bố.
-
 - **EX-01 (B1-Không):** Thí sinh không thuộc lớp, kỳ thi chưa mở/đã đóng hoặc
   hết lượt: API không tạo bài làm.
 - **EX-02 (B2-Không):** Bài đã nộp/hết hạn hoặc đáp án không thuộc câu hỏi của
