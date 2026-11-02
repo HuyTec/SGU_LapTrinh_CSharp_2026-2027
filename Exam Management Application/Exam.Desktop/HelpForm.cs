@@ -1,0 +1,103 @@
+namespace Exam.Desktop;
+
+public sealed class HelpForm : Form
+{
+    public HelpForm(string? role = null)
+    {
+        Text = "Hướng dẫn sử dụng Exam";
+        Theme.Apply(this); StartPosition = FormStartPosition.CenterParent;
+        var area = Screen.FromControl(this).WorkingArea;
+        Size = new Size(Math.Min(900, area.Width - 48), Math.Min(720, area.Height - 48)); MinimumSize = new Size(Math.Min(650, area.Width - 48), Math.Min(450, area.Height - 48));
+        var title = new Label
+        {
+            Dock = DockStyle.Top, Height = 76, Padding = new Padding(24, 20, 24, 12),
+            Font = Theme.SectionFont, BackColor = Theme.Surface,
+            Text = role is null ? "Bắt đầu sử dụng" : "Hướng dẫn — " + UiLabels.Of(role)
+        };
+        var body = new RichTextBox
+        {
+            Dock = DockStyle.Fill, ReadOnly = true, BorderStyle = BorderStyle.None,
+            BackColor = Theme.Surface, ForeColor = Theme.Text,
+            Font = Theme.BodyFont, DetectUrls = false, ScrollBars = RichTextBoxScrollBars.Vertical,
+            Text = Content(role)
+        };
+        var content = new Panel { Dock = DockStyle.Fill, Padding = new Padding(24, 20, 24, 20) };
+        var card = new UiCard { Dock = DockStyle.Fill, Padding = new Padding(20) }; card.Controls.Add(body); content.Controls.Add(card);
+        var footer = new FlowLayoutPanel { Dock = DockStyle.Bottom, AutoSize = true, Padding = new Padding(24, 12, 24, 12), FlowDirection = FlowDirection.RightToLeft, BackColor = Theme.Surface };
+        var close = new UiButton { Text = "Đóng hướng dẫn", Kind = UiButtonKind.Secondary, AutoSize = true, DialogResult = DialogResult.Cancel };
+        footer.Controls.Add(close);
+        Controls.Add(content); Controls.Add(title); Controls.Add(footer); CancelButton = close;
+    }
+
+    private static string Content(string? role)
+    {
+        var steps = role switch
+        {
+            "Administrator" => """
+                QUẢN TRỊ TÀI KHOẢN
+
+                1. Mở “Tài khoản / thí sinh”. Với yêu cầu nhân sự đăng ký trên Web, kiểm tra thông tin và cột “Vai trò đăng ký”, chọn đúng dòng rồi bấm “Duyệt đăng ký”. Chỉ sau khi được duyệt, nhân sự mới đăng nhập Desktop bằng vai trò đã được cấp.
+
+                Bạn cũng có thể chọn Thêm để tạo trực tiếp tài khoản: điền tài khoản, họ tên, mật khẩu và chọn vai trò. Tài khoản thí sinh cần mã thí sinh.
+
+                2. Muốn nhập nhiều thí sinh: chọn “Nhập CSV thí sinh”, lưu mẫu CSV, điền dữ liệu rồi chọn file UTF-8. Kiểm tra bản xem trước; máy chủ kiểm tra toàn bộ danh sách trước khi bạn xác nhận nhập. Tối đa 500 thí sinh / 1 MB.
+
+                3. Mở “Phân công giảng viên”. Chọn tên giảng viên và môn học đã được cán bộ tạo. Muốn thay đổi, xóa phân công cũ rồi thêm lại.
+
+                4. Chọn tài khoản để khóa/mở khóa hoặc “Đặt lại mật khẩu / vai trò”. Khi sửa, để trống mật khẩu sẽ giữ mật khẩu hiện tại. Thay đổi tài khoản có thể thu hồi các phiên đăng nhập của tài khoản đó.
+
+                Một tài khoản có thể mang nhiều vai trò. Mỗi lần đăng nhập Desktop, người dùng chọn một vai trò đã được cấp cho phiên làm việc.
+                """,
+            "Lecturer" => """
+                CHUẨN BỊ CÂU HỎI VÀ ĐỀ THI
+
+                1. Kiểm tra môn học đã được quản trị viên phân công. Nếu chưa có môn, liên hệ quản trị viên.
+
+                2. Mở “Chủ đề” → Thêm, chọn môn và đặt tên chủ đề.
+
+                3. Mở “Ngân hàng câu hỏi”. Chọn chủ đề, nhập nội dung và bốn phương án khác nhau; chọn đúng một đáp án đúng. Có thể tìm kiếm và lọc theo môn, chủ đề, độ khó.
+
+                4. Mở “Xây dựng đề thi”. Chọn môn, tên đề, đánh dấu các câu hỏi và nhập điểm từng câu. Tổng điểm cần bằng 10. Lưu đề rồi chọn “Xác nhận sẵn sàng”.
+
+                5. Đề đã gán đợt thi hoặc câu hỏi đang được đề sẵn sàng sử dụng có thể bị khóa sửa. Đọc thông báo máy chủ; tạo câu hỏi mới khi cần.
+
+                6. “Theo dõi / kết quả” hiển thị dữ liệu trong phạm vi môn được phân công. Chọn một dòng rồi xuất CSV/Excel cho đợt tương ứng.
+                """,
+            "ExamOfficer" => """
+                TỔ CHỨC VÀ CÔNG BỐ ĐỢT THI
+
+                1. Mở “Danh mục môn học” để thêm hoặc cập nhật môn. Quản trị viên phân công giảng viên; giảng viên chuẩn bị đề sẵn sàng.
+
+                2. Mở “Tổ chức đợt thi” → Thêm. Chọn đề sẵn sàng, tên đợt, thời gian mở/đóng, thời lượng, cách trộn câu/đáp án và chính sách xem kết quả. Thời gian nhập và hiển thị là giờ Việt Nam.
+
+                3. Mở “Phân công thí sinh”, chọn đợt nháp và thí sinh. Máy chủ kiểm tra trùng lịch. Muốn đổi phân công, xóa dòng cũ rồi thêm lại trước khi danh sách bị khóa.
+
+                4. Quay lại đợt thi và chọn “Kích hoạt”. Thí sinh được phân công có thể thi trong khung giờ máy chủ cho phép. Chỉ hoãn/hủy trước lần mở đầu và khi chưa có lượt thi.
+
+                5. Chọn “Theo dõi / kết quả” và bấm Làm mới để xem tình trạng. Bạn quản lý các đợt thuộc phạm vi phụ trách.
+
+                6. Sau khi đợt đóng và tất cả lượt thi đã được chấm, chọn “Công bố kết quả”. Thí sinh xem điểm/bài/đáp án theo chính sách đã chọn. Có thể xuất CSV hoặc Excel từ đợt thi hoặc màn theo dõi.
+                """,
+            _ => """
+                CHỌN ĐÚNG ỨNG DỤNG
+
+                • Mọi vai trò đều có thể đăng ký trên Web tại /Account/Register. Bấm “Đăng ký tài khoản trên Web” ở màn đăng nhập để mở trang của máy chủ đang cấu hình.
+
+                • Thí sinh đăng ký xong có thể đăng nhập Web để xem và làm bài thi được phân công.
+
+                • Giảng viên, cán bộ quản lý thi và quản trị viên đăng ký sẽ ở trạng thái chờ duyệt. Quản trị viên hiện có mở “Tài khoản / thí sinh”, kiểm tra “Vai trò đăng ký”, chọn dòng rồi bấm “Duyệt đăng ký”. Sau khi được duyệt, nhân sự mới đăng nhập Desktop. Chọn vai trò khi đăng ký không tự cấp quyền truy cập.
+
+                ĐĂNG NHẬP DESKTOP
+
+                1. Nhập địa chỉ máy chủ do nhóm vận hành cung cấp.
+
+                2. Nhập tên đăng nhập, mật khẩu và chọn vai trò trong phiên làm việc. “Tự động chọn vai trò” dùng một vai trò nhân sự đã được cấp; lựa chọn này không cấp thêm quyền.
+
+                3. Bấm Đăng nhập. Menu chỉ hiện chức năng phù hợp với vai trò hiện tại. Có thể mở “Hướng dẫn” trong ứng dụng để xem quy trình dành cho vai trò đó.
+
+                4. Muốn đổi vai trò, đăng xuất rồi đăng nhập lại với vai trò đã được cấp. Nếu quên mật khẩu nhân sự, liên hệ quản trị viên.
+                """
+        };
+        return steps.Trim() + "\n\nTHAO TÁC CHUNG\n\nChọn một dòng để xem/sửa hoặc thực hiện thao tác; bấm Làm mới sau khi dữ liệu thay đổi. Đọc thông báo lỗi trước khi thử lại. Nếu phiên bản dữ liệu đã thay đổi, đóng biểu mẫu và mở lại để tải bản mới.\n\nĐăng xuất khi kết thúc phiên làm việc. Thời hạn và quyền truy cập do máy chủ kiểm tra.";
+    }
+}

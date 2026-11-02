@@ -1,0 +1,45 @@
+{
+  "types": {
+    "Student": {
+      "required": true,
+      "disabled": false,
+      "visible": true
+    },
+    "Lecturer": {
+      "required": false,
+      "disabled": true,
+      "visible": false
+    },
+    "ExamOfficer": {
+      "required": false,
+      "disabled": true,
+      "visible": false
+    },
+    "Administrator": {
+      "required": false,
+      "disabled": true,
+      "visible": false
+    }
+  },
+  "created": [
+    {
+      "type": "Lecturer",
+      "userName": "staff_lecturer_mvmareao",
+      "notice": [
+        "Đã gửi yêu cầu đăng ký tài khoản nhân sự. Tài khoản đang chờ quản trị viên duyệt; sau khi được duyệt, hãy đăng nhập bằng ứng dụng Desktop."
+      ]
+    },
+    {
+      "type": "Administrator",
+      "userName": "staff_administrator_mvmarfe2",
+      "notice": [
+        "Đã gửi yêu cầu đăng ký tài khoản nhân sự. Tài khoản đang chờ quản trị viên duyệt; sau khi được duyệt, hãy đăng nhập bằng ứng dụng Desktop."
+      ]
+    }
+  ],
+  "mobile": {
+    "width": 360,
+    "scroll": 360
+  },
+  "pageErrors": []
+}

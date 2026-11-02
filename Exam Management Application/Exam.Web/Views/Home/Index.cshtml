@@ -1,0 +1,7 @@
+@model SessionListVm
+@{ ViewData["Title"] = "Trang chủ"; }
+<div class="page-heading"><div><p class="uc-label">UC-05 · Trang chủ thí sinh</p><h1>Xin chào, @User.Identity?.Name</h1><p class="muted">Kiểm tra lịch thi và chuẩn bị trước khi bắt đầu làm bài.</p></div><a class="btn btn-outline-primary" asp-controller="Attempts" asp-action="History">Lịch sử &amp; kết quả</a></div>
+<section class="notice mb-4"><h2>Trước khi thi</h2><p class="mb-0">Mỗi đợt thi chỉ có một lượt làm bài. Thời gian do máy chủ xác định và vẫn tiếp tục khi mất kết nối. Chỉ đáp án đã lưu thành công được chấm.</p></section>
+<p class="mb-4">Lần đầu sử dụng? <a asp-controller="Help" asp-action="Index">Xem hướng dẫn đăng ký, làm bài và xem kết quả</a>.</p>
+<div class="section-heading"><h2>Đợt thi của bạn</h2><a asp-controller="Sessions" asp-action="Index">Tìm kiếm đợt thi</a></div>
+<partial name="_SessionList" model="Model" />

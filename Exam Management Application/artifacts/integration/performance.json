@@ -1,0 +1,23 @@
+{
+  "run": "ae998b18",
+  "sessionId": 7,
+  "students": 50,
+  "synchronizedStart": true,
+  "transport": "HTTP loopback, same Windows host",
+  "measurement": "client end-to-end wall time; includes network and HTML serialization",
+  "saves": {
+    "count": 50,
+    "p50Ms": 38.73,
+    "p95Ms": 52.35,
+    "maxMs": 644.32
+  },
+  "lists": {
+    "count": 50,
+    "p50Ms": 20.75,
+    "p95Ms": 27.16,
+    "maxMs": 28.81
+  },
+  "saveTargetMs": 2000,
+  "listTargetMs": 3000,
+  "targetsMet": true
+}

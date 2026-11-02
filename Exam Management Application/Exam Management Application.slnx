@@ -1,2 +1,8 @@
 <Solution>
+  <Project Path="Exam.Core/Exam.Core.csproj" />
+  <Project Path="Exam.Data/Exam.Data.csproj" />
+  <Project Path="Exam.Services/Exam.Services.csproj" />
+  <Project Path="Exam.Web/Exam.Web.csproj" />
+  <Project Path="Exam.Desktop/Exam.Desktop.csproj" />
+  <Project Path="Exam.Tests/Exam.Tests.csproj" />
 </Solution>

@@ -1,0 +1,25 @@
+@model Exam.Web.ViewModels.LoginVm
+@{ ViewData["Title"] = "Đăng nhập"; }
+<section class="login-panel surface" aria-labelledby="login-heading">
+    <p class="uc-label">UC-01 · Tài khoản</p>
+    <h1 id="login-heading">Đăng nhập</h1>
+    <p class="muted">Thí sinh đăng nhập để xem đợt thi và làm bài. Nhân sự quản lý đăng nhập bằng ứng dụng Desktop.</p>
+    <form asp-controller="Account" asp-action="Login" method="post">
+        <input asp-for="ReturnUrl" type="hidden" />
+        <div asp-validation-summary="ModelOnly" class="validation-summary text-danger" role="alert"></div>
+        <div class="mb-3">
+            <label asp-for="UserName" class="form-label">Tên đăng nhập</label>
+            <input asp-for="UserName" class="form-control" autocomplete="username" required autofocus />
+            <span asp-validation-for="UserName" class="text-danger"></span>
+        </div>
+        <div class="mb-4">
+            <label asp-for="Password" class="form-label">Mật khẩu</label>
+            <input asp-for="Password" type="password" class="form-control" autocomplete="current-password" required />
+            <span asp-validation-for="Password" class="text-danger"></span>
+        </div>
+        <button class="btn btn-primary w-100" type="submit">Đăng nhập</button>
+    </form>
+    <p class="mt-4 mb-2">Chưa có tài khoản? <a asp-action="Register">Đăng ký tài khoản</a></p>
+    <p class="mb-3"><a asp-controller="Help" asp-action="Index">Hướng dẫn sử dụng</a></p>
+    <p class="small muted mb-0">Nếu không đăng nhập được, liên hệ cán bộ phụ trách kỳ thi. Nhân sự quản lý sử dụng ứng dụng Desktop.</p>
+</section>

@@ -1,0 +1,12 @@
+  Exam.Core -> E:\Project\LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Core\bin\Debug\net10.0\Exam.Core.dll
+  Exam.Data -> E:\Project\LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Data\bin\Debug\net10.0\Exam.Data.dll
+  Exam.Desktop -> E:\Project\LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Desktop\bin\Debug\net10.0-windows\Exam.Desktop.dll
+  Exam.Services -> E:\Project\LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\bin\Debug\net10.0\Exam.Services.dll
+  Exam.Tests -> E:\Project\LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\bin\Debug\net10.0\Exam.Tests.dll
+  Exam.Web -> E:\Project\LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Web\bin\Debug\net10.0\Exam.Web.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:08.97

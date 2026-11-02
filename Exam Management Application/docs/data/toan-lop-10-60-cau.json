@@ -1,0 +1,902 @@
+[
+  {
+    "code": "DS10-01",
+    "topicId": 12,
+    "topic": "Toán số 10",
+    "text": "Cho A = {1; 2; 3}, B = {3; 4}. Tập A ∪ B bằng tập nào?",
+    "options": [
+      "{1; 2}",
+      "{1; 2; 4}",
+      "{3}",
+      "{1; 2; 3; 4}"
+    ],
+    "correctIndex": 4,
+    "difficulty": "Easy",
+    "explanation": "Hợp gồm mọi phần tử thuộc A hoặc B."
+  },
+  {
+    "code": "DS10-02",
+    "topicId": 12,
+    "topic": "Toán số 10",
+    "text": "Cho A = {0; 1; 2; 3}, B = {2; 3; 4}. Tập A ∩ B bằng tập nào?",
+    "options": [
+      "{0; 1; 2; 3; 4}",
+      "{0; 1; 4}",
+      "{4}",
+      "{2; 3}"
+    ],
+    "correctIndex": 4,
+    "difficulty": "Easy",
+    "explanation": "Các phần tử chung là 2 và 3."
+  },
+  {
+    "code": "DS10-03",
+    "topicId": 12,
+    "topic": "Toán số 10",
+    "text": "Trong tập U = {1; 2; 3; 4; 5}, cho A = {2; 4}. Phần bù của A trong U là gì?",
+    "options": [
+      "{1; 2; 3}",
+      "{1; 3; 5}",
+      "{2; 4}",
+      "{3; 4; 5}"
+    ],
+    "correctIndex": 2,
+    "difficulty": "Easy",
+    "explanation": "Lấy các phần tử của U không thuộc A."
+  },
+  {
+    "code": "DS10-04",
+    "topicId": 12,
+    "topic": "Toán số 10",
+    "text": "Tập xác định của hàm số y = √(2x − 6) là gì?",
+    "options": [
+      "[−3; +∞)",
+      "(3; +∞)",
+      "(−∞; 3]",
+      "[3; +∞)"
+    ],
+    "correctIndex": 4,
+    "difficulty": "Easy",
+    "explanation": "2x − 6 ≥ 0 tương đương x ≥ 3."
+  },
+  {
+    "code": "DS10-05",
+    "topicId": 12,
+    "topic": "Toán số 10",
+    "text": "Tập xác định của hàm số y = 1/(x² − 9) là gì?",
+    "options": [
+      "ℝ \\ {3}",
+      "ℝ \\ {−9; 9}",
+      "ℝ \\ {−3; 3}",
+      "(−3; 3)"
+    ],
+    "correctIndex": 3,
+    "difficulty": "Easy",
+    "explanation": "Mẫu khác 0 nên x khác −3 và 3."
+  },
+  {
+    "code": "DS10-06",
+    "topicId": 12,
+    "topic": "Toán số 10",
+    "text": "Tập xác định của y = √(x + 1)/(x − 2) là gì?",
+    "options": [
+      "ℝ \\ {2}",
+      "(−1; +∞)",
+      "[−1; +∞) \\ {2}",
+      "[−1; 2)"
+    ],
+    "correctIndex": 3,
+    "difficulty": "Medium",
+    "explanation": "Cần x ≥ −1 và x khác 2."
+  },
+  {
+    "code": "DS10-07",
+    "topicId": 12,
+    "topic": "Toán số 10",
+    "text": "Nghiệm của phương trình 2x − 5 = 9 là gì?",
+    "options": [
+      "x = 7",
+      "x = 14",
+      "x = −7",
+      "x = 2"
+    ],
+    "correctIndex": 1,
+    "difficulty": "Easy",
+    "explanation": "2x = 14 nên x = 7."
+  },
+  {
+    "code": "DS10-08",
+    "topicId": 12,
+    "topic": "Toán số 10",
+    "text": "Tập nghiệm của x² − 5x + 6 = 0 là gì?",
+    "options": [
+      "{2; 3}",
+      "{1; 6}",
+      "{−2; −3}",
+      "{−1; −6}"
+    ],
+    "correctIndex": 1,
+    "difficulty": "Easy",
+    "explanation": "(x − 2)(x − 3) = 0."
+  },
+  {
+    "code": "DS10-09",
+    "topicId": 12,
+    "topic": "Toán số 10",
+    "text": "Phương trình x² − 6x + 9 = 0 có nghiệm nào?",
+    "options": [
+      "Vô nghiệm thực",
+      "Nghiệm kép x = 3",
+      "Nghiệm kép x = −3",
+      "Hai nghiệm 0 và 6"
+    ],
+    "correctIndex": 2,
+    "difficulty": "Easy",
+    "explanation": "(x − 3)² = 0."
+  },
+  {
+    "code": "DS10-10",
+    "topicId": 12,
+    "topic": "Toán số 10",
+    "text": "Biệt thức Δ của phương trình x² + 2x + 5 = 0 bằng bao nhiêu?",
+    "options": [
+      "−16",
+      "16",
+      "24",
+      "−4"
+    ],
+    "correctIndex": 1,
+    "difficulty": "Easy",
+    "explanation": "Δ = 2² − 4 × 1 × 5 = −16."
+  },
+  {
+    "code": "DS10-11",
+    "topicId": 12,
+    "topic": "Toán số 10",
+    "text": "Gọi x₁, x₂ là hai nghiệm của 2x² − 6x + 1 = 0. Tổng x₁ + x₂ bằng bao nhiêu?",
+    "options": [
+      "1/2",
+      "3",
+      "6",
+      "−3"
+    ],
+    "correctIndex": 2,
+    "difficulty": "Easy",
+    "explanation": "Theo Viète, tổng nghiệm bằng −b/a = 3."
+  },
+  {
+    "code": "DS10-12",
+    "topicId": 12,
+    "topic": "Toán số 10",
+    "text": "Gọi x₁, x₂ là hai nghiệm của 3x² + 2x − 4 = 0. Tích x₁x₂ bằng bao nhiêu?",
+    "options": [
+      "−4/3",
+      "4/3",
+      "−2/3",
+      "−3/4"
+    ],
+    "correctIndex": 1,
+    "difficulty": "Easy",
+    "explanation": "Theo Viète, tích nghiệm bằng c/a = −4/3."
+  },
+  {
+    "code": "DS10-13",
+    "topicId": 12,
+    "topic": "Toán số 10",
+    "text": "Đỉnh của parabol y = x² − 4x + 1 là điểm nào?",
+    "options": [
+      "(−2; −3)",
+      "(4; 1)",
+      "(2; 1)",
+      "(2; −3)"
+    ],
+    "correctIndex": 4,
+    "difficulty": "Easy",
+    "explanation": "y = (x − 2)² − 3."
+  },
+  {
+    "code": "DS10-14",
+    "topicId": 12,
+    "topic": "Toán số 10",
+    "text": "Trục đối xứng của parabol y = −2x² + 8x − 1 là đường thẳng nào?",
+    "options": [
+      "x = 4",
+      "y = 2",
+      "x = 2",
+      "x = −2"
+    ],
+    "correctIndex": 3,
+    "difficulty": "Easy",
+    "explanation": "Hoành độ đỉnh bằng −b/(2a) = 2."
+  },
+  {
+    "code": "DS10-15",
+    "topicId": 12,
+    "topic": "Toán số 10",
+    "text": "Giá trị nhỏ nhất của y = x² + 2x + 5 trên ℝ là bao nhiêu?",
+    "options": [
+      "4",
+      "5",
+      "1",
+      "−4"
+    ],
+    "correctIndex": 1,
+    "difficulty": "Easy",
+    "explanation": "y = (x + 1)² + 4 ≥ 4."
+  },
+  {
+    "code": "DS10-16",
+    "topicId": 12,
+    "topic": "Toán số 10",
+    "text": "Giá trị lớn nhất của y = −x² + 6x − 2 trên ℝ là bao nhiêu?",
+    "options": [
+      "7",
+      "−2",
+      "3",
+      "9"
+    ],
+    "correctIndex": 1,
+    "difficulty": "Easy",
+    "explanation": "y = −(x − 3)² + 7 ≤ 7."
+  },
+  {
+    "code": "DS10-17",
+    "topicId": 12,
+    "topic": "Toán số 10",
+    "text": "Hàm số y = x² − 4x + 3 đồng biến trên khoảng nào?",
+    "options": [
+      "(−∞; +∞)",
+      "(2; +∞)",
+      "(−∞; 2)",
+      "(−∞; 0)"
+    ],
+    "correctIndex": 2,
+    "difficulty": "Medium",
+    "explanation": "Parabol mở lên, có hoành độ đỉnh 2, đồng biến bên phải đỉnh."
+  },
+  {
+    "code": "DS10-18",
+    "topicId": 12,
+    "topic": "Toán số 10",
+    "text": "Tập giá trị của hàm số y = (x − 1)² + 2 trên ℝ là gì?",
+    "options": [
+      "(2; +∞)",
+      "[2; +∞)",
+      "(−∞; 2]",
+      "[1; +∞)"
+    ],
+    "correctIndex": 2,
+    "difficulty": "Medium",
+    "explanation": "Bình phương không âm; y = 2 đạt tại x = 1."
+  },
+  {
+    "code": "DS10-19",
+    "topicId": 12,
+    "topic": "Toán số 10",
+    "text": "Các giao điểm của y = x² và y = 2x + 3 là những điểm nào?",
+    "options": [
+      "(1; 1) và (3; 9)",
+      "(−1; 1) và (3; 9)",
+      "(−3; 9) và (1; 1)",
+      "(−1; −2) và (3; 6)"
+    ],
+    "correctIndex": 2,
+    "difficulty": "Medium",
+    "explanation": "x² − 2x − 3 = 0 cho x = −1 hoặc 3; thay vào y = x²."
+  },
+  {
+    "code": "DS10-20",
+    "topicId": 12,
+    "topic": "Toán số 10",
+    "text": "Tập nghiệm của bất phương trình x² − 5x + 6 < 0 là gì?",
+    "options": [
+      "(−∞; 2) ∪ (3; +∞)",
+      "[2; 3]",
+      "(−3; −2)",
+      "(2; 3)"
+    ],
+    "correctIndex": 4,
+    "difficulty": "Medium",
+    "explanation": "Tam thức hệ số đầu dương, âm giữa hai nghiệm 2 và 3."
+  },
+  {
+    "code": "DS10-21",
+    "topicId": 12,
+    "topic": "Toán số 10",
+    "text": "Tập nghiệm của x² − 4 ≥ 0 là gì?",
+    "options": [
+      "[−2; 2]",
+      "(−∞; −2] ∪ [2; +∞)",
+      "[2; +∞)",
+      "(−2; 2)"
+    ],
+    "correctIndex": 2,
+    "difficulty": "Medium",
+    "explanation": "(x − 2)(x + 2) ≥ 0 ở ngoài đoạn giữa hai nghiệm."
+  },
+  {
+    "code": "DS10-22",
+    "topicId": 12,
+    "topic": "Toán số 10",
+    "text": "Tập nghiệm của −x² + 3x + 4 > 0 là gì?",
+    "options": [
+      "(−∞; −1) ∪ (4; +∞)",
+      "[−1; 4]",
+      "(−4; 1)",
+      "(−1; 4)"
+    ],
+    "correctIndex": 4,
+    "difficulty": "Medium",
+    "explanation": "−x² + 3x + 4 = −(x − 4)(x + 1), dương giữa −1 và 4."
+  },
+  {
+    "code": "DS10-23",
+    "topicId": 12,
+    "topic": "Toán số 10",
+    "text": "Tập nghiệm của (x − 1)/(x + 2) ≤ 0 là gì?",
+    "options": [
+      "[−2; 1]",
+      "(−2; 1]",
+      "(−2; 1)",
+      "(−∞; −2) ∪ [1; +∞)"
+    ],
+    "correctIndex": 2,
+    "difficulty": "Medium",
+    "explanation": "Biểu thức không xác định tại −2, bằng 0 tại 1, âm trên (−2; 1)."
+  },
+  {
+    "code": "DS10-24",
+    "topicId": 12,
+    "topic": "Toán số 10",
+    "text": "Tập nghiệm của |2x − 1| = 5 là gì?",
+    "options": [
+      "{2; 3}",
+      "{−3; 2}",
+      "{−2; −3}",
+      "{−2; 3}"
+    ],
+    "correctIndex": 4,
+    "difficulty": "Easy",
+    "explanation": "2x − 1 = 5 hoặc −5 nên x = 3 hoặc −2."
+  },
+  {
+    "code": "DS10-25",
+    "topicId": 12,
+    "topic": "Toán số 10",
+    "text": "Nghiệm (x; y) của hệ 2x + y = 7 và x − y = 2 là gì?",
+    "options": [
+      "(2; 3)",
+      "(3; −1)",
+      "(3; 1)",
+      "(1; 3)"
+    ],
+    "correctIndex": 3,
+    "difficulty": "Easy",
+    "explanation": "Cộng hai phương trình: 3x = 9, suy ra x = 3, y = 1."
+  },
+  {
+    "code": "DS10-26",
+    "topicId": 12,
+    "topic": "Toán số 10",
+    "text": "Các nghiệm thực (x; y) của hệ x + y = 5, xy = 6 là gì?",
+    "options": [
+      "(2; 3) và (3; 2)",
+      "(−2; −3) và (−3; −2)",
+      "(1; 4) và (4; 1)",
+      "Chỉ có (2; 3)"
+    ],
+    "correctIndex": 1,
+    "difficulty": "Medium",
+    "explanation": "x và y là hai nghiệm của t² − 5t + 6 = 0."
+  },
+  {
+    "code": "DS10-27",
+    "topicId": 12,
+    "topic": "Toán số 10",
+    "text": "Tập tất cả các giá trị thực của m để phương trình x² − 2mx + m + 2 = 0 có hai nghiệm thực phân biệt là gì?",
+    "options": [
+      "m < −1 hoặc m > 2",
+      "m > 2",
+      "m ≤ −1 hoặc m ≥ 2",
+      "−1 < m < 2"
+    ],
+    "correctIndex": 1,
+    "difficulty": "Hard",
+    "explanation": "Δ = 4(m² − m − 2) = 4(m − 2)(m + 1) > 0."
+  },
+  {
+    "code": "DS10-28",
+    "topicId": 12,
+    "topic": "Toán số 10",
+    "text": "Parabol y = x² − 2x + m tiếp xúc trục hoành khi m bằng bao nhiêu?",
+    "options": [
+      "2",
+      "1",
+      "0",
+      "−1"
+    ],
+    "correctIndex": 2,
+    "difficulty": "Medium",
+    "explanation": "Tiếp xúc khi Δ = 4 − 4m = 0."
+  },
+  {
+    "code": "DS10-29",
+    "topicId": 12,
+    "topic": "Toán số 10",
+    "text": "Đồ thị y = ax² − 1 đi qua A(2; 3). Giá trị a bằng bao nhiêu?",
+    "options": [
+      "1/2",
+      "−1",
+      "2",
+      "1"
+    ],
+    "correctIndex": 4,
+    "difficulty": "Easy",
+    "explanation": "3 = 4a − 1 nên a = 1."
+  },
+  {
+    "code": "DS10-30",
+    "topicId": 12,
+    "topic": "Toán số 10",
+    "text": "Một hình chữ nhật có chu vi 20 cm. Diện tích lớn nhất của hình đó là bao nhiêu?",
+    "options": [
+      "20 cm²",
+      "100 cm²",
+      "25 cm²",
+      "50 cm²"
+    ],
+    "correctIndex": 3,
+    "difficulty": "Hard",
+    "explanation": "Hai cạnh x và 10 − x; S = −(x − 5)² + 25, đạt 25 khi x = 5."
+  },
+  {
+    "code": "HH10-01",
+    "topicId": 11,
+    "topic": "Toán hình",
+    "text": "Trong Oxy, cho A(1; 2), B(4; 6). Tọa độ vectơ AB là gì?",
+    "options": [
+      "(3; 4)",
+      "(−3; −4)",
+      "(4; 3)",
+      "(5; 8)"
+    ],
+    "correctIndex": 1,
+    "difficulty": "Easy",
+    "explanation": "AB = (4 − 1; 6 − 2) = (3; 4)."
+  },
+  {
+    "code": "HH10-02",
+    "topicId": 11,
+    "topic": "Toán hình",
+    "text": "Độ dài vectơ u = (3; −4) bằng bao nhiêu?",
+    "options": [
+      "25",
+      "5",
+      "7",
+      "1"
+    ],
+    "correctIndex": 2,
+    "difficulty": "Easy",
+    "explanation": "|u| = √(3² + (−4)²) = 5."
+  },
+  {
+    "code": "HH10-03",
+    "topicId": 11,
+    "topic": "Toán hình",
+    "text": "Cho u = (2; −1), v = (−3; 4). Tọa độ u + v là gì?",
+    "options": [
+      "(5; −5)",
+      "(1; −3)",
+      "(−6; −4)",
+      "(−1; 3)"
+    ],
+    "correctIndex": 4,
+    "difficulty": "Easy",
+    "explanation": "Cộng các tọa độ tương ứng."
+  },
+  {
+    "code": "HH10-04",
+    "topicId": 11,
+    "topic": "Toán hình",
+    "text": "Cho u = (1; −3). Tọa độ −2u là gì?",
+    "options": [
+      "(−1; 3)",
+      "(−2; 6)",
+      "(−2; −6)",
+      "(2; −6)"
+    ],
+    "correctIndex": 2,
+    "difficulty": "Easy",
+    "explanation": "Nhân mỗi tọa độ với −2."
+  },
+  {
+    "code": "HH10-05",
+    "topicId": 11,
+    "topic": "Toán hình",
+    "text": "Tích vô hướng của u = (1; 2) và v = (3; −1) bằng bao nhiêu?",
+    "options": [
+      "−5",
+      "−1",
+      "5",
+      "1"
+    ],
+    "correctIndex": 4,
+    "difficulty": "Easy",
+    "explanation": "u·v = 1×3 + 2×(−1) = 1."
+  },
+  {
+    "code": "HH10-06",
+    "topicId": 11,
+    "topic": "Toán hình",
+    "text": "Hai vectơ u = (2; 1), v = (1; k) vuông góc khi k bằng bao nhiêu?",
+    "options": [
+      "2",
+      "−2",
+      "−1/2",
+      "1/2"
+    ],
+    "correctIndex": 2,
+    "difficulty": "Easy",
+    "explanation": "u·v = 2 + k = 0."
+  },
+  {
+    "code": "HH10-07",
+    "topicId": 11,
+    "topic": "Toán hình",
+    "text": "Hai vectơ u = (2; −3), v = (4; m) cùng phương khi m bằng bao nhiêu?",
+    "options": [
+      "−3/2",
+      "−6",
+      "6",
+      "−12"
+    ],
+    "correctIndex": 2,
+    "difficulty": "Easy",
+    "explanation": "v = 2u nên m = −6."
+  },
+  {
+    "code": "HH10-08",
+    "topicId": 11,
+    "topic": "Toán hình",
+    "text": "Góc giữa hai vectơ u = (1; 0), v = (1; √3) bằng bao nhiêu?",
+    "options": [
+      "60°",
+      "30°",
+      "120°",
+      "90°"
+    ],
+    "correctIndex": 1,
+    "difficulty": "Medium",
+    "explanation": "cos góc = (u·v)/(|u||v|) = 1/2."
+  },
+  {
+    "code": "HH10-09",
+    "topicId": 11,
+    "topic": "Toán hình",
+    "text": "Trung điểm của A(−2; 4), B(6; 0) có tọa độ nào?",
+    "options": [
+      "(4; 4)",
+      "(−4; 2)",
+      "(2; 2)",
+      "(2; 4)"
+    ],
+    "correctIndex": 3,
+    "difficulty": "Easy",
+    "explanation": "Trung điểm là ((−2 + 6)/2; (4 + 0)/2)."
+  },
+  {
+    "code": "HH10-10",
+    "topicId": 11,
+    "topic": "Toán hình",
+    "text": "Trọng tâm tam giác A(0; 0), B(6; 0), C(0; 3) có tọa độ nào?",
+    "options": [
+      "(2; 1)",
+      "(3; 3/2)",
+      "(6; 3)",
+      "(1; 2)"
+    ],
+    "correctIndex": 1,
+    "difficulty": "Easy",
+    "explanation": "Lấy trung bình cộng tọa độ ba đỉnh."
+  },
+  {
+    "code": "HH10-11",
+    "topicId": 11,
+    "topic": "Toán hình",
+    "text": "Khoảng cách giữa A(−1; 2) và B(2; 6) bằng bao nhiêu?",
+    "options": [
+      "4",
+      "3",
+      "5",
+      "7"
+    ],
+    "correctIndex": 3,
+    "difficulty": "Easy",
+    "explanation": "AB = √((2 + 1)² + (6 − 2)²) = 5."
+  },
+  {
+    "code": "HH10-12",
+    "topicId": 11,
+    "topic": "Toán hình",
+    "text": "Một vectơ pháp tuyến của đường thẳng 2x − 3y + 5 = 0 là vectơ nào?",
+    "options": [
+      "(2; −3)",
+      "(3; 2)",
+      "(2; 3)",
+      "(−3; 2)"
+    ],
+    "correctIndex": 1,
+    "difficulty": "Easy",
+    "explanation": "Đường thẳng ax + by + c = 0 có pháp tuyến (a; b)."
+  },
+  {
+    "code": "HH10-13",
+    "topicId": 11,
+    "topic": "Toán hình",
+    "text": "Một vectơ chỉ phương của đường thẳng 3x + 2y − 7 = 0 là vectơ nào?",
+    "options": [
+      "(3; 2)",
+      "(2; −3)",
+      "(2; 3)",
+      "(−2; −3)"
+    ],
+    "correctIndex": 2,
+    "difficulty": "Easy",
+    "explanation": "(2; −3) vuông góc với pháp tuyến (3; 2)."
+  },
+  {
+    "code": "HH10-14",
+    "topicId": 11,
+    "topic": "Toán hình",
+    "text": "Đường thẳng đi qua A(1; 2) và có vectơ pháp tuyến n = (2; −1) có phương trình nào?",
+    "options": [
+      "2x − y + 1 = 0",
+      "x + 2y − 5 = 0",
+      "2x − y = 0",
+      "2x + y − 4 = 0"
+    ],
+    "correctIndex": 3,
+    "difficulty": "Medium",
+    "explanation": "2(x − 1) − (y − 2) = 0."
+  },
+  {
+    "code": "HH10-15",
+    "topicId": 11,
+    "topic": "Toán hình",
+    "text": "Hệ số góc của đường thẳng đi qua A(0; 1), B(2; 5) bằng bao nhiêu?",
+    "options": [
+      "−2",
+      "1/2",
+      "4",
+      "2"
+    ],
+    "correctIndex": 4,
+    "difficulty": "Easy",
+    "explanation": "Hệ số góc = (5 − 1)/(2 − 0) = 2."
+  },
+  {
+    "code": "HH10-16",
+    "topicId": 11,
+    "topic": "Toán hình",
+    "text": "Khoảng cách từ M(1; 2) đến đường thẳng 3x + 4y − 10 = 0 bằng bao nhiêu?",
+    "options": [
+      "5",
+      "1",
+      "11/5",
+      "1/5"
+    ],
+    "correctIndex": 4,
+    "difficulty": "Medium",
+    "explanation": "d = |3 + 8 − 10|/√(3² + 4²) = 1/5."
+  },
+  {
+    "code": "HH10-17",
+    "topicId": 11,
+    "topic": "Toán hình",
+    "text": "Vị trí tương đối của y = 2x + 1 và 2x − y − 3 = 0 là gì?",
+    "options": [
+      "Trùng nhau",
+      "Vuông góc",
+      "Cắt nhau tại gốc tọa độ",
+      "Song song, không trùng nhau"
+    ],
+    "correctIndex": 4,
+    "difficulty": "Easy",
+    "explanation": "Đường thứ hai là y = 2x − 3, cùng hệ số góc nhưng khác tung độ gốc."
+  },
+  {
+    "code": "HH10-18",
+    "topicId": 11,
+    "topic": "Toán hình",
+    "text": "Giao điểm của hai đường thẳng x + y = 5 và x − y = 1 là điểm nào?",
+    "options": [
+      "(1; 4)",
+      "(3; 2)",
+      "(2; 3)",
+      "(−3; −2)"
+    ],
+    "correctIndex": 2,
+    "difficulty": "Easy",
+    "explanation": "Cộng hai phương trình được 2x = 6, suy ra y = 2."
+  },
+  {
+    "code": "HH10-19",
+    "topicId": 11,
+    "topic": "Toán hình",
+    "text": "Tâm của đường tròn (x − 2)² + (y + 1)² = 9 là điểm nào?",
+    "options": [
+      "(2; −1)",
+      "(2; 1)",
+      "(−2; 1)",
+      "(−2; −1)"
+    ],
+    "correctIndex": 1,
+    "difficulty": "Easy",
+    "explanation": "Dạng (x − a)² + (y − b)² = R² có tâm (a; b)."
+  },
+  {
+    "code": "HH10-20",
+    "topicId": 11,
+    "topic": "Toán hình",
+    "text": "Bán kính đường tròn x² + y² − 4x + 6y − 12 = 0 bằng bao nhiêu?",
+    "options": [
+      "5",
+      "25",
+      "13",
+      "√12"
+    ],
+    "correctIndex": 1,
+    "difficulty": "Medium",
+    "explanation": "Hoàn thành bình phương: (x − 2)² + (y + 3)² = 25."
+  },
+  {
+    "code": "HH10-21",
+    "topicId": 11,
+    "topic": "Toán hình",
+    "text": "Đường tròn tâm I(−1; 2), bán kính 3 có phương trình nào?",
+    "options": [
+      "(x + 1)² + (y − 2)² = 9",
+      "(x + 1)² + (y − 2)² = 3",
+      "(x − 1)² + (y + 2)² = 9",
+      "(x + 1)² − (y − 2)² = 9"
+    ],
+    "correctIndex": 1,
+    "difficulty": "Easy",
+    "explanation": "Thay tâm và bình phương bán kính vào phương trình chuẩn."
+  },
+  {
+    "code": "HH10-22",
+    "topicId": 11,
+    "topic": "Toán hình",
+    "text": "Điểm M(3; 4) có vị trí nào đối với đường tròn x² + y² = 25?",
+    "options": [
+      "Là tâm đường tròn",
+      "Nằm trên đường tròn",
+      "Nằm ngoài đường tròn",
+      "Nằm trong đường tròn"
+    ],
+    "correctIndex": 2,
+    "difficulty": "Easy",
+    "explanation": "3² + 4² = 25 đúng bằng bình phương bán kính."
+  },
+  {
+    "code": "HH10-23",
+    "topicId": 11,
+    "topic": "Toán hình",
+    "text": "Tiếp tuyến của đường tròn x² + y² = 25 tại M(3; 4) có phương trình nào?",
+    "options": [
+      "4x − 3y = 0",
+      "3x + 4y = 25",
+      "3x − 4y = 25",
+      "3x + 4y = 5"
+    ],
+    "correctIndex": 2,
+    "difficulty": "Hard",
+    "explanation": "Tiếp tuyến đi qua M và có pháp tuyến OM = (3; 4)."
+  },
+  {
+    "code": "HH10-24",
+    "topicId": 11,
+    "topic": "Toán hình",
+    "text": "Tam giác có hai cạnh dài 3 và 4, góc xen giữa bằng 60°. Độ dài cạnh còn lại là bao nhiêu?",
+    "options": [
+      "√13",
+      "7",
+      "√37",
+      "5"
+    ],
+    "correctIndex": 1,
+    "difficulty": "Medium",
+    "explanation": "Định lý cos: c² = 3² + 4² − 2×3×4×cos60° = 13."
+  },
+  {
+    "code": "HH10-25",
+    "topicId": 11,
+    "topic": "Toán hình",
+    "text": "Tam giác có ba cạnh 5, 7, 8. Cosin của góc đối diện cạnh 8 bằng bao nhiêu?",
+    "options": [
+      "4/7",
+      "−1/7",
+      "1/2",
+      "1/7"
+    ],
+    "correctIndex": 4,
+    "difficulty": "Medium",
+    "explanation": "cos C = (5² + 7² − 8²)/(2×5×7) = 10/70."
+  },
+  {
+    "code": "HH10-26",
+    "topicId": 11,
+    "topic": "Toán hình",
+    "text": "Tam giác có hai cạnh dài 6 cm và 8 cm, góc xen giữa bằng 30°. Diện tích bằng bao nhiêu?",
+    "options": [
+      "48 cm²",
+      "24 cm²",
+      "12 cm²",
+      "6 cm²"
+    ],
+    "correctIndex": 3,
+    "difficulty": "Medium",
+    "explanation": "S = (1/2)×6×8×sin30° = 12."
+  },
+  {
+    "code": "HH10-27",
+    "topicId": 11,
+    "topic": "Toán hình",
+    "text": "Trong tam giác ABC, a = BC = 6, góc A = 30°, góc B = 45°. Cạnh b = CA bằng bao nhiêu?",
+    "options": [
+      "3√2",
+      "12√2",
+      "6√3",
+      "6√2"
+    ],
+    "correctIndex": 4,
+    "difficulty": "Medium",
+    "explanation": "Định lý sin: b = a×sin45°/sin30° = 6√2."
+  },
+  {
+    "code": "HH10-28",
+    "topicId": 11,
+    "topic": "Toán hình",
+    "text": "Tam giác có cạnh a = 8 đối diện góc A = 30°. Bán kính đường tròn ngoại tiếp bằng bao nhiêu?",
+    "options": [
+      "4√3",
+      "4",
+      "8",
+      "16"
+    ],
+    "correctIndex": 3,
+    "difficulty": "Medium",
+    "explanation": "a/sin A = 2R nên R = 8/(2×sin30°) = 8."
+  },
+  {
+    "code": "HH10-29",
+    "topicId": 11,
+    "topic": "Toán hình",
+    "text": "Tam giác có ba cạnh 13 cm, 14 cm, 15 cm. Diện tích bằng bao nhiêu?",
+    "options": [
+      "84 cm²",
+      "91 cm²",
+      "168 cm²",
+      "42 cm²"
+    ],
+    "correctIndex": 1,
+    "difficulty": "Hard",
+    "explanation": "Nửa chu vi p = 21; Heron cho S = √(21×8×7×6) = 84."
+  },
+  {
+    "code": "HH10-30",
+    "topicId": 11,
+    "topic": "Toán hình",
+    "text": "Tam giác vuông có hai cạnh góc vuông 3 cm và 4 cm. Bán kính đường tròn nội tiếp bằng bao nhiêu?",
+    "options": [
+      "5/2 cm",
+      "1 cm",
+      "3/2 cm",
+      "2 cm"
+    ],
+    "correctIndex": 2,
+    "difficulty": "Medium",
+    "explanation": "Cạnh huyền 5, S = 6, nửa chu vi p = 6; r = S/p = 1."
+  }
+]

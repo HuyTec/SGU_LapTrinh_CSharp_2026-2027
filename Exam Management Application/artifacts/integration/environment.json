@@ -1,0 +1,10 @@
+{
+  "checkedAtUtc": "2026-10-24T07:57:58.6386114Z",
+  "sdk": "10.0.401",
+  "cpu": "13th Gen Intel(R) Core(TM) i5-13450HX",
+  "logicalProcessors": 16,
+  "ramGiB": 15.71,
+  "efCore": "10.0.13",
+  "sqlServer": "17.0.1000.7 Express",
+  "transport": "HTTP loopback, Windows client and server on the same host"
+}

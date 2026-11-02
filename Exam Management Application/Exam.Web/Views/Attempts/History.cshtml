@@ -1,0 +1,7 @@
+@model HistoryVm
+@{ ViewData["Title"] = "Lịch sử & kết quả"; }
+<div class="page-heading"><div><p class="uc-label">UC-08, UC-09</p><h1>Lịch sử &amp; kết quả</h1><p class="muted">Xem lại trạng thái và kết quả các lượt thi của bạn.</p></div></div>
+@if(Model.Results.Count==0)
+{<section class="surface empty-state"><h2>Bạn chưa làm bài thi nào</h2><p>Các lượt thi sẽ xuất hiện tại đây sau khi bắt đầu.</p><a class="btn btn-primary" asp-controller="Sessions" asp-action="Index">Xem đợt thi</a></section>}
+else
+{<div class="session-list">@foreach(var result in Model.Results){<article class="surface session-item"><div><h2>@result.Title</h2><p class="mb-0">@(result.Published && result.Score.HasValue ? $"Điểm: {result.Score:0.##}/10" : result.Status == "InProgress" ? "Đang làm bài" : result.Status == "PendingGrading" ? "Đã kết thúc · Đang chờ chấm điểm" : "Đã kết thúc · Chưa công bố điểm")</p></div><a class="btn btn-outline-primary" asp-controller="Attempts" asp-action="Result" asp-route-id="@result.AttemptId">Xem lượt thi</a></article>}</div>}
