@@ -6,3 +6,6 @@ obj/
 packages/
 *.userosscache
 *.sln.docstates
+*.rar
+*.zip
+Exam Management Application.rar
