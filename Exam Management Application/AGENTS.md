@@ -1,5 +1,23 @@
 # Exam Management Application - Project Operating Guide
 
+## Team workflow added 10 November 2026
+
+Read `team/QUY_TAC_AI_VA_CODE.md` before changes. Use a task ID from
+`team/PHAN_CONG_NHOM_2026-11-10.xlsx`, identify module owner and reviewer,
+and state the specific files/methods and acceptance evidence. TV1 is Phùng Anh Vũ
+(accounts), TV2 is Nguyễn Hoàng Phúc (classes/exam papers), TV3 is Trần Nhựt Huy
+(Web attempts/grading), and TV4 is Bùi Nhật Hào (exam sessions).
+Dates and cross-cutting review assignments are provisional. The target roles
+are Student, Lecturer, and Administrator. The user assigned lecturers the
+subject, class, and exam-session workflows previously assigned to ExamOfficer.
+The current code still contains ExamOfficer, so role/scope migration is pending
+(D25); do not describe target behavior as implemented. Class permissions and
+schema in `team/QUAN_LY_LOP_HOC.md` remain proposals until D26 is delivered.
+Do not invent completed contributions.
+Shared shell/editor/API/service files require coordinated changes; screen
+ownership does not grant exclusive ownership of a shared file. React is not
+present in this checkout; do not assume it replaces the assessed C# Web app.
+
 ## Source and priority
 
 This repository implements the C# course project requirements in
@@ -108,6 +126,8 @@ brief limits the maximum score if any of the following is missing:
 - Keep documentation and diagrams synchronized with implemented behavior.
 - Preserve App1; the assessed clients are now Exam.Desktop and Exam.Web.
 - Current acceptance source: docs/YEU_CAU_DU_AN_DE_TAI_18.md and DECISIONS.md.
-- UC-17 belongs to ExamOfficer. Identity maps to Users/Roles/UserRoles.
+- Target role mapping is Student/Lecturer/Administrator; lecturer owns exam-session
+  workflows within assigned subjects. Current source still has ExamOfficer;
+  migrate it under D25. Identity remains Users/Roles/UserRoles.
 - Approved scope includes xUnit and basic CSV/XLSX result export; other optional
   features remain deferred. Never claim unexecuted runtime or visual checks.

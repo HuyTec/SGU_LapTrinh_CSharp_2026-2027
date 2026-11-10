@@ -1,6 +1,8 @@
 **/bin/
 **/obj/
 **/.vs/
+**/__pycache__/
+**/*.py[cod]
 **/TestResults/
 **/appsettings.Development.json
 **/appsettings.Local.json
@@ -10,3 +12,5 @@
 **/*.ldf
 .local/
 artifacts/runtime/
+artifacts/desktop-build/
+artifacts/desktop-qa-build/

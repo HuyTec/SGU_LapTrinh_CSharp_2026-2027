@@ -1,0 +1,14 @@
+name: exam-team-local
+services:
+  sql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: Developer
+      MSSQL_SA_PASSWORD: ${EXAM_SQL_PASSWORD:?Set EXAM_SQL_PASSWORD in this terminal}
+    ports:
+      - "127.0.0.1:14333:1433"
+    volumes:
+      - exam_sql_data:/var/opt/mssql
+volumes:
+  exam_sql_data:

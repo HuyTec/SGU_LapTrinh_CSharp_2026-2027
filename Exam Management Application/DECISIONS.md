@@ -2,6 +2,12 @@
 
 Ngày xác nhận: 24/10/2026 (Asia/Saigon). Người dùng duyệt `1a, 2a 3a 4a 5a` sau cổng rà soát.
 
+### Thay đổi phạm vi ngày 10/11/2026
+
+Theo chỉ đạo mới của người dùng, bỏ tác nhân/vai trò Cán bộ quản lý thi (`ExamOfficer`). Giảng viên nhận các nghiệp vụ UC-12/13/17–21 trong phạm vi môn được phân công; bổ sung UC-24 quản lý lớp học phần và đưa học viên từ lớp vào danh sách đợt thi. Giữ Thí sinh và Quản trị viên. Đây là thay đổi so với quyết định 24/10/2026.
+
+Mã nguồn hiện vẫn khai báo `ExamOfficer`, gán `ManagedBy` theo cán bộ và kiểm tra role này ở `AdminService`; thay đổi trên là mục tiêu cần triển khai, chưa phải trạng thái đã đạt. D25–D27 trong workbook cập nhật theo dõi gộp quyền, lớp và kiểm thử. Phải giữ giới hạn theo môn/lớp, xác nhận lại danh sách khi sao chép vào `SessionCandidates`, và không cho Admin/Student có quyền đợt ngoài scope. Không tạo role mới.
+
 | Mục | Quyết định | Lý do |
 |---|---|---|
 | Nguồn yêu cầu | `docs/YEU_CAU_DU_AN_DE_TAI_18.md` là tiêu chí nghiệm thu chính; đặc tả 3.2 chi tiết nghiệp vụ, ưu tiên hơn 3.3 | Theo chỉ định trực tiếp của người dùng |

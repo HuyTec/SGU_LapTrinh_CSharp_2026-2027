@@ -1,5 +1,18 @@
 # Hệ thống quản lý thi trắc nghiệm
 
+## Điều phối nhóm và kiểm soát AI (10/11/2026)
+
+Kế hoạch mới: [team/README.md](team/README.md), [Excel phân công ngang/dọc](team/PHAN_CONG_NHOM_2026-11-10.xlsx), [quy tắc và prompt AI](team/QUY_TAC_AI_VA_CODE.md), [rà soát và luồng hệ thống](team/RA_SOAT_VA_LUONG.md), [hướng dẫn Docker/React/SQL Server](team/DOCKER_REACT_SQLSERVER.md).
+
+| Thành viên | Trách nhiệm ngang đề xuất | Module dọc đã phân công |
+|---|---|---|
+| TV1 — Phùng Anh Vũ | Desktop, shell/header và quyền tài khoản | Tài khoản quản trị/giảng viên/cán bộ/thí sinh, xác thực và phân quyền |
+| TV2 — Nguyễn Hoàng Phúc | Hợp đồng API/DTO nghiệp vụ | Quản lý lớp học, chủ đề/câu hỏi và đề thi |
+| TV3 — Trần Nhựt Huy | Web, layout và trải nghiệm dự thi | Quá trình thi, chấm tự động phía server, lịch sử/kết quả |
+| TV4 — Bùi Nhật Hào | SQL, migration và tích hợp | Môn, đợt thi, phân công, công bố/xuất |
+
+Tên và module đã cập nhật theo người dùng; mã TV giữ ổn định để tra việc. Lịch 11–24/11 và trách nhiệm review ngang vẫn là đề xuất. [Quản lý lớp học](team/QUAN_LY_LOP_HOC.md) là module mở rộng cho Giảng viên/Cán bộ, chưa triển khai và chưa thêm role mới. Excel dành D08 cho thiết kế lớp; triển khai cần ước lượng riêng. Mã hiện tại chưa có React; frontend đang dùng MVC/Razor, chưa thay đổi kiến trúc đã duyệt.
+
 Báo cáo tổng hợp demo ngày 24/10/2026, vị trí mã nguồn, vận hành và cải thiện: [xem báo cáo](docs/BAO_CAO_DEMO_2026-10-24.md).
 
 WinForms cho nhân sự quản trị, ASP.NET Core MVC/Razor/Bootstrap cho thí sinh; cả hai dùng một backend và một CSDL SQL Server. Phạm vi đã duyệt: chức năng bắt buộc, xUnit và xuất kết quả CSV/XLSX cơ bản. Giao diện ưu tiên thao tác rõ ràng, dễ dùng.
