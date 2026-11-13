@@ -14,10 +14,10 @@ public static class DemoSeeder
         var db = scope.ServiceProvider.GetRequiredService<ExamDbContext>();
         var users = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
         var roles = scope.ServiceProvider.GetRequiredService<RoleManager<AppRole>>();
-        foreach (var role in new[] { "Student", "Lecturer", "ExamOfficer", "Administrator" })
+        foreach (var role in new[] { "Student", "Lecturer", "Administrator" })
         if (!await roles.RoleExistsAsync(role))
             await roles.CreateAsync(new AppRole { Name = role });
-        var names = new[] { ("admin", "Administrator", "Quản trị viên"), ("lecturer", "Lecturer", "Giảng viên 1"), ("lecturer2", "Lecturer", "Giảng viên 2"), ("officer", "ExamOfficer", "Cán bộ 1"), ("officer2", "ExamOfficer", "Cán bộ 2"), ("student", "Student", "Thí sinh 1"), ("student2", "Student", "Thí sinh 2") };
+        var names = new[] { ("admin", "Administrator", "Quản trị viên"), ("lecturer", "Lecturer", "Giảng viên 1"), ("lecturer2", "Lecturer", "Giảng viên 2"), ("student", "Student", "Thí sinh 1"), ("student2", "Student", "Thí sinh 2") };
         foreach (var (name, role, full) in names)
         {
             if (await users.FindByNameAsync(name) != null)
@@ -32,7 +32,6 @@ public static class DemoSeeder
             return;
         var lecturer = (await users.FindByNameAsync("lecturer"))!;
         var lecturer2 = (await users.FindByNameAsync("lecturer2"))!;
-        var officer = (await users.FindByNameAsync("officer"))!;
         var subject = new Subject { Code = "CSHARP", Name = "Lập trình C#" };
         var other = new Subject { Code = "DATABASE", Name = "Cơ sở dữ liệu" };
         db.Subjects.AddRange(subject, other);
@@ -70,7 +69,7 @@ public static class DemoSeeder
         var paper = new ExamPaper { SubjectId = subject.Id, CreatedBy = lecturer.Id, Title = "C# — đề mẫu", Status = "Ready", Questions = qs.Select((q, i) => new ExamQuestion { QuestionId = q.Id, Points = 2, Order = i + 1 }).ToList() };
         db.Exams.Add(paper);
         await db.SaveChangesAsync();
-        var session = new ExamSession { ExamId = paper.Id, ManagedBy = officer.Id, Title = "Thi thử C#", OpensAt = DateTime.UtcNow.AddMinutes(-10), ClosesAt = DateTime.UtcNow.AddDays(7), DurationMinutes = 30, Status = "Active", ShuffleOptions = true, ShuffleQuestions = true, ReviewPolicy = "CorrectAnswers" };
+        var session = new ExamSession { ExamId = paper.Id, ManagedBy = lecturer.Id, Title = "Thi thử C#", OpensAt = DateTime.UtcNow.AddMinutes(-10), ClosesAt = DateTime.UtcNow.AddDays(7), DurationMinutes = 30, Status = "Active", ShuffleOptions = true, ShuffleQuestions = true, ReviewPolicy = "CorrectAnswers" };
         var demoClass = new ExamClass { SubjectId = subject.Id, Code = "DEMO-TS01" };
         foreach (var name in new[] { "student", "student2" })
             demoClass.Students.Add(new() { StudentId = (await users.FindByNameAsync(name))!.Id });

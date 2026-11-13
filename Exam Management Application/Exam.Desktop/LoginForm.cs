@@ -5,63 +5,12 @@ namespace Exam.Desktop;
 /// <summary>Desktop sign-in and connection settings. Authentication and role decisions remain on the API.</summary>
 public sealed partial class LoginForm : Form
 {
-    private readonly ExamApiClient api;
-    private readonly TextBox address=new(){Text=Environment.GetEnvironmentVariable("EXAM_API_URL")??"http://localhost:5180",Dock=DockStyle.Fill};
-    private readonly TextBox userName=new(){Dock=DockStyle.Fill,PlaceholderText="Tên tài khoản của bạn",AccessibleName="Tên đăng nhập"};
-    private readonly TextBox password=new(){UseSystemPasswordChar=true,Dock=DockStyle.Fill,PlaceholderText="Nhập mật khẩu",AccessibleName="Mật khẩu"};
-    private readonly Label status=new(){AutoSize=true,ForeColor=Theme.Muted,MaximumSize=new Size(520,0),Margin=new Padding(0,8,0,8),AccessibleRole=AccessibleRole.StatusBar};
-    private readonly UiButton login=new(){Text="Đăng nhập",Kind=UiButtonKind.Primary,Dock=DockStyle.Fill,Height=44,AccessibleName="Đăng nhập quản trị viên"};
-    private readonly ErrorProvider errors=new(){BlinkStyle=ErrorBlinkStyle.NeverBlink};
-    private readonly TableLayoutPanel columns=new(){Dock=DockStyle.Fill,ColumnCount=2,RowCount=1,Margin=Padding.Empty,Padding=Padding.Empty};
-    private readonly Panel brand=new(){Dock=DockStyle.Fill,BackColor=Theme.Primary,Margin=Padding.Empty};
-    private readonly TableLayoutPanel settings=new(){AutoSize=true,Dock=DockStyle.Top,ColumnCount=1,Visible=false,Margin=new Padding(0,0,0,8)};
-    private readonly UiButton serverToggle=new(){Text="Cài đặt máy chủ",Kind=UiButtonKind.Ghost,AutoSize=true};
     private bool busy;
 
     public LoginForm()
     {
-        this.api=api;Theme.Apply(this);errors.ContainerControl=this;
-        Text="Exam — Không gian khảo thí";StartPosition=FormStartPosition.CenterScreen;
-        ClientSize=new Size(1040,680);MinimumSize=new Size(760,590);
-        columns.ColumnStyles.Add(new ColumnStyle(SizeType.Percent,42));columns.ColumnStyles.Add(new ColumnStyle(SizeType.Percent,58));
-        Controls.Add(columns);columns.Controls.Add(brand,0,0);
-        BuildBrand();
-        var right=new Panel{Dock=DockStyle.Fill,BackColor=Theme.Surface,Padding=new Padding(42,24,42,20),AutoScroll=true,Margin=Padding.Empty};
-        columns.Controls.Add(right,1,0);
-        var form=new TableLayoutPanel{AutoSize=true,AutoSizeMode=AutoSizeMode.GrowAndShrink,Dock=DockStyle.Top,ColumnCount=1,Padding=Padding.Empty,Margin=Padding.Empty};
-        form.ColumnStyles.Add(new ColumnStyle(SizeType.Percent,100));right.Controls.Add(form);
-        form.SizeChanged+=(_,_)=>{foreach(var label in form.Controls.OfType<Label>())label.MaximumSize=new Size(Math.Max(220,form.ClientSize.Width),0);};
-        form.Controls.Add(new Label{Text="KHÔNG GIAN KHẢO THÍ",Font=new Font("Arial",9F,FontStyle.Bold),ForeColor=Theme.Primary,AutoSize=true,Margin=new Padding(0,8,0,12)});
-        form.Controls.Add(new Label{Text="Chào mừng trở lại",Font=Theme.TitleFont,ForeColor=Theme.Text,AutoSize=true,Margin=new Padding(0,0,0,8)});
-        form.Controls.Add(new Label{Text="Đăng nhập bằng tài khoản quản trị viên.",ForeColor=Theme.Muted,AutoSize=true,MaximumSize=new Size(520,0),Margin=new Padding(0,0,0,24)});
-        AddField(form,"Tên đăng nhập",userName);
-        var passwordRow=new TableLayoutPanel{AutoSize=true,Dock=DockStyle.Fill,ColumnCount=2,Margin=Padding.Empty};
-        passwordRow.ColumnStyles.Add(new ColumnStyle(SizeType.Percent,100));passwordRow.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute,96));
-        var reveal=new UiButton{Text="Hiện",Kind=UiButtonKind.Ghost,Dock=DockStyle.Fill,Height=32,Padding=new Padding(4),Margin=Padding.Empty,AccessibleName="Hiện mật khẩu"};
-        Theme.StyleInput(password);password.Margin=Padding.Empty;
-        passwordRow.Controls.Add(password,0,0);passwordRow.Controls.Add(reveal,1,0);
-        reveal.Click+=(_,_)=>{password.UseSystemPasswordChar=!password.UseSystemPasswordChar;reveal.Text=password.UseSystemPasswordChar?"Hiện":"Ẩn";reveal.AccessibleName=password.UseSystemPasswordChar?"Hiện mật khẩu":"Ẩn mật khẩu";};
-        AddField(form,"Mật khẩu",passwordRow);
-        form.Controls.Add(new Label{Text="Quên mật khẩu? Liên hệ quản trị viên.",AutoSize=true,Font=Theme.SmallFont,ForeColor=Theme.Muted,Margin=new Padding(0,0,0,12)});
-        form.Controls.Add(login);form.Controls.Add(status);
-        form.Controls.Add(serverToggle);
-        settings.ColumnStyles.Add(new ColumnStyle(SizeType.Percent,100));
-        settings.Controls.Add(new Label{Text="Địa chỉ máy chủ",AutoSize=true,ForeColor=Theme.Muted,Margin=new Padding(0,8,0,4)});
-        Theme.StyleInput(address);settings.Controls.Add(address);
-        settings.Controls.Add(new Label{Text="Dùng địa chỉ do nhóm quản trị cung cấp.",ForeColor=Theme.Muted,Font=Theme.SmallFont,AutoSize=true,Margin=new Padding(0,0,0,4)});
-        form.Controls.Add(settings);
-        serverToggle.Click+=(_,_)=>{settings.Visible=!settings.Visible;serverToggle.Text=settings.Visible?"Ẩn cài đặt máy chủ":"Cài đặt máy chủ";if(settings.Visible)address.Focus();};
-        var links=new FlowLayoutPanel{AutoSize=true,Dock=DockStyle.Fill,WrapContents=true,Margin=new Padding(0,10,0,0)};
-        var help=new UiButton{Text="Hướng dẫn",Kind=UiButtonKind.Ghost,AutoSize=true};
-        var register=new UiButton{Text="Đăng ký tài khoản",Kind=UiButtonKind.Ghost,AutoSize=true};
-        help.Click+=(_,_)=>{using var helpForm=new HelpForm();helpForm.ShowDialog(this);};
-        register.Click+=(_,_)=>OpenRegistration();links.Controls.Add(help);links.Controls.Add(register);form.Controls.Add(links);
-        form.Controls.Add(new Label{Text="Tài khoản quản trị viên mới cần được duyệt.",AutoSize=true,MaximumSize=new Size(520,0),Font=Theme.SmallFont,ForeColor=Theme.Muted,Margin=new Padding(0,10,0,0)});
-        AcceptButton=login;login.Click+=async(_,_)=>await LoginAsync();
-        userName.TextChanged+=(_,_)=>errors.SetError(userName,"");password.TextChanged+=(_,_)=>errors.SetError(password,"");
-        Shown+=(_,_)=>{var area=Screen.FromControl(this).WorkingArea;MinimumSize=new Size(Math.Min(MinimumSize.Width,area.Width-24),Math.Min(MinimumSize.Height,area.Height-24));if(Width>area.Width-24)Width=area.Width-24;if(Height>area.Height-24)Height=area.Height-24;CenterToScreen();userName.Focus();};
-        Resize+=(_,_)=>UpdateResponsiveColumns();UpdateResponsiveColumns();
-        FormClosing+=(_,e)=>{if(busy)e.Cancel=true;};
+        InitializeComponent();
+        roleLabel.Visible = role.Visible = roleNote.Visible = register.Visible = false;
     }
 
     public LoginForm(ExamApiClient api) : this()
@@ -70,11 +19,6 @@ public sealed partial class LoginForm : Form
         settings.Visible = false;
         form.SizeChanged += (_, _) => UpdateLabelWidths();
         UpdateLabelWidths();
-
-        role.Items.Add(new ChoiceDto("", "Tự động chọn vai trò"));
-        foreach (var name in new[] { "Administrator", "Lecturer", "ExamOfficer" })
-            role.Items.Add(new ChoiceDto(name, UiLabels.Of(name)));
-        role.SelectedIndex = 0;
 
         reveal.Click += (_, _) =>
         {

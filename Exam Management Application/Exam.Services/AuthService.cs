@@ -13,7 +13,7 @@ public class AuthService(ExamDbContext db, UserManager<AppUser> users, TimeProvi
     {
         var userName = request.UserName.Trim();
         var fullName = request.FullName.Trim();
-        if(!new[]{"Student","Lecturer","ExamOfficer","Administrator"}.Contains(request.AccountType))throw new BusinessException("Loại tài khoản không hợp lệ.");
+        if(!new[]{"Student","Lecturer"}.Contains(request.AccountType))throw new BusinessException("Loại tài khoản không hợp lệ.");
         var isStudent=request.AccountType=="Student";
         var studentCode = isStudent ? request.StudentCode?.Trim() : null;
         var email = request.Email.Trim();
@@ -72,21 +72,31 @@ public class AuthService(ExamDbContext db, UserManager<AppUser> users, TimeProvi
         if(!u.IsActive)
             throw new BusinessException(u.RequestedRole!=null?"Tài khoản đang chờ quản trị viên duyệt. Vui lòng liên hệ quản trị viên trước khi đăng nhập.":"Tên đăng nhập hoặc mật khẩu không đúng.",u.RequestedRole!=null?403:401);
         var roles = await users.GetRolesAsync(u);
-        var role = desktop ? (string.IsNullOrWhiteSpace(request.Role) ? roles.FirstOrDefault(r=>r!="Student") : request.Role) : (roles.Contains("Student") ? "Student" : null);
-        if (string.IsNullOrWhiteSpace(role)||!roles.Contains(role)||(desktop&&role=="Student"))
-            throw new BusinessException(desktop ? "Thí sinh đăng nhập trên Web." : "Nhân sự đăng nhập bằng Desktop.", 403);
+        var role = desktop ? "Administrator" : roles.Contains("Lecturer") ? "Lecturer" : "Student";
+        if (!roles.Contains(role) || (desktop && !string.IsNullOrWhiteSpace(request.Role) && request.Role != role))
+            throw new BusinessException(desktop
+                ? "Chỉ quản trị viên được đăng nhập ứng dụng Desktop."
+                : "Chỉ giảng viên và thí sinh được đăng nhập trên Web.", 403);
         var session = new AuthSession { Id = Guid.NewGuid(), UserId = u.Id, ExpiresAt = clock.GetUtcNow().UtcDateTime.AddHours(4) };
         db.AuthSessions.Add(session);
         await db.SaveChangesAsync();
         return (u, role, session);
     }
     public static List<Claim> Claims(AppUser u, string role, AuthSession session) => [new(ClaimTypes.NameIdentifier, u.Id.ToString()), new(ClaimTypes.Name, u.FullName), new(ClaimTypes.Role, role), new("sid", session.Id.ToString())];
-    public async Task<bool> ValidAsync(ClaimsPrincipal principal)
+    public async Task<bool> ValidAsync(ClaimsPrincipal principal, bool desktop)
     {
-        if (!Guid.TryParse(principal.FindFirstValue("sid"), out var sid))
+        var role = principal.FindFirstValue(ClaimTypes.Role);
+        if ((desktop ? role != "Administrator" : role is not ("Lecturer" or "Student"))
+            || !Guid.TryParse(principal.FindFirstValue("sid"), out var sid)
+            || !int.TryParse(principal.FindFirstValue(ClaimTypes.NameIdentifier), out var userId))
             return false;
+
         var now = clock.GetUtcNow().UtcDateTime;
-        return await db.AuthSessions.AnyAsync(s => s.Id == sid && !s.Revoked && s.ExpiresAt > now && s.User.IsActive);
+        var normalizedRole = users.NormalizeName(role);
+        return await db.AuthSessions.AnyAsync(s => s.Id == sid && s.UserId == userId
+            && !s.Revoked && s.ExpiresAt > now && s.User.IsActive
+            && db.UserRoles.Any(link => link.UserId == userId
+                && db.Roles.Any(r => r.Id == link.RoleId && r.NormalizedName == normalizedRole)));
     }
     public async Task LogoutAsync(ClaimsPrincipal principal)
     {

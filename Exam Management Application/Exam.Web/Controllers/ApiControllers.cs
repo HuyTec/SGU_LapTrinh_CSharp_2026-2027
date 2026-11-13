@@ -13,7 +13,7 @@ public class AuthApiController(AuthService auth,IConfiguration config):Controlle
  [HttpPost("login")]public async Task<LoginResponse> Login(LoginRequest request){var(u,role,s)=await auth.LoginAsync(request,true);var token=new JwtSecurityToken(config["Jwt:Issuer"]??"Exam.Web",config["Jwt:Audience"]??"Exam.Desktop",AuthService.Claims(u,role,s),DateTime.UtcNow,s.ExpiresAt,new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"]!)),SecurityAlgorithms.HmacSha256));return new(new JwtSecurityTokenHandler().WriteToken(token),s.ExpiresAt,u.FullName,role);}
  [HttpPost("logout"),Authorize(AuthenticationSchemes=JwtBearerDefaults.AuthenticationScheme)]public async Task<IActionResult> Logout(){await auth.LogoutAsync(User);return NoContent();}
 }
-[ApiController,Route("api/admin"),Authorize(AuthenticationSchemes=JwtBearerDefaults.AuthenticationScheme,Roles="Administrator,Lecturer,ExamOfficer")]
+[ApiController,Route("api/admin"),Authorize(AuthenticationSchemes=JwtBearerDefaults.AuthenticationScheme,Roles="Administrator")]
 public class AdminController(AdminService admin,ExportService export):ControllerBase{
  int Uid=>int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);string Role=>User.FindFirstValue(ClaimTypes.Role)!;
  [HttpGet("catalog")]public Task<AdminCatalogDto> Catalog()=>admin.CatalogAsync(Uid,Role);

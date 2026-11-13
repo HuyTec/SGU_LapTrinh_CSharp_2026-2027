@@ -26,8 +26,8 @@ flowchart LR
 
 - `questions` list/detail có `version` base64; PUT sửa câu hỏi bắt buộc gửi lại `values.version` gốc, thiếu/sai/cũ trả 409. Metadata có kiểu `hidden`: client giữ token khi sửa nhưng không dựng ô nhập hoặc cột danh sách. Tạo mới không gửi phiên bản.
 
-- JSON camelCase, enum/role dùng chuỗi. Quyền: Student, Lecturer, ExamOfficer, Administrator.
-- Cookie chỉ dành cho Web thí sinh; JWT API chỉ cho nhân sự Desktop. Hủy phiên và khóa tài khoản được kiểm tra ở máy chủ.
+- JSON camelCase, enum/role dùng chuỗi. Quyền: Student, Lecturer, Administrator.
+- Cookie dành cho giảng viên và thí sinh trên Web. JWT Desktop chỉ cấp cho quản trị viên. Máy chủ kiểm tra phiên và vai trò hiện tại trên mỗi yêu cầu.
 - API quản trị và MVC đều gọi cùng Exam.Services; không truy cập DbContext từ Form/View/JS.
 - Danh sách quản trị hỗ trợ search/page/pageSize; lọc đúng quyền trước khi phân trang.
 - GET đọc dữ liệu, POST/PUT/DELETE thay đổi. Không trả IsCorrect/IsCorrectSnapshot trong DTO đang làm bài.
@@ -79,7 +79,7 @@ Quyền tạo lượt mới dựa trên thành viên của lớp đang hoạt đ
 ### Desktop API
 
 - POST `/api/auth/login` (`LoginRequest`) → `LoginResponse`; POST `/api/auth/logout` thu hồi JWT hiện tại.
-- JWT Bearer cho mọi `/api/admin` route.
+- JWT Bearer của quản trị viên cho mọi `/api/admin` route.
 - GET `/api/admin/catalog` → `AdminCatalogDto` theo vai trò và phạm vi.
 - GET `/api/admin/{resource}?search=&page=1&pageSize=100` → `AdminPageDto`. `questions` còn nhận `subjectId`, `topicId`, `difficulty`; lọc và phân trang câu hỏi bằng SQL. Danh mục môn học nhận bộ lọc tùy chọn `isActive=true|false`.
 - GET `/api/admin/{resource}/{id}` → dictionary chi tiết (chính các key field metadata).
@@ -88,7 +88,7 @@ Quyền tạo lượt mới dựa trên thành viên của lớp đang hoạt đ
 - POST `/api/admin/{resource}/{id}/action` nhận `{ action }`: users lock/unlock; exams ready/draft; sessions activate/postpone/cancel/publish.
 - GET `/api/admin/sessions/{id}/export?format=csv|xlsx`: kiểm tra scope đợt; đủ toàn bộ kết quả, UTF-8 BOM CSV và XLSX OpenXML; không có chức năng sửa điểm.
 
-Resource: Administrator users/subjects/assignments; Lecturer topics/questions/exams/monitor; ExamOfficer sessions/candidates/monitor. `monitor` chỉ đọc; row `id` là ID phân công thí sinh, `sessionId` dành xuất kết quả.
+API Desktop cung cấp users/subjects/assignments cho Administrator. Dịch vụ dùng chung giới hạn học liệu theo môn được phân công và đợt thi theo môn và người phụ trách. Trang Web giảng viên hiện hiển thị môn được phân công. `monitor` chỉ đọc; row `id` là ID phân công thí sinh, `sessionId` dành xuất kết quả.
 
 Field types metadata: text/password/number/datetime/checkbox/select/questionpoints. questionPoints là object `{ "questionId": decimalPoints }`; editor gửi thêm questionIds là mảng key đã chọn. Backend vẫn nhận pointsPerQuestion nếu cần tương thích; điểm từng câu tối đa 2 chữ số thập phân, tổng 10 mới xác nhận Ready. Câu hỏi gồm option1..option4 và correctIndex 1..4. Người dùng chỉ chọn nhãn qua control, không nhập JSON hay ID thô.
 
