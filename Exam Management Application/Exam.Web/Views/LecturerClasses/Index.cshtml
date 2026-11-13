@@ -1,0 +1,59 @@
+@model Exam.Services.LecturerClassService.Page
+@{ ViewData["Title"] = "Lớp và thí sinh"; }
+<h1>Lớp và thí sinh</h1>
+@if (Model.Classes.Count == 0)
+{
+    <p>Chưa có lớp thuộc các môn được phân công.</p>
+}
+else
+{
+    <ul class="list-group mb-4">
+        @foreach (var item in Model.Classes)
+        {
+            <li class="list-group-item"><a asp-action="Index" asp-route-id="@item.Id" aria-current="@(Model.Selected?.Id == item.Id ? "page" : null)">@item.Code · @item.Subject</a>@(item.Active ? "" : " (đã ngừng hoạt động)")</li>
+        }
+    </ul>
+}
+@if (Model.Selected is { } selected)
+{
+    <h2>Thành viên lớp @selected.Code</h2>
+    @if (selected.Active)
+    {
+        <form asp-action="Add" asp-route-id="@selected.Id" method="post" class="surface mb-3">
+            <label for="code" class="form-label">Mã thí sinh</label>
+            <input id="code" name="code" class="form-control mb-2" maxlength="30" required />
+            <button class="btn btn-primary" type="submit">Thêm vào lớp</button>
+        </form>
+    }
+    else
+    {
+        <p>Lớp hoặc môn đã ngừng hoạt động. Bạn vẫn có thể xem và gỡ thành viên.</p>
+    }
+    @if (Model.Members.Count == 0)
+    {
+        <p>Lớp chưa có thành viên.</p>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table">
+                <thead><tr><th>Mã thí sinh</th><th>Họ tên</th><th>Tài khoản</th><th>Thao tác</th></tr></thead>
+                <tbody>
+                @foreach (var member in Model.Members)
+                {
+                    <tr>
+                        <td>@member.Code</td><td>@member.Name</td><td>@(member.Active ? "Hoạt động" : "Đã khóa")</td>
+                        <td>
+                            <form asp-action="Remove" asp-route-id="@selected.Id" method="post">
+                                <input type="hidden" name="studentId" value="@member.Id" />
+                                <button type="submit" class="btn btn-outline-danger" aria-label="Gỡ @member.Name khỏi lớp">Gỡ khỏi lớp</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+        <p class="muted">Gỡ thành viên không xóa lượt thi đã tạo.</p>
+    }
+}

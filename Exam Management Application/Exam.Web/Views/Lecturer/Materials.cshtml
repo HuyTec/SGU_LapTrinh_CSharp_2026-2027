@@ -1,0 +1,56 @@
+@model Exam.Web.Controllers.LecturerController.MaterialsPage
+@{
+    ViewData["Title"] = Model.Definition.Label;
+    var resource = Model.Definition.Key;
+    var questions = resource == "questions";
+    var lastPage = Math.Max(1, (int)Math.Ceiling((double)Model.Page.Total / Model.Page.PageSize));
+}
+<div class="page-heading">
+    <h1>@Model.Definition.Label</h1>
+    <a asp-action="EditMaterial" asp-route-resource="@resource" class="btn btn-primary">Thêm @(questions ? "câu hỏi" : "chủ đề")</a>
+</div>
+<form asp-action="Materials" method="get" class="surface filter-bar mb-4" role="search">
+    <input type="hidden" name="resource" value="@resource" />
+    <div class="filter-search">
+        <label for="search" class="form-label">Từ khóa</label>
+        <input id="search" name="search" type="search" value="@Model.Search" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+    <a asp-action="Materials" asp-route-resource="@resource" class="btn btn-outline-secondary">Xóa lọc</a>
+</form>
+@if (Model.Page.Items.Count == 0)
+{
+    <p>Không tìm thấy dữ liệu phù hợp.</p>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table align-middle">
+            <thead><tr><th scope="col">@(questions ? "Câu hỏi" : "Chủ đề")</th><th scope="col">Môn học</th><th scope="col">Trạng thái</th><th scope="col">Thao tác</th></tr></thead>
+            <tbody>
+            @foreach (var row in Model.Page.Items)
+            {
+                <tr>
+                    <td>@row[questions ? "text" : "name"]</td>
+                    <td>@row["subject"]</td>
+                    <td>@(row["isActive"] is true ? "Đang hoạt động" : "Đã ngừng")</td>
+                    <td>
+                        <a asp-action="EditMaterial" asp-route-resource="@resource" asp-route-id="@row["id"]" class="btn btn-outline-primary">Sửa</a>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}
+<nav class="action-row" aria-label="Phân trang">
+    @if (Model.Page.Page > 1)
+    {
+        <a asp-action="Materials" asp-route-resource="@resource" asp-route-search="@Model.Search" asp-route-page="@(Model.Page.Page - 1)">Trang trước</a>
+    }
+    <span>Trang @Model.Page.Page / @lastPage · @Model.Page.Total mục</span>
+    @if (Model.Page.Page < lastPage)
+    {
+        <a asp-action="Materials" asp-route-resource="@resource" asp-route-search="@Model.Search" asp-route-page="@(Model.Page.Page + 1)">Trang sau</a>
+    }
+</nav>

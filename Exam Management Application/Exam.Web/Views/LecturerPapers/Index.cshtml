@@ -1,0 +1,33 @@
+@model AdminPageDto
+@{ ViewData["Title"] = "Đề thi"; }
+<div class="page-heading">
+    <div><h1>Đề thi</h1><p class="muted">Chọn câu hỏi cùng môn, nhập trọng số rồi xác nhận đề sẵn sàng.</p></div>
+    <a asp-action="Create" class="btn btn-primary">Tạo đề nháp</a>
+</div>
+@if (Model.Items.Count == 0)
+{
+    <p>Chưa có đề thi.</p>
+}
+else
+{
+    <div class="table-responsive surface">
+        <table class="table align-middle">
+            <thead><tr><th scope="col">Tên đề</th><th scope="col">Môn học</th><th scope="col">Trạng thái</th></tr></thead>
+            <tbody>
+            @foreach (var row in Model.Items)
+            {
+                <tr>
+                    <td><a asp-action="Edit" asp-route-id="@row["id"]">@row["title"]</a></td>
+                    <td>@row["subject"]</td>
+                    <td>@((string?)row["status"] == "Ready" ? "Sẵn sàng" : "Nháp")</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}
+<nav class="action-row mt-3" aria-label="Phân trang đề thi">
+    @if (Model.Page > 1) { <a asp-route-page="@(Model.Page - 1)" class="btn btn-outline-secondary">Trang trước</a> }
+    @if ((long)Model.Page * Model.PageSize < Model.Total) { <a asp-route-page="@(Model.Page + 1)" class="btn btn-outline-secondary">Trang sau</a> }
+</nav>
+<p><a asp-controller="Lecturer" asp-action="Index">Về trang giảng viên</a></p>

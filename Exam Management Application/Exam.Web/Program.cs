@@ -16,6 +16,8 @@ builder.Services.AddIdentityCore<AppUser>(o => { o.Password.RequiredLength = 8; 
 builder.Services.AddSingleton(TimeProvider.System);
 builder.Services.AddScoped<ExamService>();
 builder.Services.AddScoped<AdminService>();
+builder.Services.AddScoped<LecturerSessionService>();
+builder.Services.AddScoped<LecturerClassService>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<ExportService>();
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(o => { o.LoginPath = "/Account/Login"; o.AccessDeniedPath = "/Account/AccessDenied"; o.Cookie.HttpOnly = true; o.Cookie.SameSite = SameSiteMode.Lax; o.Cookie.SecurePolicy = builder.Environment.IsDevelopment() ? CookieSecurePolicy.SameAsRequest : CookieSecurePolicy.Always; o.Events.OnValidatePrincipal = async c => { if (!await c.HttpContext.RequestServices.GetRequiredService<AuthService>().ValidAsync(c.Principal!, desktop: false)) c.RejectPrincipal(); }; }).AddJwtBearer(o => { o.MapInboundClaims = false; o.TokenValidationParameters = new() { ValidateIssuer = true, ValidateAudience = true, ValidateLifetime = true, ValidateIssuerSigningKey = true, ValidIssuer = builder.Configuration["Jwt:Issuer"] ?? "Exam.Web", ValidAudience = builder.Configuration["Jwt:Audience"] ?? "Exam.Desktop", IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)), ClockSkew = TimeSpan.FromSeconds(5) }; o.Events = new JwtBearerEvents { OnTokenValidated = async c => { if (!await c.HttpContext.RequestServices.GetRequiredService<AuthService>().ValidAsync(c.Principal!, desktop: true)) c.Fail("Session invalid"); } }; });

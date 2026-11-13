@@ -55,7 +55,7 @@ public sealed partial class QuestionPointsPicker : UserControl
     {
         if (disposingPicker || IsDisposed) return;
         var selected = rows.Rows.Cast<DataRow>().Where(r => r["selected"] is true).ToList();
-        total.Text = $"Đã chọn {selected.Count} câu — tổng điểm: {selected.Sum(r => (decimal)r["points"]):0.##} / 10";
+        total.Text = $"Đã chọn {selected.Count} câu — tổng trọng số: {selected.Sum(r => (decimal)r["points"]):0.##}";
     }
 
     private void PreviewSelectionChanged(object? sender, EventArgs e)

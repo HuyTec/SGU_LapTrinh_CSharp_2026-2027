@@ -8,16 +8,7 @@ public class ExportService(AdminService admin)
 {
     public async Task<byte[]> ExportAsync(int uid, string role, int sid, bool xlsx)
     {
-        await admin.EnsureSessionReadAsync(uid, role, sid);
-        var all = new List<Dictionary<string, object?>>();
-        int page = 1;
-        AdminPageDto result;
-        do
-        {
-            result = await admin.ListAsync(uid, role, "monitor", null, page++, 200);
-            all.AddRange(result.Items);
-        } while (all.Count < result.Total);
-        var rows = all.Where(x => Convert.ToInt32(x["sessionId"]) == sid).ToList();
+        var rows = await admin.SessionMonitorAsync(uid, role, sid);
         string[] cols = ["session", "studentCode", "student", "status", "score", "submittedAt"];
         string[] labels = ["Đợt thi", "Mã thí sinh", "Họ tên", "Trạng thái", "Điểm", "Nộp lúc (UTC)"];
         string Safe(object? value)

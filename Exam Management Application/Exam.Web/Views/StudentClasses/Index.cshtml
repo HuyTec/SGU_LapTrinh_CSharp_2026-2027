@@ -1,0 +1,38 @@
+@model IReadOnlyList<Exam.Services.ExamService.StudentClassRow>
+@{ ViewData["Title"] = "Lớp của tôi"; }
+<h1>Lớp của tôi</h1>
+@if (Model.Count == 0)
+{
+    <p>Bạn chưa được thêm vào lớp nào.</p>
+}
+@foreach (var item in Model)
+{
+    <section class="surface mb-3">
+        <h2>@item.Code · @item.Subject</h2>
+        @if (!item.Active)
+        {
+            <p class="muted">Lớp hoặc môn đã ngừng hoạt động.</p>
+        }
+        <p><strong>Giảng viên được phân công theo môn:</strong>
+            @(item.Lecturers.Count == 0 ? "Chưa có giảng viên" : string.Join(", ", item.Lecturers))
+        </p>
+        <h3>Đợt thi của lớp</h3>
+        @if (item.Sessions.Count == 0)
+        {
+            <p class="muted">Chưa có đợt thi hiển thị cho bạn.</p>
+        }
+        else
+        {
+            <ul>
+                @foreach (var session in item.Sessions)
+                {
+                    var state = session.Status switch { "Scheduled" => "Sắp mở", "Open" => "Đang mở", "Closed" => "Đã đóng", "Cancelled" => "Đã hủy", _ => session.Status };
+                    <li>
+                        <a asp-controller="Sessions" asp-action="Details" asp-route-id="@session.Id">@session.Title</a>
+                        · @state · @session.OpensAt.AddHours(7).ToString("dd/MM/yyyy HH:mm") – @session.ClosesAt.AddHours(7).ToString("dd/MM/yyyy HH:mm")
+                    </li>
+                }
+            </ul>
+        }
+    </section>
+}
