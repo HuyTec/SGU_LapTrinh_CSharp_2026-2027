@@ -22,13 +22,11 @@ Mở hai terminal, chạy Web trước rồi chạy Desktop:
 .\scripts\Start-Desktop.ps1
 ```
 
-Web ở [localhost:5180](http://localhost:5180). Muốn tạo đợt mở ngay trên DB demo, chạy:
+Khi chạy bằng hai script trên, Web và Desktop dùng [http://localhost:5180](http://localhost:5180). Nếu chạy Exam.Web bằng launch profile HTTPS của Visual Studio, nhập `https://localhost:60012` trong phần **Cài đặt máy chủ** của Desktop.
 
-```powershell
-.\scripts\New-Demo.ps1 -Minutes 5
-```
+Quản trị viên đăng nhập Desktop để quản lý môn và phân công giảng viên. Giảng viên đăng nhập Web để xem môn được phân công. Thí sinh đăng nhập Web để tham gia đợt thi được cấp quyền. Dữ liệu demo trên cơ sở dữ liệu mới có sẵn đợt thi và mã tham gia được in lúc khởi tạo.
 
-Thí sinh demo đăng nhập Web, làm và nộp bài. Hết cửa sổ thi, dùng tài khoản `officer` trên Desktop để công bố và xuất kết quả. Điểm hiển thị trên Web sau khi công bố. Đây là luồng của code hiện tại; kiến trúc đích chuyển tổ chức thi sang Web Giảng viên và bỏ `ExamOfficer`.
+Các màn Web quản lý học liệu thuộc HL01/HL02. Tạo và sửa đợt nháp thuộc DT01, gán lớp và kích hoạt thuộc DT03, theo dõi và công bố kết quả thuộc DT04. Script `New-Demo.ps1` dùng API của luồng cán bộ cũ nên không dùng với bản phân quyền QT01.
 
 ## Kiểm tra
 
