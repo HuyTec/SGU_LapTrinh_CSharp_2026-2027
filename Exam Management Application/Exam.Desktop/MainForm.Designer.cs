@@ -32,6 +32,9 @@ partial class MainForm
         sidebar = new Panel();
         navigation = new FlowLayoutPanel();
         sidebarFooter = new FlowLayoutPanel();
+        help = new AcademicNavigationButton();
+        logout = new AcademicNavigationButton();
+        avatar = new AcademicAvatar();
         brand = new TableLayoutPanel();
         brandName = new Label();
         brandSubtitle = new Label();
@@ -98,6 +101,12 @@ partial class MainForm
         // 
         // sidebarFooter
         // 
+        help.Text = "Hướng dẫn";
+        help.Glyph = "?";
+        logout.Text = "Đăng xuất";
+        logout.Glyph = "↪";
+        sidebarFooter.Controls.Add(help);
+        sidebarFooter.Controls.Add(logout);
         sidebarFooter.Dock = DockStyle.Bottom;
         sidebarFooter.FlowDirection = FlowDirection.TopDown;
         sidebarFooter.Location = new Point(0, 698);
@@ -290,14 +299,16 @@ partial class MainForm
         // 
         identity.AutoSize = true;
         identity.ColumnCount = 2;
-        identity.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
-        identity.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
+        identity.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 40F));
+        identity.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
+        avatar.Size = new Size(36, 36);
+        identity.Controls.Add(avatar, 0, 0);
         identity.Controls.Add(accountLabel, 1, 0);
         identity.Location = new Point(1052, 24);
         identity.Margin = new Padding(0, 12, 0, 0);
         identity.Name = "identity";
         identity.RowCount = 1;
-        identity.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+        identity.RowStyles.Add(new RowStyle(SizeType.Absolute, 40F));
         identity.Size = new Size(40, 20);
         identity.TabIndex = 3;
         // 
