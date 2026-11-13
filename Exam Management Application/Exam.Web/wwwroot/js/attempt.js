@@ -13,7 +13,8 @@
     const dirty = new Map();
     let flushing = null, submitting = false, finished = false, deadlineReached = false, blocked = false;
     const utcMs = value => new Date(/[zZ]$|[+-]\d\d:\d\d$/.test(value) ? value : value + 'Z').getTime();
-    let remainingAtSync = utcMs(app.dataset.deadline) - utcMs(app.dataset.serverNow);
+    let lastServerNow = utcMs(app.dataset.serverNow);
+    let remainingAtSync = utcMs(app.dataset.deadline) - lastServerNow;
     let syncTick = performance.now();
     const report = message => { feedback.textContent = message; feedback.hidden = false; };
     const state = (text, kind) => { saveStatus.textContent = text; saveStatus.className = 'save-status ' + kind; };
@@ -36,12 +37,12 @@
         const controller = new AbortController();
         const timer = window.setTimeout(() => controller.abort(), 12000);
         try {
-            const response = await fetch(url, { method: body === undefined ? 'GET' : 'POST', credentials: 'same-origin', redirect: 'error', signal: controller.signal, headers: { 'Accept': 'application/json', ...(body === undefined ? {} : { 'Content-Type': 'application/json', 'RequestVerificationToken': token }) }, ...(body === undefined ? {} : { body: JSON.stringify(body) }) });
+            const response = await fetch(url, { method: body === undefined ? 'GET' : 'POST', cache: 'no-store', credentials: 'same-origin', redirect: 'error', signal: controller.signal, headers: { 'Accept': 'application/json', ...(body === undefined ? {} : { 'Content-Type': 'application/json', 'RequestVerificationToken': token }) }, ...(body === undefined ? {} : { body: JSON.stringify(body) }) });
             let data = null;
             try { data = await response.json(); } catch { /* Friendly fallback below. */ }
             if (!response.ok) {
                 if (response.status === 401 || response.status === 403) {
-                    blocked = true; disableAnswers(true); submitButton.disabled = true;
+                    blocked = true; disableAnswers(true); submitButton.disabled = true; retryButton.hidden = true;
                     throw new Error(response.status === 401 ? 'Phiên đăng nhập đã hết hạn. Hãy đăng nhập lại và mở lại lượt thi. Chỉ dữ liệu đã lưu được khôi phục.' : 'Bạn không có quyền thao tác với bài thi này. Hãy liên hệ cán bộ phụ trách.');
                 }
                 throw new Error(data?.detail || data?.title || 'Yêu cầu chưa thành công. Hãy thử lại hoặc tải lại trang để kiểm tra dữ liệu đã lưu.');
@@ -53,14 +54,33 @@
             throw error;
         } finally { clearTimeout(timer); }
     }
-    function sync(data) {
-        if (data.serverNow && data.deadline) { remainingAtSync = utcMs(data.deadline) - utcMs(data.serverNow); syncTick = performance.now(); }
-        if (data.status && data.status !== 'InProgress') { finished = true; disableAnswers(true); window.location.assign(app.dataset.resultUrl); }
+    function sync(data, authoritativeStatus = false) {
+        if (finished) return;
+        if (data.status && data.status !== 'InProgress') {
+            finished = true; disableAnswers(true); window.location.assign(app.dataset.resultUrl);
+            return;
+        }
+        if (!data.serverNow || !data.deadline || (deadlineReached && !authoritativeStatus)) return;
+        const serverNow = utcMs(data.serverNow);
+        const timeLeft = utcMs(data.deadline) - serverNow;
+        if (!Number.isFinite(timeLeft) || serverNow < lastServerNow) return;
+        lastServerNow = serverNow;
+        remainingAtSync = timeLeft;
+        syncTick = performance.now();
+        if (deadlineReached && timeLeft > 0) {
+            deadlineReached = false;
+            if (!submitting && !blocked) {
+                disableAnswers(false); submitButton.disabled = false;
+                feedback.hidden = true; retryButton.hidden = true; retryButton.textContent = 'Thử lưu lại';
+                if (dirty.size) void flush();
+                else state('Dữ liệu đã lưu', 'saved');
+            }
+        }
     }
     async function flush() {
         if (flushing) return flushing;
         flushing = (async () => {
-            while (dirty.size && !finished && !blocked) {
+            while (dirty.size && !finished && !blocked && !deadlineReached) {
                 const [id, payload] = dirty.entries().next().value;
                 const card = document.getElementById('question-' + id);
                 const label = card.querySelector('.question-save');
@@ -76,7 +96,7 @@
                     return false;
                 }
             }
-            if (!dirty.size) { state('Đã lưu tất cả thay đổi', 'saved'); retryButton.hidden = true; feedback.hidden = true; }
+            if (!dirty.size && !deadlineReached) { state('Đã lưu tất cả thay đổi', 'saved'); retryButton.hidden = true; feedback.hidden = true; }
             return !dirty.size;
         })();
         try { return await flushing; } finally { flushing = null; }
@@ -89,46 +109,60 @@
         card.querySelector('.question-save').textContent = 'Chờ lưu…';
         progress(); void flush();
     }));
-    retryButton.addEventListener('click', () => { if (deadlineReached) void submit(true); else void flush(); });
-    async function submit(automatic) {
-        if (submitting || finished || blocked) return;
+    retryButton.addEventListener('click', () => { if (deadlineReached) void checkStatus(); else void flush(); });
+    async function submit() {
+        if (submitting || finished || blocked || deadlineReached) return;
         submitting = true; submitButton.disabled = true; confirmButton.disabled = true; disableAnswers(true);
         if (dialog.open) dialog.close();
-        state(automatic ? 'Hết giờ. Đang kết thúc bài thi…' : 'Đang lưu và nộp bài…', '');
+        state('Đang lưu và nộp bài…', '');
         try {
             const saved = await flush();
-            if (finished) return;
-            if (!saved && !automatic) { report('Chưa thể nộp vì có đáp án lưu thất bại. Hãy thử lưu lại rồi nộp bài.'); return; }
+            if (finished || blocked || deadlineReached) return;
+            if (!saved) { report('Chưa thể nộp vì có đáp án lưu thất bại. Hãy thử lưu lại rồi nộp bài.'); return; }
             const response = await request(app.dataset.submitUrl, {});
             finished = true; dirty.clear();
             // Redirect only to a local route supplied by this application.
             const target = new URL(response.redirectUrl || app.dataset.resultUrl, window.location.origin);
             window.location.assign(target.origin === window.location.origin ? target.href : app.dataset.resultUrl);
-        } catch (error) { report(error.message); state('Chưa nhận được xác nhận kết thúc bài', 'failed'); retryButton.hidden = false; }
-        finally { submitting = false; confirmButton.disabled = false; submitButton.disabled = finished || blocked; if (!deadlineReached && !finished && !blocked) disableAnswers(false); }
+        } catch (error) {
+            report(error.message); state('Chưa nhận được xác nhận nộp bài. Bạn có thể thử nộp lại.', 'failed');
+        }
+        finally { submitting = false; confirmButton.disabled = false; submitButton.disabled = finished || blocked || deadlineReached; if (!submitButton.disabled) disableAnswers(false); }
     }
     submitButton.addEventListener('click', () => {
-        if (deadlineReached) { void submit(true); return; }
+        if (deadlineReached || blocked || submitting || finished) return;
         const count = progress();
         document.getElementById('submit-description').textContent = 'Bạn đã chọn đáp án cho ' + count + '/' + cards.length + ' câu. ' + (count < cards.length ? 'Còn ' + (cards.length - count) + ' câu chưa trả lời.' : 'Bạn đã trả lời tất cả câu hỏi.');
         dialog.showModal(); document.getElementById('cancel-submit').focus();
     });
     document.getElementById('cancel-submit').addEventListener('click', () => dialog.close());
-    confirmButton.addEventListener('click', () => void submit(false));
+    confirmButton.addEventListener('click', () => void submit());
     function tick() {
         const seconds = Math.max(0, Math.ceil(remaining() / 1000));
         document.getElementById('remaining-time').textContent = Math.floor(seconds / 60).toString().padStart(2, '0') + ':' + (seconds % 60).toString().padStart(2, '0');
-        if (seconds <= 0 && !deadlineReached) { deadlineReached = true; disableAnswers(true); void submit(true); }
+        if (seconds <= 0 && !deadlineReached && !finished && !blocked) {
+            deadlineReached = true; disableAnswers(true); submitButton.disabled = true;
+            if (dialog.open) dialog.close();
+            state('Đang xác nhận hạn nộp với máy chủ…', '');
+            // Only the server can confirm that the deadline has passed.
+            void checkStatus();
+        }
     }
     let checking = false;
     async function checkStatus() {
         if (finished || blocked || checking) return;
         checking = true;
-        try { sync(await request(app.dataset.statusUrl)); }
-        catch (error) { report(error.message); }
+        try { sync(await request(app.dataset.statusUrl), true); }
+        catch (error) {
+            report(error.message);
+            if (deadlineReached && !blocked) {
+                retryButton.textContent = 'Kiểm tra lại trạng thái';
+                retryButton.hidden = false;
+            }
+        }
         finally { checking = false; }
     }
-    window.addEventListener('online', () => { if (!blocked) { void checkStatus(); if (deadlineReached) void submit(true); else void flush(); } });
+    window.addEventListener('online', () => { if (!blocked) { void checkStatus(); if (!deadlineReached) void flush(); } });
     window.addEventListener('offline', () => report('Mất kết nối mạng. Đáp án chưa được xác nhận cần thử lưu lại khi có mạng. Thời gian thi vẫn tiếp tục.'));
     window.addEventListener('beforeunload', event => { if ((dirty.size || submitting) && !finished) { event.preventDefault(); event.returnValue = ''; } });
     document.addEventListener('visibilitychange', () => { if (!document.hidden) void checkStatus(); });

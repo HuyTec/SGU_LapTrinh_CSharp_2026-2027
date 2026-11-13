@@ -214,6 +214,8 @@ public sealed partial class MainForm : Form
     {
 
     }
+
+
 }
 
 public sealed class AcademicNavigationButton : Button

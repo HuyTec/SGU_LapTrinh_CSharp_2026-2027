@@ -48,7 +48,6 @@ public sealed partial class LoginForm
         brand = new Panel();
         brandLayout = new TableLayoutPanel();
         brandHeading = new Label();
-        illustration = new AcademicIllustration();
         process = new TableLayoutPanel();
         processOne = new Label();
         processTwo = new Label();
@@ -57,25 +56,20 @@ public sealed partial class LoginForm
         right = new Panel();
         form = new TableLayoutPanel();
         eyebrow = new Label();
-        heading = new Label();
         introduction = new Label();
         userNameLabel = new Label();
         userName = new TextBox();
         passwordLabel = new Label();
         passwordRow = new TableLayoutPanel();
         password = new TextBox();
-        reveal = new UiButton();
         roleLabel = new Label();
         role = new ComboBox();
         roleNote = new Label();
         passwordNote = new Label();
-        login = new UiButton();
         status = new Label();
-        serverToggle = new UiButton();
         links = new FlowLayoutPanel();
-        help = new UiButton();
-        register = new UiButton();
         footnote = new Label();
+        heading = new Label();
         errors = new ErrorProvider(components);
         columns.SuspendLayout();
         brand.SuspendLayout();
@@ -84,7 +78,6 @@ public sealed partial class LoginForm
         right.SuspendLayout();
         form.SuspendLayout();
         passwordRow.SuspendLayout();
-        links.SuspendLayout();
         ((ISupportInitialize)errors).BeginInit();
         SuspendLayout();
         // 
@@ -121,7 +114,6 @@ public sealed partial class LoginForm
         brandLayout.ColumnCount = 1;
         brandLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
         brandLayout.Controls.Add(brandHeading, 0, 0);
-        brandLayout.Controls.Add(illustration, 0, 1);
         brandLayout.Controls.Add(process, 0, 2);
         brandLayout.Controls.Add(brandFootnote, 0, 3);
         brandLayout.Dock = DockStyle.Fill;
@@ -148,18 +140,6 @@ public sealed partial class LoginForm
         brandHeading.Size = new Size(372, 80);
         brandHeading.TabIndex = 0;
         brandHeading.Text = "EXAM\nKhông gian khảo thí";
-        // 
-        // illustration
-        // 
-        illustration.AccessibleName = "Minh họa trang sách và đề thi";
-        illustration.AccessibleRole = AccessibleRole.Graphic;
-        illustration.BackColor = Color.FromArgb(30, 78, 140);
-        illustration.Dock = DockStyle.Fill;
-        illustration.Location = new Point(32, 120);
-        illustration.Margin = new Padding(0, 8, 0, 8);
-        illustration.Name = "illustration";
-        illustration.Size = new Size(372, 366);
-        illustration.TabIndex = 1;
         // 
         // process
         // 
@@ -259,9 +239,7 @@ public sealed partial class LoginForm
         form.Controls.Add(role, 0, 8);
         form.Controls.Add(roleNote, 0, 9);
         form.Controls.Add(passwordNote, 0, 10);
-        form.Controls.Add(login, 0, 11);
         form.Controls.Add(status, 0, 12);
-        form.Controls.Add(serverToggle, 0, 13);
         form.Controls.Add(links, 0, 15);
         form.Controls.Add(footnote, 0, 16);
         form.Controls.Add(heading, 0, 1);
@@ -287,7 +265,7 @@ public sealed partial class LoginForm
         form.RowStyles.Add(new RowStyle());
         form.RowStyles.Add(new RowStyle());
         form.RowStyles.Add(new RowStyle());
-        form.Size = new Size(520, 597);
+        form.Size = new Size(520, 468);
         form.TabIndex = 0;
         // 
         // eyebrow
@@ -301,18 +279,6 @@ public sealed partial class LoginForm
         eyebrow.Size = new Size(181, 18);
         eyebrow.TabIndex = 0;
         eyebrow.Text = "KHÔNG GIAN KHẢO THÍ";
-        // 
-        // heading
-        // 
-        heading.AutoSize = true;
-        heading.Font = new Font("Arial", 20F, FontStyle.Bold);
-        heading.ForeColor = Color.FromArgb(31, 41, 55);
-        heading.Location = new Point(0, 38);
-        heading.Margin = new Padding(0, 0, 0, 8);
-        heading.Name = "heading";
-        heading.Size = new Size(312, 40);
-        heading.TabIndex = 1;
-        heading.Text = "Chào mừng trở lại";
         // 
         // introduction
         // 
@@ -368,14 +334,13 @@ public sealed partial class LoginForm
         passwordRow.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
         passwordRow.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 96F));
         passwordRow.Controls.Add(password, 0, 0);
-        passwordRow.Controls.Add(reveal, 1, 0);
         passwordRow.Dock = DockStyle.Fill;
         passwordRow.Location = new Point(0, 222);
         passwordRow.Margin = new Padding(0, 0, 0, 16);
         passwordRow.Name = "passwordRow";
         passwordRow.RowCount = 1;
         passwordRow.RowStyles.Add(new RowStyle());
-        passwordRow.Size = new Size(520, 32);
+        passwordRow.Size = new Size(520, 27);
         passwordRow.TabIndex = 6;
         // 
         // password
@@ -392,30 +357,11 @@ public sealed partial class LoginForm
         password.TabIndex = 0;
         password.UseSystemPasswordChar = true;
         // 
-        // reveal
-        // 
-        reveal.AccessibleName = "Hiện mật khẩu";
-        reveal.BackColor = Color.White;
-        reveal.Dock = DockStyle.Fill;
-        reveal.FlatStyle = FlatStyle.Flat;
-        reveal.Font = new Font("Segoe UI", 10F);
-        reveal.ForeColor = Color.FromArgb(30, 78, 140);
-        reveal.Kind = UiButtonKind.Ghost;
-        reveal.Location = new Point(424, 0);
-        reveal.Margin = new Padding(0);
-        reveal.MinimumSize = new Size(0, 32);
-        reveal.Name = "reveal";
-        reveal.Padding = new Padding(4);
-        reveal.Size = new Size(96, 32);
-        reveal.TabIndex = 1;
-        reveal.Text = "Hiện";
-        reveal.UseVisualStyleBackColor = false;
-        // 
         // roleLabel
         // 
         roleLabel.AutoSize = true;
         roleLabel.ForeColor = Color.FromArgb(31, 41, 55);
-        roleLabel.Location = new Point(0, 270);
+        roleLabel.Location = new Point(0, 265);
         roleLabel.Margin = new Padding(0, 0, 0, 6);
         roleLabel.Name = "roleLabel";
         roleLabel.Size = new Size(134, 19);
@@ -429,7 +375,7 @@ public sealed partial class LoginForm
         role.DisplayMember = "Label";
         role.Dock = DockStyle.Fill;
         role.DropDownStyle = ComboBoxStyle.DropDownList;
-        role.Location = new Point(0, 295);
+        role.Location = new Point(0, 290);
         role.Margin = new Padding(0, 0, 0, 16);
         role.Name = "role";
         role.Size = new Size(520, 27);
@@ -440,7 +386,7 @@ public sealed partial class LoginForm
         roleNote.AutoSize = true;
         roleNote.Font = new Font("Arial", 9F);
         roleNote.ForeColor = Color.FromArgb(98, 109, 124);
-        roleNote.Location = new Point(0, 339);
+        roleNote.Location = new Point(0, 334);
         roleNote.Margin = new Padding(0, 0, 0, 16);
         roleNote.Name = "roleNote";
         roleNote.Size = new Size(311, 17);
@@ -452,118 +398,59 @@ public sealed partial class LoginForm
         passwordNote.AutoSize = true;
         passwordNote.Font = new Font("Arial", 9F);
         passwordNote.ForeColor = Color.FromArgb(98, 109, 124);
-        passwordNote.Location = new Point(0, 372);
+        passwordNote.Location = new Point(0, 367);
         passwordNote.Margin = new Padding(0, 0, 0, 12);
         passwordNote.Name = "passwordNote";
         passwordNote.Size = new Size(253, 17);
         passwordNote.TabIndex = 10;
         passwordNote.Text = "Quên mật khẩu? Liên hệ quản trị viên.";
         // 
-        // login
-        // 
-        login.AccessibleName = "Đăng nhập nhân sự";
-        login.BackColor = Color.White;
-        login.Dock = DockStyle.Fill;
-        login.FlatStyle = FlatStyle.Flat;
-        login.Font = new Font("Segoe UI", 10F);
-        login.ForeColor = Color.FromArgb(30, 78, 140);
-        login.Location = new Point(0, 401);
-        login.Margin = new Padding(0, 0, 8, 0);
-        login.MinimumSize = new Size(0, 44);
-        login.Name = "login";
-        login.Padding = new Padding(16, 8, 16, 8);
-        login.Size = new Size(512, 44);
-        login.TabIndex = 11;
-        login.Text = "Đăng nhập";
-        login.UseVisualStyleBackColor = false;
-        // 
         // status
         // 
         status.AccessibleRole = AccessibleRole.StatusBar;
         status.AutoSize = true;
         status.ForeColor = Color.FromArgb(98, 109, 124);
-        status.Location = new Point(0, 453);
+        status.Location = new Point(0, 404);
         status.Margin = new Padding(0, 8, 0, 8);
         status.MaximumSize = new Size(520, 0);
         status.Name = "status";
         status.Size = new Size(0, 19);
         status.TabIndex = 12;
         // 
-        // serverToggle
-        // 
-        serverToggle.AutoSize = true;
-        serverToggle.BackColor = Color.White;
-        serverToggle.FlatStyle = FlatStyle.Flat;
-        serverToggle.Font = new Font("Segoe UI", 10F);
-        serverToggle.ForeColor = Color.FromArgb(30, 78, 140);
-        serverToggle.Kind = UiButtonKind.Ghost;
-        serverToggle.Location = new Point(0, 480);
-        serverToggle.Margin = new Padding(0, 0, 8, 0);
-        serverToggle.Name = "serverToggle";
-        serverToggle.Padding = new Padding(16, 8, 16, 8);
-        serverToggle.Size = new Size(166, 40);
-        serverToggle.TabIndex = 13;
-        serverToggle.Text = "Cài đặt máy chủ";
-        serverToggle.UseVisualStyleBackColor = false;
-        // 
         // links
         // 
         links.AutoSize = true;
-        links.Controls.Add(help);
-        links.Controls.Add(register);
         links.Dock = DockStyle.Fill;
-        links.Location = new Point(0, 530);
+        links.Location = new Point(0, 441);
         links.Margin = new Padding(0, 10, 0, 0);
         links.Name = "links";
-        links.Size = new Size(520, 40);
+        links.Size = new Size(520, 1);
         links.TabIndex = 15;
-        // 
-        // help
-        // 
-        help.AutoSize = true;
-        help.BackColor = Color.White;
-        help.FlatStyle = FlatStyle.Flat;
-        help.Font = new Font("Segoe UI", 10F);
-        help.ForeColor = Color.FromArgb(30, 78, 140);
-        help.Kind = UiButtonKind.Ghost;
-        help.Location = new Point(0, 0);
-        help.Margin = new Padding(0, 0, 8, 0);
-        help.Name = "help";
-        help.Padding = new Padding(16, 8, 16, 8);
-        help.Size = new Size(128, 40);
-        help.TabIndex = 0;
-        help.Text = "Hướng dẫn";
-        help.UseVisualStyleBackColor = false;
-        // 
-        // register
-        // 
-        register.AutoSize = true;
-        register.BackColor = Color.White;
-        register.FlatStyle = FlatStyle.Flat;
-        register.Font = new Font("Segoe UI", 10F);
-        register.ForeColor = Color.FromArgb(30, 78, 140);
-        register.Kind = UiButtonKind.Ghost;
-        register.Location = new Point(136, 0);
-        register.Margin = new Padding(0, 0, 8, 0);
-        register.Name = "register";
-        register.Padding = new Padding(16, 8, 16, 8);
-        register.Size = new Size(180, 40);
-        register.TabIndex = 1;
-        register.Text = "Đăng ký tài khoản";
-        register.UseVisualStyleBackColor = false;
         // 
         // footnote
         // 
         footnote.AutoSize = true;
         footnote.Font = new Font("Arial", 9F);
         footnote.ForeColor = Color.FromArgb(98, 109, 124);
-        footnote.Location = new Point(0, 580);
+        footnote.Location = new Point(0, 451);
         footnote.Margin = new Padding(0, 10, 0, 0);
         footnote.MaximumSize = new Size(520, 0);
         footnote.Name = "footnote";
         footnote.Size = new Size(444, 17);
         footnote.TabIndex = 16;
         footnote.Text = "Thí sinh làm bài trên Web. Tài khoản nhân sự mới cần được duyệt.";
+        // 
+        // heading
+        // 
+        heading.AutoSize = true;
+        heading.Font = new Font("Arial", 20F, FontStyle.Bold);
+        heading.ForeColor = Color.FromArgb(31, 41, 55);
+        heading.Location = new Point(0, 38);
+        heading.Margin = new Padding(0, 0, 0, 8);
+        heading.Name = "heading";
+        heading.Size = new Size(312, 40);
+        heading.TabIndex = 1;
+        heading.Text = "Chào mừng trở lại";
         // 
         // errors
         // 
@@ -572,7 +459,6 @@ public sealed partial class LoginForm
         // 
         // LoginForm
         // 
-        AcceptButton = login;
         AutoScaleDimensions = new SizeF(120F, 120F);
         AutoScaleMode = AutoScaleMode.Dpi;
         BackColor = Color.FromArgb(245, 247, 250);
@@ -596,8 +482,6 @@ public sealed partial class LoginForm
         form.PerformLayout();
         passwordRow.ResumeLayout(false);
         passwordRow.PerformLayout();
-        links.ResumeLayout(false);
-        links.PerformLayout();
         ((ISupportInitialize)errors).EndInit();
         ResumeLayout(false);
     }
