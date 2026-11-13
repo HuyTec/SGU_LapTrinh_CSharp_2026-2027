@@ -2,21 +2,19 @@ using System.Drawing.Drawing2D;
 
 namespace Exam.Desktop;
 
-public sealed class DashboardView : UserControl, IWorkspaceView
+public sealed partial class DashboardView : UserControl, IWorkspaceView
 {
-    private readonly DashboardPresenter presenter;
-    private readonly string role;
-    private readonly Panel scroll = new() { Dock = DockStyle.Fill, AutoScroll = true };
-    private readonly Label feedback = new() { Dock = DockStyle.Top, Height = 40, TextAlign = ContentAlignment.MiddleLeft };
+    private readonly DashboardPresenter presenter = null!;
+    private readonly string role = "";
     private bool loading;
     public string Title => "Tổng quan";
     public event EventHandler<string>? NavigateRequested;
 
-    public DashboardView(ExamApiClient api)
+    public DashboardView() => InitializeComponent();
+
+    public DashboardView(ExamApiClient api) : this()
     {
-        presenter = new(api); role = api.Role ?? "";
-        BackColor = Theme.Background; Font = Theme.BodyFont;
-        Controls.Add(scroll); Controls.Add(feedback); feedback.ForeColor = Theme.Muted;
+        presenter = new(api); role = api.Role ?? ""; layout.Visible = false;
     }
     public Task LoadAsync() => RefreshAsync();
     public async Task RefreshAsync()
@@ -45,27 +43,26 @@ public sealed class DashboardView : UserControl, IWorkspaceView
     }
     private void ClearContent()
     {
-        foreach (Control old in scroll.Controls.Cast<Control>().ToArray()) old.Dispose();
-        scroll.Controls.Clear();
+        foreach (Control old in scroll.Controls.Cast<Control>().ToArray())
+            if (old != layout) old.Dispose();
+        layout.Visible = false;
+        foreach (Control child in welcome.Controls.Cast<Control>().ToArray()) child.Dispose();
+        foreach (Control child in layout.Controls.Cast<Control>().ToArray())
+            if (child != welcome) child.Dispose();
     }
     private void Render(DashboardSnapshot snapshot)
     {
         ClearContent();
-        var layout = new TableLayoutPanel { Dock = DockStyle.Top, AutoSize = true, ColumnCount = 1, RowCount = 3, Padding = new Padding(0, 0, 0, 16) };
-        layout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
-        layout.RowStyles.Add(new RowStyle(SizeType.Absolute, 158));
-        layout.RowStyles.Add(new RowStyle(SizeType.Absolute, 138));
-        layout.RowStyles.Add(new RowStyle(SizeType.Absolute, 278));
-        var welcome = new UiCard { Dock = DockStyle.Fill, Height = 142, Margin = new Padding(0, 0, 0, 16), BackColor = Theme.SoftPrimary };
         var welcomeLayout = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 2 };
-        welcomeLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 68)); welcomeLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 32));
+        welcomeLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 68));
+        welcomeLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 32));
         var copy = new TableLayoutPanel { Dock = DockStyle.Fill, RowCount = 2, ColumnCount = 1 };
         copy.RowStyles.Add(new RowStyle(SizeType.Percent, 60)); copy.RowStyles.Add(new RowStyle(SizeType.Percent, 40));
         copy.Controls.Add(new Label { Text = snapshot.Heading, Dock = DockStyle.Fill, Font = Theme.SectionFont, ForeColor = Theme.Primary, TextAlign = ContentAlignment.MiddleLeft }, 0, 0);
         copy.Controls.Add(new Label { Text = snapshot.Description, Dock = DockStyle.Fill, Font = Theme.BodyFont, ForeColor = Theme.Text }, 0, 1);
         var next = new UiButton { Text = snapshot.NextStep, Kind = UiButtonKind.Primary, AutoSize = false, Dock = DockStyle.Fill, Margin = new Padding(16, 22, 0, 22) };
         next.Click += (_, _) => NavigateRequested?.Invoke(this, snapshot.NextKey);
-        welcomeLayout.Controls.Add(copy, 0, 0); welcomeLayout.Controls.Add(next, 1, 0); welcome.Controls.Add(welcomeLayout); layout.Controls.Add(welcome, 0, 0);
+        welcomeLayout.Controls.Add(copy, 0, 0); welcomeLayout.Controls.Add(next, 1, 0); welcome.Controls.Add(welcomeLayout);
         var cards = new TableLayoutPanel { Dock = DockStyle.Top, Height = 122, ColumnCount = 4, Margin = new Padding(0, 0, 0, 16) };
         for (var i = 0; i < snapshot.Metrics.Count; i++)
         {
@@ -99,7 +96,7 @@ public sealed class DashboardView : UserControl, IWorkspaceView
         if (role == "Administrator")
             insight.Controls.Add(new Label { Text = "Quy trình chuẩn bị\n\n01  Tạo hoặc duyệt tài khoản\n\n02  Phân công giảng viên theo môn\n\n03  Cán bộ tổ chức đợt thi\n\nMỗi người có một không gian làm việc đúng với vai trò được giao.", Font = Theme.BodyFont, ForeColor = Theme.Text, Dock = DockStyle.Fill });
         else insight.Controls.Add(new ScoreDistributionView(snapshot.ScoreBins, snapshot.GradedCount, snapshot.AverageScore) { Dock = DockStyle.Fill });
-        bottom.Controls.Add(recent, 0, 0); bottom.Controls.Add(insight, 1, 0); layout.Controls.Add(bottom, 0, 2); scroll.Controls.Add(layout);
+        bottom.Controls.Add(recent, 0, 0); bottom.Controls.Add(insight, 1, 0); layout.Controls.Add(bottom, 0, 2); layout.Visible = true;
     }
     public void FocusSearch() { }
     public Task AddNewAsync() => Task.CompletedTask;

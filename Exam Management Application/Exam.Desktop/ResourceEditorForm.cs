@@ -4,50 +4,35 @@ using Exam.Core;
 namespace Exam.Desktop;
 
 /// <summary>Builds a labeled editor from server-owned field definitions and lookup choices.</summary>
-public sealed class ResourceEditorForm : Form
+public sealed partial class ResourceEditorForm : Form
 {
-    private readonly ExamApiClient api;
-    private readonly ResourceDto resource;
+    private readonly ExamApiClient api = null!;
+    private readonly ResourceDto resource = new("", "", []);
     private readonly int? id;
-    private readonly Dictionary<string, JsonElement> original;
+    private readonly Dictionary<string, JsonElement> original = new();
     private readonly Dictionary<string, Control> inputs = new();
-    private readonly ErrorProvider errors = new() { BlinkStyle = ErrorBlinkStyle.NeverBlink };
-    private readonly Label status = new() { AutoSize = true, Dock = DockStyle.Fill, ForeColor = Theme.Muted, Padding = new Padding(0, 4, 12, 4) };
-    private readonly UiButton save = new() { Name = "saveResource", Text = "Lưu thay đổi", Kind = UiButtonKind.Primary, AutoSize = true };
     private bool saving;
-    private readonly TableLayoutPanel layout = new() { Dock = DockStyle.Top, AutoSize = true, ColumnCount = 1, Padding = new Padding(20), BackColor = Theme.Background };
     private readonly Dictionary<string, TableLayoutPanel> sections = new();
     private readonly Dictionary<string, Control> sectionCards = new();
     private TableLayoutPanel? answerGrid;
-    private readonly UiButton previous = new() { Name = "wizardPrevious", Text = "Quay lại", Kind = UiButtonKind.Secondary, AutoSize = true, CausesValidation = false, Visible = false };
-    private readonly UiButton next = new() { Name = "wizardNext", Text = "Tiếp tục", Kind = UiButtonKind.Primary, AutoSize = true, Visible = false };
-    private readonly Label wizardProgress = new() { Name = "wizardProgress", AutoSize = true, Font = Theme.BodyFont, ForeColor = Theme.Primary, Margin = new Padding(0, 12, 0, 0) };
     private Control? reviewCard;
     private TextBox? reviewText;
     private int wizardStep;
     private bool IsSessionWizard => resource.Key == "sessions";
 
-    public ResourceEditorForm(ExamApiClient api, ResourceDto resource, int? id, Dictionary<string, JsonElement> values)
+    public ResourceEditorForm() => InitializeComponent();
+
+    public ResourceEditorForm(ExamApiClient api, ResourceDto resource, int? id, Dictionary<string, JsonElement> values) : this()
     {
         this.api = api; this.resource = resource; this.id = id; original = values;
         Text = $"{(id.HasValue ? "Xem / Sửa" : "Thêm")} — {resource.Label}";
-        Theme.Apply(this); StartPosition = FormStartPosition.CenterParent;
         var area = Screen.FromControl(this).WorkingArea;
         Size = new Size(Math.Min(resource.Key == "exams" ? 1100 : 940, area.Width - 48), Math.Min(760, area.Height - 48));
         MinimumSize = new Size(Math.Min(640, area.Width - 48), Math.Min(450, area.Height - 48));
-        errors.ContainerControl = this;
-        layout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
-        var scroll = new Panel { Dock = DockStyle.Fill, AutoScroll = true }; scroll.Controls.Add(layout);
-        var header = new TableLayoutPanel { Dock = DockStyle.Top, AutoSize = true, ColumnCount = 1, Padding = new Padding(24, 20, 24, 16), BackColor = Theme.Surface };
-        header.Controls.Add(new Label { Text = (id.HasValue ? "Chỉnh sửa " : "Thêm ") + resource.Label.ToLowerInvariant(), Font = Theme.SectionFont, AutoSize = true, Margin = new Padding(0, 0, 0, 8) });
-        header.Controls.Add(new Label { Text = IsSessionWizard ? "Hoàn thành 3 bước để lưu đợt nháp. Ctrl + Enter để tiếp tục / lưu · Esc để đóng." : "Các trường có dấu * là bắt buộc. Ctrl + Enter để lưu · Esc để đóng.", Font = Theme.SmallFont, ForeColor = Theme.Muted, AutoSize = true });
-        if (IsSessionWizard) header.Controls.Add(wizardProgress);
-        var footer = new TableLayoutPanel { Dock = DockStyle.Bottom, AutoSize = true, ColumnCount = 2, Padding = new Padding(24, 12, 24, 12), BackColor = Theme.Surface };
-        footer.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100)); footer.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
-        var actions = new FlowLayoutPanel { AutoSize = true, WrapContents = false, Margin = Padding.Empty, FlowDirection = FlowDirection.LeftToRight };
-        var cancel = new UiButton { Text = "Đóng", Kind = UiButtonKind.Secondary, AutoSize = true, DialogResult = DialogResult.Cancel, CausesValidation = false };
-        actions.Controls.Add(cancel); actions.Controls.Add(previous); actions.Controls.Add(next); actions.Controls.Add(save); footer.Controls.Add(status, 0, 0); footer.Controls.Add(actions, 1, 0);
-        Controls.Add(scroll); Controls.Add(header); Controls.Add(footer); CancelButton = cancel;
+        heading.Text = (id.HasValue ? "Chỉnh sửa " : "Thêm ") + resource.Label.ToLowerInvariant();
+        if (IsSessionWizard)
+            guidance.Text = "Hoàn thành 3 bước để lưu đợt nháp. Ctrl + Enter để tiếp tục / lưu · Esc để đóng.";
+        wizardProgress.Visible = IsSessionWizard;
         FormClosing += (_, e) => { if (saving) e.Cancel = true; };
         foreach (var field in resource.Fields) AddField(field);
         status.Text = resource.Key switch { "exams" => "Nhập điểm từng câu. Tổng điểm 10 để xác nhận sẵn sàng sau khi lưu.", "sessions" => "Lưu đợt nháp trước; phân công thí sinh và kích hoạt ở màn đợt thi.", _ => "Thay đổi chỉ được ghi khi bấm Lưu." };
