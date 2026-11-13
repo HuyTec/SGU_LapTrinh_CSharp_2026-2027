@@ -53,10 +53,9 @@ public sealed class MainForm : Form
         sidebarFooter.Controls.Add(help); sidebarFooter.Controls.Add(logout);
         sidebar.Controls.Add(navigation); sidebar.Controls.Add(sidebarFooter); sidebar.Controls.Add(brand);
         var right = new Panel { Dock = DockStyle.Fill, BackColor = Theme.Background };
-        var header = new TableLayoutPanel { Dock = DockStyle.Top, Height = 104, ColumnCount = 4, Padding = new Padding(24, 12, 24, 12), BackColor = Theme.Surface };
+        var header = new TableLayoutPanel { Dock = DockStyle.Top, Height = 104, ColumnCount = 3, Padding = new Padding(24, 12, 24, 12), BackColor = Theme.Surface };
         header.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 52));
         header.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
-        header.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
         header.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
         var toggle = new UiButton { Text = "\uE700", Font = new Font("Segoe MDL2 Assets", 16), Kind = UiButtonKind.Ghost, Width = 40, Height = 40, AccessibleName = "Thu gọn hoặc mở thanh điều hướng", Margin = new Padding(0, 16, 12, 0) };
         toggle.Click += (_, _) => ToggleSidebar();
@@ -65,15 +64,13 @@ public sealed class MainForm : Form
         heading.Font = Theme.TitleFont; heading.ForeColor = Theme.Text;
         breadcrumb.Text = "Không gian làm việc"; breadcrumb.Font = Theme.SmallFont; breadcrumb.ForeColor = Theme.Muted;
         title.Controls.Add(breadcrumb); title.Controls.Add(heading);
-        var quickSearch = new UiButton { Text = "Tìm kiếm  Ctrl+F", Kind = UiButtonKind.Secondary, AutoSize = true, Margin = new Padding(16, 19, 16, 0) };
-        quickSearch.Click += async (_, _) => await FocusCurrentSearchAsync();
         var identity = new TableLayoutPanel { AutoSize = true, ColumnCount = 2, RowCount = 1, Margin = new Padding(0, 12, 0, 0) };
-        var initials = string.Concat((api.DisplayName ?? "Exam").Split(' ', StringSplitOptions.RemoveEmptyEntries).TakeLast(2).Select(x => x[0]));
+        var displayName = string.IsNullOrWhiteSpace(api.DisplayName) ? UiLabels.Of(api.Role ?? "") : api.DisplayName;
+        var initials = string.Concat(displayName.Split(' ', StringSplitOptions.RemoveEmptyEntries).TakeLast(2).Select(x => x[0]));
         identity.Controls.Add(new AcademicAvatar(initials) { Width = 44, Height = 44, Margin = new Padding(0, 4, 10, 0) });
-        identity.Controls.Add(new Label { AutoSize = true, Text = $"{api.DisplayName}\n{UiLabels.Of(api.Role ?? "")}", Font = Theme.SmallFont, ForeColor = Theme.Text, MaximumSize = new Size(200, 0), Padding = new Padding(0, 4, 0, 0) });
-        header.Controls.Add(toggle, 0, 0); header.Controls.Add(title, 1, 0); header.Controls.Add(quickSearch, 2, 0); header.Controls.Add(identity, 3, 0);
-        var footer = new Label { Dock = DockStyle.Bottom, Height = 30, Padding = new Padding(24, 0, 24, 0), Font = Theme.SmallFont, ForeColor = Theme.Muted, TextAlign = ContentAlignment.MiddleLeft, Text = "Ctrl+N  Thêm mới     Ctrl+F  Tìm kiếm     F5  Làm mới                         Dữ liệu dùng chung qua API" };
-        right.Controls.Add(workspace); right.Controls.Add(toast); right.Controls.Add(footer); right.Controls.Add(header);
+        identity.Controls.Add(new Label { AutoSize = true, Anchor = AnchorStyles.Left, Text = displayName, Font = Theme.SmallFont, ForeColor = Theme.Text, MaximumSize = new Size(200, 0) });
+        header.Controls.Add(toggle, 0, 0); header.Controls.Add(title, 1, 0); header.Controls.Add(identity, 2, 0);
+        right.Controls.Add(workspace); right.Controls.Add(toast); right.Controls.Add(header);
         frame.Controls.Add(sidebar, 0, 0); frame.Controls.Add(right, 1, 0); Controls.Add(frame);
         navigation.SizeChanged += (_, _) => ResizeNavigation();
         sidebarFooter.SizeChanged += (_, _) => { help.Width = logout.Width = Math.Max(48, sidebarFooter.ClientSize.Width - 24); help.Compact = logout.Compact = compact; };
@@ -184,7 +181,7 @@ public sealed class MainForm : Form
     private static string ScreenTitle(string key, string fallback) => key switch
     {
         "questions" => "Ngân hàng câu hỏi", "topics" => "Chủ đề học tập", "exams" => "Đề thi",
-        "sessions" => "Tổ chức đợt thi", "users" => "Người dùng & phân quyền", "subjects" => "Môn học",
+        "sessions" => "Tổ chức đợt thi", "users" => "Người dùng & phân quyền", "subjects" => "Danh mục môn học",
         "assignments" => "Phân công giảng viên", "candidates" => "Danh sách dự thi", "monitor" => "Theo dõi & kết quả", _ => fallback
     };
     protected override void Dispose(bool disposing)

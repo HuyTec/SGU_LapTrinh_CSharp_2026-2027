@@ -1,4 +1,3 @@
-using Exam.Core;
 using System.Diagnostics;
 using System.Drawing.Drawing2D;
 namespace Exam.Desktop;
@@ -10,9 +9,8 @@ public sealed class LoginForm:Form
     private readonly TextBox address=new(){Text=Environment.GetEnvironmentVariable("EXAM_API_URL")??"http://localhost:5180",Dock=DockStyle.Fill};
     private readonly TextBox userName=new(){Dock=DockStyle.Fill,PlaceholderText="Tên tài khoản của bạn",AccessibleName="Tên đăng nhập"};
     private readonly TextBox password=new(){UseSystemPasswordChar=true,Dock=DockStyle.Fill,PlaceholderText="Nhập mật khẩu",AccessibleName="Mật khẩu"};
-    private readonly ComboBox role=new(){Dock=DockStyle.Fill,DropDownStyle=ComboBoxStyle.DropDownList,DisplayMember="Label",AccessibleName="Vai trò hoạt động"};
     private readonly Label status=new(){AutoSize=true,ForeColor=Theme.Muted,MaximumSize=new Size(520,0),Margin=new Padding(0,8,0,8),AccessibleRole=AccessibleRole.StatusBar};
-    private readonly UiButton login=new(){Text="Đăng nhập",Kind=UiButtonKind.Primary,Dock=DockStyle.Fill,Height=44,AccessibleName="Đăng nhập nhân sự"};
+    private readonly UiButton login=new(){Text="Đăng nhập",Kind=UiButtonKind.Primary,Dock=DockStyle.Fill,Height=44,AccessibleName="Đăng nhập quản trị viên"};
     private readonly ErrorProvider errors=new(){BlinkStyle=ErrorBlinkStyle.NeverBlink};
     private readonly TableLayoutPanel columns=new(){Dock=DockStyle.Fill,ColumnCount=2,RowCount=1,Margin=Padding.Empty,Padding=Padding.Empty};
     private readonly Panel brand=new(){Dock=DockStyle.Fill,BackColor=Theme.Primary,Margin=Padding.Empty};
@@ -35,7 +33,7 @@ public sealed class LoginForm:Form
         form.SizeChanged+=(_,_)=>{foreach(var label in form.Controls.OfType<Label>())label.MaximumSize=new Size(Math.Max(220,form.ClientSize.Width),0);};
         form.Controls.Add(new Label{Text="KHÔNG GIAN KHẢO THÍ",Font=new Font("Segoe UI",9F,FontStyle.Bold),ForeColor=Theme.Primary,AutoSize=true,Margin=new Padding(0,8,0,12)});
         form.Controls.Add(new Label{Text="Chào mừng trở lại",Font=Theme.TitleFont,ForeColor=Theme.Text,AutoSize=true,Margin=new Padding(0,0,0,8)});
-        form.Controls.Add(new Label{Text="Đăng nhập để chuẩn bị, tổ chức và đánh giá kỳ thi.",ForeColor=Theme.Muted,AutoSize=true,MaximumSize=new Size(520,0),Margin=new Padding(0,0,0,24)});
+        form.Controls.Add(new Label{Text="Đăng nhập bằng tài khoản quản trị viên.",ForeColor=Theme.Muted,AutoSize=true,MaximumSize=new Size(520,0),Margin=new Padding(0,0,0,24)});
         AddField(form,"Tên đăng nhập",userName);
         var passwordRow=new TableLayoutPanel{AutoSize=true,Dock=DockStyle.Fill,ColumnCount=2,Margin=Padding.Empty};
         passwordRow.ColumnStyles.Add(new ColumnStyle(SizeType.Percent,100));passwordRow.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute,96));
@@ -44,10 +42,6 @@ public sealed class LoginForm:Form
         passwordRow.Controls.Add(password,0,0);passwordRow.Controls.Add(reveal,1,0);
         reveal.Click+=(_,_)=>{password.UseSystemPasswordChar=!password.UseSystemPasswordChar;reveal.Text=password.UseSystemPasswordChar?"Hiện":"Ẩn";reveal.AccessibleName=password.UseSystemPasswordChar?"Hiện mật khẩu":"Ẩn mật khẩu";};
         AddField(form,"Mật khẩu",passwordRow);
-        role.Items.Add(new ChoiceDto("","Tự động chọn vai trò"));
-        foreach(var name in new[]{"Administrator","Lecturer","ExamOfficer"})role.Items.Add(new ChoiceDto(name,UiLabels.Of(name)));
-        role.SelectedIndex=0;AddField(form,"Vai trò hoạt động",role);
-        form.Controls.Add(new Label{Text="Chỉ chọn vai trò bạn đã được quản trị viên cấp.",ForeColor=Theme.Muted,Font=Theme.SmallFont,AutoSize=true,Margin=new Padding(0,0,0,16)});
         form.Controls.Add(new Label{Text="Quên mật khẩu? Liên hệ quản trị viên.",AutoSize=true,Font=Theme.SmallFont,ForeColor=Theme.Muted,Margin=new Padding(0,0,0,12)});
         form.Controls.Add(login);form.Controls.Add(status);
         form.Controls.Add(serverToggle);
@@ -62,7 +56,7 @@ public sealed class LoginForm:Form
         var register=new UiButton{Text="Đăng ký tài khoản",Kind=UiButtonKind.Ghost,AutoSize=true};
         help.Click+=(_,_)=>{using var helpForm=new HelpForm();helpForm.ShowDialog(this);};
         register.Click+=(_,_)=>OpenRegistration();links.Controls.Add(help);links.Controls.Add(register);form.Controls.Add(links);
-        form.Controls.Add(new Label{Text="Thí sinh làm bài trên Web. Tài khoản nhân sự mới cần được duyệt.",AutoSize=true,MaximumSize=new Size(520,0),Font=Theme.SmallFont,ForeColor=Theme.Muted,Margin=new Padding(0,10,0,0)});
+        form.Controls.Add(new Label{Text="Tài khoản quản trị viên mới cần được duyệt.",AutoSize=true,MaximumSize=new Size(520,0),Font=Theme.SmallFont,ForeColor=Theme.Muted,Margin=new Padding(0,10,0,0)});
         AcceptButton=login;login.Click+=async(_,_)=>await LoginAsync();
         userName.TextChanged+=(_,_)=>errors.SetError(userName,"");password.TextChanged+=(_,_)=>errors.SetError(password,"");
         Shown+=(_,_)=>{var area=Screen.FromControl(this).WorkingArea;MinimumSize=new Size(Math.Min(MinimumSize.Width,area.Width-24),Math.Min(MinimumSize.Height,area.Height-24));if(Width>area.Width-24)Width=area.Width-24;if(Height>area.Height-24)Height=area.Height-24;CenterToScreen();userName.Focus();};
@@ -115,18 +109,17 @@ public sealed class LoginForm:Form
         if(string.IsNullOrWhiteSpace(userName.Text)){errors.SetError(userName,"Vui lòng nhập tên đăng nhập.");userName.Focus();ShowStatus("Vui lòng nhập tài khoản và mật khẩu.",true);return;}
         if(string.IsNullOrEmpty(password.Text)){errors.SetError(password,"Vui lòng nhập mật khẩu.");password.Focus();ShowStatus("Vui lòng nhập tài khoản và mật khẩu.",true);return;}
         try{ValidServer();}catch(Exception ex){settings.Visible=true;ShowStatus(ex.Message,true);address.Focus();return;}
-        busy=true;login.Enabled=false;role.Enabled=false;address.Enabled=false;ShowStatus("Đang kết nối máy chủ…");
+        busy=true;login.Enabled=false;address.Enabled=false;ShowStatus("Đang kết nối máy chủ…");
         try
         {
-            var selectedRole=(role.SelectedItem as ChoiceDto)?.Value;
-            await api.LoginAsync(address.Text,userName.Text.Trim(),password.Text,string.IsNullOrEmpty(selectedRole)?null:selectedRole);
+            await api.LoginAsync(address.Text,userName.Text.Trim(),password.Text,"Administrator");
             password.Clear();Hide();
             string? logoutNotice;
             using(var main=new MainForm(api)){main.ShowDialog();logoutNotice=main.LogoutNotice;}
             Show();ShowStatus(logoutNotice??"Đã đăng xuất. Bạn có thể đăng nhập lại.",logoutNotice!=null);userName.Focus();
         }
         catch(Exception ex){ShowStatus(ex is HttpRequestException?"Không kết nối được máy chủ. Kiểm tra địa chỉ và chứng chỉ HTTPS.":ex.Message,true);}
-        finally{busy=false;login.Enabled=true;role.Enabled=true;address.Enabled=true;}
+        finally{busy=false;login.Enabled=true;address.Enabled=true;}
     }
     private void ShowStatus(string text,bool isError=false){status.ForeColor=isError?Theme.Danger:Theme.Muted;status.Text=text;status.AccessibleName=text;}
     protected override void Dispose(bool disposing){if(disposing)errors.Dispose();base.Dispose(disposing);}
