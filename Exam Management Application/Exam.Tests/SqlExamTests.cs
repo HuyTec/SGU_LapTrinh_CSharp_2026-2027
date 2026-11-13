@@ -1,3 +1,4 @@
+using Microsoft.Extensions.DependencyInjection;
 using System.Text.Json;
 using Exam.Core;
 using Exam.Data;
@@ -89,6 +90,46 @@ public class SqlExamTests : IAsyncLifetime
 
     private ExamDbContext NewContext() => new(options);
     private ExamService Service(ExamDbContext db) => new(db, clock);
+
+    [SqlFact]
+    public async Task AdministratorManagesClassCatalogAndCannotDeleteAReferencedClass()
+    {
+        var services = new Microsoft.Extensions.DependencyInjection.ServiceCollection();
+        services.AddLogging();
+        services.AddDbContext<ExamDbContext>(o => o.UseSqlServer(
+            options.Extensions.OfType<Microsoft.EntityFrameworkCore.Infrastructure.RelationalOptionsExtension>().Single().ConnectionString!,
+            sql => sql.EnableRetryOnFailure()));
+        services.AddIdentityCore<AppUser>().AddRoles<AppRole>().AddEntityFrameworkStores<ExamDbContext>();
+        await using var provider = services.BuildServiceProvider();
+        await using var scope = provider.CreateAsyncScope();
+        var db = scope.ServiceProvider.GetRequiredService<ExamDbContext>();
+        var users = scope.ServiceProvider.GetRequiredService<Microsoft.AspNetCore.Identity.UserManager<AppUser>>();
+        var admin = new AdminService(db, users, clock);
+        var subjectId = await db.Subjects.Select(s => s.Id).SingleAsync();
+        AdminSaveRequest Request(string code, bool active = true) => new(
+            JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(
+                JsonSerializer.Serialize(new { subjectId, code, isActive = active }))!);
+
+        var denied = await Assert.ThrowsAsync<BusinessException>(
+            () => admin.SaveAsync(studentId, "Lecturer", "classes", null, Request("QT03")));
+        Assert.Equal(403, denied.Status);
+
+        var id = await admin.SaveAsync(studentId, "Administrator", "classes", null, Request("QT03"));
+        var found = await admin.ListAsync(studentId, "Administrator", "classes", "QT03", 1, 20);
+        Assert.Equal(1, found.Total);
+        await Assert.ThrowsAsync<BusinessException>(
+            () => admin.SaveAsync(studentId, "Administrator", "classes", null, Request("QT03")));
+
+        await admin.SaveAsync(studentId, "Administrator", "classes", id, Request("QT03-EDIT", false));
+        Assert.False((await db.Set<ExamClass>().FindAsync(id))!.IsActive);
+        db.Add(new ClassStudent { ClassId = id, StudentId = studentId });
+        await db.SaveChangesAsync();
+
+        var referenced = await Assert.ThrowsAsync<BusinessException>(
+            () => admin.DeleteAsync(studentId, "Administrator", "classes", id));
+        Assert.Equal(409, referenced.Status);
+        Assert.True(await db.Set<ClassStudent>().AnyAsync(c => c.ClassId == id));
+    }
 
     [SqlFact]
     public async Task DemoClassMembershipIsPrivateAndJoiningTwiceIsIdempotent()

@@ -56,6 +56,7 @@ public class AdminService(ExamDbContext db, UserManager<AppUser> users, TimeProv
         {
             rs.Add(new("users", "Tài khoản / thí sinh", [new("userName", "Tên đăng nhập", Required: true), new("fullName", "Họ tên", Required: true), new("studentCode", "Mã thí sinh"), new("email", "Email"), new("password", "Mật khẩu mới", "password"), new("roles", "Vai trò", "multiselect", true, Choices("Student", "Lecturer", "Administrator")), new("isActive", "Hoạt động", "checkbox")]));
             rs.Add(new("assignments", "Phân công giảng viên", [new("lecturerId", "Giảng viên", "select", true, lecturers), new("subjectId", "Môn học", "select", true, subs)]));
+            rs.Add(new("classes", "Danh mục lớp", [new("subjectId", "Môn học", "select", true, subs), new("code", "Mã lớp", Required: true), new("isActive", "Hoạt động", "checkbox")]));
             rs.Add(new("subjects", "Danh mục môn học", [new("code", "Mã môn", Required: true), new("name", "Tên môn", Required: true), new("isActive", "Đang sử dụng", "checkbox")]));
         }
         if (role == "Lecturer")
@@ -99,6 +100,14 @@ public class AdminService(ExamDbContext db, UserManager<AppUser> users, TimeProv
                 }
                 rows = (await matchingSubjects.OrderBy(x => x.Code).ToListAsync())
                     .Select(x => D(("id", x.Id), ("code", x.Code), ("name", x.Name), ("isActive", x.IsActive))).ToList();
+                break;
+            case "classes":
+                var classes = from c in db.Set<ExamClass>().AsNoTracking()
+                              join subject in db.Subjects on c.SubjectId equals subject.Id
+                              orderby subject.Name, c.Code
+                              select new { c.Id, c.Code, c.SubjectId, Subject = subject.Name, c.IsActive };
+                rows = (await classes.ToListAsync()).Select(c =>
+                    D(("id", c.Id), ("code", c.Code), ("subjectId", c.SubjectId), ("subject", c.Subject), ("isActive", c.IsActive))).ToList();
                 break;
             case "assignments":
                 rows = (await db.LecturerSubjects.Include(x => x.Lecturer).Include(x => x.Subject).ToListAsync()).Select(x => D(("id", x.Id), ("lecturerId", x.LecturerId), ("lecturer", x.Lecturer.FullName), ("subjectId", x.SubjectId), ("subject", x.Subject.Name))).ToList();
@@ -181,6 +190,30 @@ public class AdminService(ExamDbContext db, UserManager<AppUser> users, TimeProv
             throw Denied();
         switch (resource)
         {
+            case "classes":
+                Role(role, "Administrator");
+                var examClass = id == null ? new ExamClass() : await db.Set<ExamClass>().FindAsync(id)
+                    ?? throw new BusinessException("Không tìm thấy lớp.", 404);
+                var classCode = Required(v, "code");
+                if (classCode.Length > 50)
+                    throw new BusinessException("Mã lớp tối đa 50 ký tự.");
+                var classSubjectId = I(v, "subjectId");
+                var classSubject = await db.Subjects.FindAsync(classSubjectId)
+                    ?? throw new BusinessException("Môn học không hợp lệ.");
+                var classActive = B(v, "isActive", examClass.IsActive);
+                if (!classSubject.IsActive && (classActive || classSubjectId != examClass.SubjectId))
+                    throw new BusinessException("Không thể chọn hoặc kích hoạt lớp thuộc môn đã ngừng hoạt động.");
+                if (id != null && classSubjectId != examClass.SubjectId && await ClassIsReferencedAsync(examClass.Id))
+                    throw new BusinessException("Lớp đã được sử dụng nên không thể đổi môn.", 409);
+                if (await db.Set<ExamClass>().AnyAsync(c => c.SubjectId == classSubjectId && c.Code == classCode && c.Id != examClass.Id))
+                    throw new BusinessException("Mã lớp đã tồn tại trong môn này.", 409);
+                examClass.SubjectId = classSubjectId;
+                examClass.Code = classCode;
+                examClass.IsActive = classActive;
+                if (id == null)
+                    db.Add(examClass);
+                await db.SaveChangesAsync();
+                return examClass.Id;
             case "subjects":
                 Role(role, "Administrator");
                 var sub = id == null ? new Subject() : await db.Subjects.FindAsync(id) ?? throw new BusinessException("Không thấy môn.", 404);
@@ -460,6 +493,10 @@ public class AdminService(ExamDbContext db, UserManager<AppUser> users, TimeProv
         Role(role, "Lecturer");
         await db.Database.CreateExecutionStrategy().ExecuteAsync(async () => { db.ChangeTracker.Clear(); await using var tx = await db.Database.BeginTransactionAsync(IsolationLevel.Serializable); var s = await Session(uid, role, id); switch (action) { case "activate": if (!await db.Subjects.AnyAsync(x => x.Id == s.Exam.SubjectId && x.IsActive)) throw new BusinessException("Môn học đã ngừng dùng."); if (s.Status != "Draft" || s.HasOpened || s.ClosesAt <= Now || s.OpensAt >= s.ClosesAt || s.DurationMinutes <= 0 || s.Exam.Status != "Ready") throw new BusinessException("Đợt không đủ điều kiện kích hoạt."); var candidates = await db.SessionCandidates.Where(x => x.SessionId == id).ToListAsync(); if (candidates.Count == 0) throw new BusinessException("Chưa phân công thí sinh."); foreach (var c in candidates) await ValidateCandidate(s, c.StudentId); s.Status = "Active"; break; case "postpone": case "cancel": if (s.HasOpened || Now >= s.OpensAt || await db.Attempts.AnyAsync(a => a.SessionId == id)) throw new BusinessException("Chỉ hoãn/hủy trước lần mở đầu."); s.Status = action == "cancel" ? "Cancelled" : "Draft"; break; case "publish": if (s.Status != "Active" || Now < s.ClosesAt || await db.Attempts.AnyAsync(a => a.SessionId == id && (a.Status == "InProgress" || a.Result == null))) throw new BusinessException("Chỉ công bố sau khi đợt đóng và đã chấm hết bài."); s.Published = true;s.PublishedAt??=Now; break; default: throw new BusinessException("Thao tác không hợp lệ."); } await db.SaveChangesAsync(); await tx.CommitAsync(); });
     }
+    private async Task<bool> ClassIsReferencedAsync(int id) =>
+        await db.Set<ClassStudent>().AnyAsync(x => x.ClassId == id) ||
+        await db.Set<SessionClass>().AnyAsync(x => x.ClassId == id);
+
     public async Task DeleteAsync(int uid,string role,string resource,int id){await db.Database.CreateExecutionStrategy().ExecuteAsync(async()=>{db.ChangeTracker.Clear();await using var tx=await db.Database.BeginTransactionAsync(IsolationLevel.Serializable);await DeleteInternalAsync(uid,role,resource,id);await tx.CommitAsync();});} private async Task DeleteInternalAsync(int uid, string role, string resource, int id)
     {
         if (!(await CatalogAsync(uid, role)).Resources.Any(x => x.Key == resource && x.CanDelete))
@@ -475,6 +512,14 @@ public class AdminService(ExamDbContext db, UserManager<AppUser> users, TimeProv
                     throw new BusinessException("Tài khoản đã được tham chiếu; dùng Khóa.");
                 var userRoles=await users.GetRolesAsync(u);if(userRoles.Count>0)Identity(await users.RemoveFromRolesAsync(u,userRoles));Identity(await users.DeleteAsync(u));
                 return;
+            case "classes":
+                Role(role, "Administrator");
+                var examClass = await db.Set<ExamClass>().FindAsync(id)
+                    ?? throw new BusinessException("Không tìm thấy lớp.", 404);
+                if (await ClassIsReferencedAsync(id))
+                    throw new BusinessException("Lớp đã được sử dụng; hãy chọn ngừng hoạt động.", 409);
+                db.Remove(examClass);
+                break;
             case "subjects":
                 Role(role, "Administrator");
                 if (await db.Topics.AnyAsync(x => x.SubjectId == id) || await db.Exams.AnyAsync(x => x.SubjectId == id) || await db.LecturerSubjects.AnyAsync(x => x.SubjectId == id)

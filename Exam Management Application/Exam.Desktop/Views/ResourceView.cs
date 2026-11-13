@@ -387,6 +387,7 @@ public partial class ResourceView : UserControl, IWorkspaceView, IResourceView
     private static IReadOnlyList<Column> ColumnsFor(string key) => key switch
     {
         "users" => [new("userName", "Tài khoản", 110, 130), new("fullName", "Họ và tên", 150, 170), new("requestedRole", "Vai trò đăng ký", 100, 140), new("isActive", "Hoạt động", 65, 100), new("role", "Vai trò hiện tại", 120, 150), new("studentCode", "Mã thí sinh", 80, 115)],
+        "classes" => [new("code", "Mã lớp", 100, 150), new("subject", "Môn học", 180, 240), new("isActive", "Hoạt động", 80, 110)],
         "subjects" => [new("code", "Mã môn", 70, 110), new("name", "Tên môn học", 200, 220), new("isActive", "Hoạt động", 70, 110)],
         "topics" => [new("subject", "Môn học", 140, 180), new("name", "Tên chủ đề", 200, 220), new("isActive", "Hoạt động", 70, 110)],
         "assignments" => [new("lecturer", "Giảng viên", 150, 200), new("subject", "Môn học được phân công", 200, 250)],

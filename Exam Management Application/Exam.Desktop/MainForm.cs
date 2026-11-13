@@ -139,6 +139,7 @@ public sealed partial class MainForm : Form
             "exams" => new ExamPapersView(api),
             "sessions" => new ExamSessionsView(api),
             "users" => new UsersView(api),
+            "classes" => new ResourceView(api, "classes"),
             "subjects" => new SubjectsView(api),
             "assignments" => new AssignmentsView(api),
             "candidates" => new CandidatesView(api),
