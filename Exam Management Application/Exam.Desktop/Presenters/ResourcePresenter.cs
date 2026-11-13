@@ -135,6 +135,16 @@ public sealed class ResourcePresenter : IDisposable
         if (!Unavailable) view.Notify("Đã xuất kết quả đến " + dialog.FileName);
     }, "Đang xuất kết quả…");
 
+    public Task ManageClassMembersAsync() => RunAsync(() =>
+    {
+        if (view.SelectedRecordId is int id)
+        {
+            using var form = new ClassMembersForm(api, id);
+            form.ShowDialog(view.DialogOwner);
+        }
+        return Task.CompletedTask;
+    }, "Đang mở danh sách thành viên…");
+
     public Task ImportAsync() => RunAsync(async () =>
     {
         using var form = new ImportStudentsForm(api);

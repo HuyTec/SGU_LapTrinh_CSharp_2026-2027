@@ -56,9 +56,16 @@ public sealed class ExamApiClient : IDisposable
         $"api/admin/{key}" + (id.HasValue ? $"/{id}" : ""), new AdminSaveRequest(values));
     public Task DeleteAsync(string key, int id) => SendAsync<JsonElement>(HttpMethod.Delete, $"api/admin/{key}/{id}");
     public Task ActionAsync(string key, int id, string action) => SendAsync<JsonElement>(HttpMethod.Post, $"api/admin/{key}/{id}/action", new ActionRequest(action));
-    public async Task<int> ImportStudentsAsync(string csv, bool preview = false)
+    public Task<List<ClassMemberDto>> ClassMembersAsync(int id) =>
+        SendAsync<List<ClassMemberDto>>(HttpMethod.Get, $"api/admin/classes/{id}/members");
+    public Task AddClassMemberAsync(int id, string code) =>
+        SendAsync<JsonElement>(HttpMethod.Post, $"api/admin/classes/{id}/members", new AddClassMemberRequest(code));
+    public Task RemoveClassMemberAsync(int id, int studentId) =>
+        SendAsync<JsonElement>(HttpMethod.Delete, $"api/admin/classes/{id}/members/{studentId}");
+
+    public async Task<int> ImportStudentsAsync(string csv, bool preview = false, int? classId = null)
     {
-        var result = await SendAsync<JsonElement>(HttpMethod.Post, "api/admin/users/import", new { csv, preview });
+        var result = await SendAsync<JsonElement>(HttpMethod.Post, "api/admin/users/import", new ImportStudentsRequest(csv, preview, classId));
         return result.GetProperty("imported").GetInt32();
     }
 

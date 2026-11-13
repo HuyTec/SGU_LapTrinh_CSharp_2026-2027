@@ -194,7 +194,8 @@ public sealed partial class ResourceEditorForm : Form
                 CheckedListBox list => list.CheckedItems.Cast<ChoiceDto>().Select(c => ConvertChoice(c.Value)).ToArray(),
                 FlowLayoutPanel group => ConvertChoice(group.Controls.OfType<RadioButton>().FirstOrDefault(r => r.Checked)?.Tag?.ToString()),
                 QuestionPointsPicker picker => picker.SelectedPoints(),
-                _ => field.Type == "password" ? control.Text : control.Text.Trim()
+                _ => resource.Key == "classes" && field.Name == "code" ? control.Text.Trim().ToUpperInvariant() :
+                    field.Type == "password" ? control.Text : control.Text.Trim()
             };
             values[field.Name] = JsonSerializer.SerializeToElement(value);
             if (control is QuestionPointsPicker questionPicker)

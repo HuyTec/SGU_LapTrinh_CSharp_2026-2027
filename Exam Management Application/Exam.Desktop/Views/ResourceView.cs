@@ -30,7 +30,7 @@ public partial class ResourceView : UserControl, IWorkspaceView, IResourceView
     public IWin32Window DialogOwner => (IWin32Window?)FindForm() ?? this;
     [System.ComponentModel.Browsable(false)]
     [System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
-    public ResourceQuery Query => new(search.Text.Trim(), resourceKey == "questions" ? Value(subjectFilter) : null,
+    public ResourceQuery Query => new(search.Text.Trim(), resourceKey is "questions" or "classes" ? Value(subjectFilter) : null,
         resourceKey == "questions" ? Value(topicFilter) : null, resourceKey == "questions" ? Value(difficultyFilter) : null,
         resourceKey == "subjects" && subjectStatusFilter.SelectedIndex > 0 ? subjectStatusFilter.SelectedIndex == 1 : null);
     public int? SelectedRecordId => grid.CurrentRow is { } row && int.TryParse(row.Cells["_id"].Value?.ToString(), out var id) ? id : null;
@@ -94,8 +94,9 @@ public partial class ResourceView : UserControl, IWorkspaceView, IResourceView
             if (resourceKey == "questions" && width != renderedPreviewWidth) RenderQuestionDetail(lastPreviewDetail, lastPreviewMessage);
         };
         VisibleChanged += (_, _) => LayoutToolbar();
-        subjectGroup.Visible = topicGroup.Visible = difficultyGroup.Visible = resourceKey == "questions";
-        filters.Visible = resourceKey is "subjects" or "questions";
+        subjectGroup.Visible = resourceKey is "questions" or "classes";
+        topicGroup.Visible = difficultyGroup.Visible = resourceKey == "questions";
+        filters.Visible = resourceKey is "subjects" or "questions" or "classes";
         previewCard.Visible = sideGap.Visible = resourceKey == "questions";
         RenderQuestionDetail(null); countLabel.Text = title;
         LayoutToolbar();
@@ -117,7 +118,7 @@ public partial class ResourceView : UserControl, IWorkspaceView, IResourceView
             combo.SelectedIndex = Enumerable.Range(0, combo.Items.Count).FirstOrDefault(i => (combo.Items[i] as ChoiceDto)?.Value == selected);
             combo.EndUpdate();
         }
-        Fill(subjectFilter, "Tất cả môn", catalog.Resources.FirstOrDefault(r => r.Key == "topics")?.Fields.FirstOrDefault(f => f.Name == "subjectId")?.Choices);
+        Fill(subjectFilter, "Tất cả môn", (resourceKey == "classes" ? definition : catalog.Resources.FirstOrDefault(r => r.Key == "topics"))?.Fields.FirstOrDefault(f => f.Name == "subjectId")?.Choices);
         Fill(topicFilter, "Tất cả chủ đề", definition.Fields.FirstOrDefault(f => f.Name == "topicId")?.Choices);
         Fill(difficultyFilter, "Tất cả độ khó", definition.Fields.FirstOrDefault(f => f.Name == "difficulty")?.Choices);
         add.Visible = definition.CanCreate;
@@ -132,6 +133,13 @@ public partial class ResourceView : UserControl, IWorkspaceView, IResourceView
             button.Tag = action;
             button.Click += async (_, _) => await presenter.ActionAsync(action, label, danger);
             resourceActions.Controls.Add(button); selectedActions.Add(button);
+        }
+        if (resourceKey == "classes")
+        {
+            var members = Button("Thành viên lớp");
+            members.Click += async (_, _) => await presenter.ManageClassMembersAsync();
+            resourceActions.Controls.Add(members);
+            selectedActions.Add(members);
         }
         if (resourceKey == "users")
         {

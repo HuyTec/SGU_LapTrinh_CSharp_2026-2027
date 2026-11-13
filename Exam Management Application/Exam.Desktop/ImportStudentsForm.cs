@@ -8,6 +8,7 @@ public sealed partial class ImportStudentsForm : Form
 {
     private const string Header = "UserName,FullName,StudentCode,Email,Password";
     private readonly ExamApiClient api = null!;
+    private readonly int? classId;
     private string? csv;
     private int count;
     private bool importing;
@@ -15,9 +16,9 @@ public sealed partial class ImportStudentsForm : Form
 
     public ImportStudentsForm() => InitializeComponent();
 
-    public ImportStudentsForm(ExamApiClient api) : this()
+    public ImportStudentsForm(ExamApiClient api, int? classId = null) : this()
     {
-        this.api = api; Text = "Nhập danh sách thí sinh từ CSV"; Theme.Apply(this);
+        this.api = api; this.classId = classId; Text = classId.HasValue ? "Nhập thí sinh CSV vào lớp" : "Nhập danh sách thí sinh từ CSV"; Theme.Apply(this);
         var area = Screen.FromControl(this).WorkingArea;
         StartPosition = FormStartPosition.CenterParent; Size = new Size(Math.Min(1040, area.Width - 48), Math.Min(720, area.Height - 48)); MinimumSize = new Size(Math.Min(700, area.Width - 48), Math.Min(450, area.Height - 48));
         Theme.StyleGrid(preview);
@@ -74,10 +75,10 @@ public sealed partial class ImportStudentsForm : Form
         try
         {
             status.Text = "Đang kiểm tra toàn bộ danh sách trên máy chủ…";
-            var validated = await api.ImportStudentsAsync(payload, preview: true);
+            var validated = await api.ImportStudentsAsync(payload, preview: true, classId: classId);
             if (!UiConfirmDialog.Confirm(this, "Nhập danh sách thí sinh", $"Máy chủ đã kiểm tra {validated} tài khoản. Xác nhận tạo danh sách thí sinh?", "Xác nhận nhập"))
             { status.Text = "Đã kiểm tra hợp lệ. Chưa nhập dữ liệu."; import.Enabled = true; return; }
-            var imported = await api.ImportStudentsAsync(payload);
+            var imported = await api.ImportStudentsAsync(payload, classId: classId);
             status.ForeColor = Theme.Success; status.Text = $"Đã nhập thành công {imported} thí sinh.";
             importing = false; DialogResult = DialogResult.OK; Close();
         }

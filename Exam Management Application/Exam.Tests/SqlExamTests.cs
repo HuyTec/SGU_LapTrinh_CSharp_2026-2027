@@ -92,6 +92,49 @@ public class SqlExamTests : IAsyncLifetime
     private ExamService Service(ExamDbContext db) => new(db, clock);
 
     [SqlFact]
+    public async Task ClassMembershipAndCsvImportPreserveExistingAttempt()
+    {
+        var services = new Microsoft.Extensions.DependencyInjection.ServiceCollection();
+        services.AddLogging();
+        services.AddDbContext<ExamDbContext>(o => o.UseSqlServer(
+            options.Extensions.OfType<Microsoft.EntityFrameworkCore.Infrastructure.RelationalOptionsExtension>().Single().ConnectionString!,
+            sql => sql.EnableRetryOnFailure()));
+        services.AddIdentityCore<AppUser>().AddRoles<AppRole>().AddEntityFrameworkStores<ExamDbContext>();
+        await using var provider = services.BuildServiceProvider();
+        await using var scope = provider.CreateAsyncScope();
+        var db = scope.ServiceProvider.GetRequiredService<ExamDbContext>();
+        var users = scope.ServiceProvider.GetRequiredService<Microsoft.AspNetCore.Identity.UserManager<AppUser>>();
+        var admin = new AdminService(db, users, clock);
+        var roles = scope.ServiceProvider.GetRequiredService<Microsoft.AspNetCore.Identity.RoleManager<AppRole>>();
+        Assert.True((await roles.CreateAsync(new AppRole { Name = "Student" })).Succeeded);
+        var student = await users.FindByIdAsync(studentId.ToString());
+        Assert.True((await users.UpdateSecurityStampAsync(student!)).Succeeded);
+        Assert.True((await users.AddToRoleAsync(student!, "Student")).Succeeded);
+        var attemptId = await Start();
+        var deadline = await db.Attempts.Where(a => a.Id == attemptId).Select(a => a.Deadline).SingleAsync();
+        var subjectId = await db.Subjects.Select(s => s.Id).SingleAsync();
+        var target = new ExamClass { Code = "QT04", SubjectId = subjectId };
+        db.Add(target);
+        await db.SaveChangesAsync();
+
+        var denied = await Assert.ThrowsAsync<BusinessException>(() => admin.ClassMembersAsync("Lecturer", target.Id));
+        Assert.Equal(403, denied.Status);
+        await admin.AddClassMemberAsync("Administrator", target.Id, student!.StudentCode);
+        await admin.AddClassMemberAsync("Administrator", target.Id, student.StudentCode);
+        Assert.Single(await admin.ClassMembersAsync("Administrator", target.Id));
+
+        const string csv = "UserName,FullName,StudentCode,Email,Password\nqt04user,QT04 User,QT0401,qt04@example.com,Example1!";
+        Assert.Equal(1, await admin.ImportStudentsAsync(studentId, "Administrator", csv, preview: true, classId: target.Id));
+        Assert.Single(await admin.ClassMembersAsync("Administrator", target.Id));
+        Assert.Equal(1, await admin.ImportStudentsAsync(studentId, "Administrator", csv, classId: target.Id));
+        Assert.Equal(2, (await admin.ClassMembersAsync("Administrator", target.Id)).Count);
+
+        await admin.RemoveClassMemberAsync("Administrator", target.Id, studentId);
+        Assert.DoesNotContain(await admin.ClassMembersAsync("Administrator", target.Id), m => m.StudentId == studentId);
+        Assert.Equal(deadline, await db.Attempts.Where(a => a.Id == attemptId).Select(a => a.Deadline).SingleAsync());
+    }
+
+    [SqlFact]
     public async Task AdministratorManagesClassCatalogAndCannotDeleteAReferencedClass()
     {
         var services = new Microsoft.Extensions.DependencyInjection.ServiceCollection();
@@ -111,14 +154,17 @@ public class SqlExamTests : IAsyncLifetime
                 JsonSerializer.Serialize(new { subjectId, code, isActive = active }))!);
 
         var denied = await Assert.ThrowsAsync<BusinessException>(
-            () => admin.SaveAsync(studentId, "Lecturer", "classes", null, Request("QT03")));
+            () => admin.SaveAsync(studentId, "Lecturer", "classes", null, Request(" qt03 ")));
         Assert.Equal(403, denied.Status);
 
-        var id = await admin.SaveAsync(studentId, "Administrator", "classes", null, Request("QT03"));
+        var id = await admin.SaveAsync(studentId, "Administrator", "classes", null, Request(" qt03 "));
         var found = await admin.ListAsync(studentId, "Administrator", "classes", "QT03", 1, 20);
         Assert.Equal(1, found.Total);
+        Assert.Equal("QT03", found.Items.Single()["code"]);
+        Assert.All((await admin.ListAsync(studentId, "Administrator", "classes", null, 1, 20, subjectId: subjectId)).Items, item => Assert.Equal(subjectId, item["subjectId"]));
+        Assert.Equal(0, (await admin.ListAsync(studentId, "Administrator", "classes", null, 1, 20, subjectId: int.MaxValue)).Total);
         await Assert.ThrowsAsync<BusinessException>(
-            () => admin.SaveAsync(studentId, "Administrator", "classes", null, Request("QT03")));
+            () => admin.SaveAsync(studentId, "Administrator", "classes", null, Request(" qt03 ")));
 
         await admin.SaveAsync(studentId, "Administrator", "classes", id, Request("QT03-EDIT", false));
         Assert.False((await db.Set<ExamClass>().FindAsync(id))!.IsActive);

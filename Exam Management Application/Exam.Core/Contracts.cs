@@ -26,7 +26,9 @@ public class BusinessException(string message, int status = 400) : Exception(mes
 {
     public int Status { get; } = status;
 }
-public record ImportStudentsRequest(string Csv, bool Preview = false);
+public record ImportStudentsRequest(string Csv, bool Preview = false, int? ClassId = null);
+public record ClassMemberDto(int StudentId, string? StudentCode, string FullName, bool IsActive);
+public record AddClassMemberRequest(string StudentCode);
 
 
 
