@@ -16,9 +16,12 @@ Nguồn chính xác có thể dựng lại: `Exam.Data/ExamDbContext.cs`, `Exam.
 | AnswerOptions | Id; FK QuestionId; UQ vị trí, unique filtered IsCorrect | Các phương án và tối đa một đáp án đúng; service kiểm tra đủ phương án |
 | Exams | Id; FK SubjectId/CreatedBy | Đề Draft/Ready |
 | ExamQuestions | Id; FK ExamId/QuestionId; UQ câu và vị trí trong đề | Điểm từng câu > 0, tổng 10 khi xác nhận Ready |
-| ExamSessions | Id; FK ExamId/ManagedBy; CHECK lịch/thời lượng/trạng thái/chính sách | Nháp/kích hoạt/hủy; Open/Closed được tính từ giờ server; PublishedAt lưu thời điểm công bố |
-| SessionCandidates | Id; alternate key(SessionId, StudentId), FK đợt/thí sinh | Phân công duy nhất; service kiểm tra vai trò và lịch không giao nhau |
-| Attempts | Id bigint; UQ(SessionId, StudentId); FK ghép tới SessionCandidates | Bắt đầu, Deadline, trạng thái, SubmittedAt, EndReason |
+| ExamSessions | Id; FK ExamId/ManagedBy; UQ AccessCode khi khác NULL; CHECK lịch/thời lượng/trạng thái/chính sách | Nháp/kích hoạt/hủy; Open/Closed được tính từ giờ server; PublishedAt lưu thời điểm công bố |
+| Classes | Id; FK SubjectId; UQ(SubjectId, Code) | Lớp theo môn và trạng thái hoạt động |
+| ClassStudents | PK(ClassId, StudentId); FK Classes và Users | Thành viên lớp |
+| SessionClasses | PK(SessionId, ClassId); FK ExamSessions và Classes | Liên kết đợt thi với lớp được gán |
+| SessionCandidates | Id; alternate key(SessionId, StudentId); FK ExamSessions và Users | Danh sách phân công theo luồng cũ, giữ để đối chiếu |
+| Attempts | Id bigint; UQ(SessionId, StudentId); FK trực tiếp ExamSessions và Users | Bắt đầu, Deadline, trạng thái, SubmittedAt, EndReason |
 | AttemptQuestions | Id bigint; FK AttemptId và SourceQuestionId; UQ thứ tự trong lượt | Snapshot nội dung, điểm và thứ tự |
 | AttemptOptions | Id bigint; FK AttemptQuestionId; alternate key(AttemptQuestionId, Id) | Snapshot phương án, đáp án và thứ tự |
 | Responses | Id bigint; unique FK AttemptQuestionId; FK ghép tới AttemptOptions | Đáp án chọn, IsFlagged và SavedAt; không được chọn phương án của câu khác |
@@ -37,7 +40,7 @@ Thời gian lưu UTC trong datetime2 độ chính xác mặc định của EF Co
 
 ## 3NF và dữ liệu lịch sử
 
-Ba migration đã áp dụng: `InitialSchema`, `PublicationTimestamp`, `QuestionConcurrency`. Questions có thêm `RowVersion` kiểu SQL Server rowversion (không phải thời gian nghiệp vụ). API trả token base64; Form sửa gửi lại token gốc và máy chủ trả 409 nếu dữ liệu đã thay đổi. Sửa riêng phương án cũng làm tăng phiên bản câu hỏi. Đây là thuộc tính kỹ thuật, không hiện thành trường nhập cho người dùng.
+Migration `QuestionConcurrency` thêm `Questions.RowVersion` kiểu SQL Server rowversion. API trả token base64; Form sửa gửi lại token gốc và máy chủ trả 409 nếu dữ liệu đã thay đổi. Sửa riêng phương án cũng làm tăng phiên bản câu hỏi. Đây là thuộc tính kỹ thuật, không hiện thành trường nhập cho người dùng.
 
 - 1NF: phương án, câu trong đề, vai trò và phân công là các dòng riêng, không lưu danh sách câu/đáp án trong một cột nghiệp vụ.
 - 2NF: thuộc tính phân công thuộc cả cặp giảng viên–môn hoặc đợt–thí sinh; không sao chép tên người/môn vào bảng liên kết.
@@ -49,3 +52,13 @@ Các giới hạn nhiều dòng như đúng một đáp án, tổng 10, quyền 
 ## Đăng ký nhân sự chờ duyệt
 
 Migration `StaffRegistrationApproval` thêm Users.RequestedRole (nvarchar(32), NULL). Tài khoản nhân sự tự đăng ký có IsActive=false, RequestedRole là Lecturer/ExamOfficer/Administrator và chưa có dòng UserRoles. Quản trị viên duyệt trong giao dịch để cấp vai trò, kích hoạt và xóa RequestedRole. Tài khoản cũ giữ NULL; không đổi mật khẩu hay quyền sẵn có. Đây là yêu cầu cấp quyền chờ xử lý, không phải bảng người dùng khác hoặc một vai trò đang có hiệu lực.
+
+## Nâng cấp dữ liệu đợt thi (DT02)
+
+Migration `20261113090207_StudentClassAdmission` thêm các bảng lớp và mã vào thi. Migration tháo FK ghép từ `Attempts` đến `SessionCandidates`, giữ hai FK trực tiếp, khóa duy nhất và dữ liệu từng lượt. Mã vào thi của đợt cũ bắt đầu là NULL. Giữ các dòng `SessionCandidates` để đối chiếu. Chỉ ghi ánh xạ đợt–lớp từ nguồn đã được nhóm xác nhận.
+
+Đợt cũ thiếu ánh xạ lớp không cấp quyền tạo lượt mới, kể cả khi đang mở. Chủ sở hữu lượt đã có vẫn tiếp tục theo hạn ban đầu và xem kết quả theo chính sách công bố. Căn cứ nghiệp vụ là [UC19](https://docs.google.com/spreadsheets/d/10sSsgNXNt2c-S9SLn9rWQej7txwzoXuFAWfPI9gzFOc/edit#gid=899770140&range=A392%3AB401) và [FR-F03, FR-F04](https://docs.google.com/spreadsheets/d/10sSsgNXNt2c-S9SLn9rWQej7txwzoXuFAWfPI9gzFOc/edit#gid=482467226&range=A70%3AF71).
+
+Trước khi áp dụng lên DB dùng chung, xác minh bản sao lưu có thể phục hồi vào DB riêng. Chạy migration trên bản phục hồi và đối chiếu theo ID lượt, đợt, chủ sở hữu, trạng thái, thời hạn, câu trả lời và điểm. Nếu đã có lượt tạo theo lớp mà thiếu dòng tương ứng trong `SessionCandidates`, migration xuống phiên bản cũ sẽ không thể khôi phục FK ghép. Dùng bản sao lưu đã xác minh để phục hồi khi cần.
+
+Ngày 13/11/2026, thử trên SQL Server Express cục bộ với dữ liệu mẫu ở phiên bản `StaffRegistrationApproval`. Bản sao lưu `COPY_ONLY` qua kiểm tra checksum và phục hồi vào DB riêng. Chạy `docs/schema.sql` hai lần trên bản phục hồi. Kết quả đối chiếu khớp 2/2 lượt (một đang làm, một đã nộp), gồm ID, đợt, chủ sở hữu, trạng thái, mốc thời gian, bản chụp đề, câu trả lời và điểm. Cả 3 dòng phân công cũ còn nguyên và có 0 liên kết lớp phát sinh. Bộ `Exam.Tests` chạy trên SQL Server đạt 30/30, gồm kiểm tra từ chối tạo lượt chỉ từ danh sách cũ và chống trùng đợt–lớp, mã vào thi.
