@@ -182,7 +182,7 @@ Mã vận hành: [scripts/Initialize-Local.ps1:1](<E:/Project/LapTrinh_CSharp_20
 4. Đóng trình duyệt không dừng giờ thi. Theo dõi trạng thái lưu; đáp án chưa được server xác nhận không được xem là đã ghi nhận.
 5. Sau giờ đóng và khi mọi lượt đã chấm, `officer` công bố; student xem điểm/lịch sử. Nộp sớm không làm đợt đóng sớm.
 
-Script `New-Demo.ps1 -Minutes 5` có thể tạo đợt/thí sinh mới khi cần diễn tập nhanh; nó **tạo dữ liệu**, nên chỉ dùng khi thực sự muốn thêm. Hướng dẫn chi tiết và lỗi thường gặp: [HUONG_DAN_VAN_HANH.md](HUONG_DAN_VAN_HANH.md).
+Script `New-Demo.ps1 -Minutes 5` có thể tạo đợt/thí sinh mới khi cần diễn tập nhanh; nó **tạo dữ liệu**, nên chỉ dùng khi thực sự muốn thêm. [Lệnh chạy và kiểm tra](../README.md).
 
 ## 7. Bằng chứng build, kiểm thử và giới hạn
 
@@ -227,7 +227,7 @@ Không suy ra “đã kiểm thử giao diện Windows tương tác” từ buil
 
 - Yêu cầu và quyết định: [YEU_CAU_DU_AN_DE_TAI_18.md](YEU_CAU_DU_AN_DE_TAI_18.md), [DECISIONS.md](../DECISIONS.md).
 - Hợp đồng API và schema: [CONTRACT.md](../CONTRACT.md), [SCHEMA.md](SCHEMA.md), [schema.sql](schema.sql), thư mục `Exam.Data/Migrations`.
-- Vận hành và nghiệm thu: [README](../README.md), [HUONG_DAN_VAN_HANH](HUONG_DAN_VAN_HANH.md), [REPORT](../REPORT.md).
+- Vận hành và nghiệm thu: [README](../README.md), [REPORT](../REPORT.md).
 - Thiết kế/ảnh mới: [DESKTOP_UI_DESIGN](DESKTOP_UI_DESIGN.md), `artifacts/desktop-redesign`.
 - Nguồn 60 câu: `docs/data/toan-lop-10-60-cau.json` và `.md`.
 - `.local` chứa cấu hình/tệp mật khẩu, backup và output build riêng; không đưa vào Git hoặc bản báo cáo công khai.
