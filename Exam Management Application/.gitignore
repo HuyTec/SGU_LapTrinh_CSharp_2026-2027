@@ -14,3 +14,8 @@
 artifacts/runtime/
 artifacts/desktop-build/
 artifacts/desktop-qa-build/
+
+# Office lock files
+~$*.xlsx
+~$*.docx
+~$*.pptx

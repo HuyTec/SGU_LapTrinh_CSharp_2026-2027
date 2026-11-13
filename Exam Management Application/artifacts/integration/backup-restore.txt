@@ -1,5 +1,5 @@
-Checked UTC: 2026-10-24T15:11:13.6673638Z
+﻿Checked UTC: 2026-11-13T06:25:16.5426738Z
 COPY_ONLY backup + checksum verification: PASS
-Restored dedicated database: ExamAppRestore_6e3190572b79
+Restored dedicated database: ExamAppRestore_bd855dfa6c23
 Source users: 4; restored users: 4
 Only the private restore target is removed; the source database is preserved.
