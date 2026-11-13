@@ -2,31 +2,27 @@
 
 Web ASP.NET Core MVC và Desktop WinForms dùng chung API, nghiệp vụ và SQL Server. [Phân công và cách làm việc nhóm](team/README.md).
 
-## Chạy trên Windows
+## Chạy nhanh trên Windows
 
-Cần .NET SDK 10, PowerShell và SQL Server Express/Developer. Chạy từ thư mục chứa solution. Thay `.\SQLEXPRESS` bằng instance của bạn nếu khác.
+Cần .NET SDK 10, PowerShell và SQL Server. Chạy lệnh từ thư mục chứa solution.
 
-```powershell
-.\scripts\Initialize-Local.ps1 -SqlInstance '.\SQLEXPRESS' -RunTests
-```
+1. **Khởi tạo lần đầu với SQL Server Express:**
 
-Script build, áp dụng migration, tạo dữ liệu demo và chạy test. Tài khoản mẫu ở `.local/demo-credentials.txt`. Giữ file này và User Secrets ngoài Git.
+   ```powershell
+   .\scripts\Initialize-Local.ps1 -SqlInstance '.\SQLEXPRESS'
+   ```
 
-Mở hai terminal, chạy Web trước rồi chạy Desktop:
+   Script áp dụng migration và tạo dữ liệu demo. Tài khoản mẫu nằm trong `.local/demo-credentials.txt`. Nếu đã cấu hình và seed SQL Docker qua User Secrets, bỏ qua bước này.
 
-```powershell
-.\scripts\Start-Web.ps1
-```
+2. **Chạy bằng Visual Studio:** mở `Exam Management Application.slnx`, đặt `Exam.Web` làm Startup Project, chọn profile `Exam.Web` rồi nhấn **F5**. Web mở tại [https://localhost:60012](https://localhost:60012). Mở Desktop từ PowerShell:
 
-```powershell
-.\scripts\Start-Desktop.ps1
-```
+   ```powershell
+   .\scripts\Start-Desktop.ps1 -ApiUrl 'https://localhost:60012'
+   ```
 
-Khi chạy bằng hai script trên, Web và Desktop dùng [http://localhost:5180](http://localhost:5180). Nếu chạy Exam.Web bằng launch profile HTTPS của Visual Studio, nhập `https://localhost:60012` trong phần **Cài đặt máy chủ** của Desktop.
+   Nếu chạy cả hai bằng PowerShell, mở hai terminal và chạy `.\scripts\Start-Web.ps1` trước, rồi `.\scripts\Start-Desktop.ps1`. Cả hai dùng `http://localhost:5180`.
 
-Quản trị viên đăng nhập Desktop để quản lý môn và phân công giảng viên. Giảng viên đăng nhập Web để xem môn được phân công. Thí sinh đăng nhập Web để tham gia đợt thi được cấp quyền. Dữ liệu demo trên cơ sở dữ liệu mới có sẵn đợt thi và mã tham gia được in lúc khởi tạo.
-
-Các màn Web quản lý học liệu thuộc HL01/HL02. Tạo và sửa đợt nháp thuộc DT01, gán lớp và kích hoạt thuộc DT03, theo dõi và công bố kết quả thuộc DT04. Script `New-Demo.ps1` dùng API của luồng cán bộ cũ nên không dùng với bản phân quyền QT01.
+3. **Đăng nhập:** quản trị viên dùng Desktop. Giảng viên và thí sinh dùng Web. Mã đợt thi demo được in khi seed cơ sở dữ liệu mới.
 
 ## Kiểm tra
 
@@ -49,3 +45,24 @@ Link báo cáo: GG Docs:
 Link báo cáo Nghiệp vụ GG Sheets:
 
 [docs.google.com/spreadsheets/d/10sSsgNXNt2c-S9SLn9rWQej7txwzoXuFAWfPI9gzFOc/edit?usp=sharing](https://docs.google.com/spreadsheets/d/10sSsgNXNt2c-S9SLn9rWQej7txwzoXuFAWfPI9gzFOc/edit?usp=sharing)
+
+## Cấu trúc thư mục
+
+```text
+Exam Management Application/
+├── Exam Management Application.slnx
+├── Exam.Web/           # Web MVC cho thí sinh, giảng viên và API cho Desktop
+│   ├── Controllers/
+│   ├── Views/
+│   └── wwwroot/        # CSS, JavaScript và tài nguyên tĩnh
+├── Exam.Desktop/       # Ứng dụng quản trị WinForms
+├── Exam.Core/          # DTO và kiểu dữ liệu dùng chung
+├── Exam.Services/      # Nghiệp vụ và kiểm tra quyền
+├── Exam.Data/          # EF Core, Identity và SQL Server
+│   └── Migrations/
+├── Exam.Tests/         # xUnit và kiểm thử SQL Server cách ly
+├── scripts/            # Khởi tạo, chạy và kiểm thử cục bộ
+├── docs/               # Đặc tả, sơ đồ và tài liệu kỹ thuật
+├── team/               # Phân công và quy trình nhóm
+└── App1/               # WinUI 3 lưu để tham khảo
+```
