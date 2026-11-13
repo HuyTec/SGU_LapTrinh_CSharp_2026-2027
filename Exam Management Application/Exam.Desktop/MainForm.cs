@@ -48,7 +48,7 @@ public sealed partial class MainForm : Form
         var identity = new TableLayoutPanel { AutoSize = true, ColumnCount = 2, RowCount = 1, Margin = new Padding(0, 12, 0, 0) };
         var displayName = string.IsNullOrWhiteSpace(api.DisplayName) ? UiLabels.Of(api.Role ?? "") : api.DisplayName;
         var initials = string.Concat(displayName.Split(' ', StringSplitOptions.RemoveEmptyEntries).TakeLast(2).Select(x => x[0]));
-        identity.Controls.Add(new AcademicAvatar(initials) { Width = 44, Height = 44, Margin = new Padding(0, 4, 10, 0) });
+        identity.Controls.Add(new AcademicAvatar { Initials = initials, Width = 44, Height = 44, Margin = new Padding(0, 4, 10, 0) });
         identity.Controls.Add(new Label { AutoSize = true, Anchor = AnchorStyles.Left, Text = displayName, Font = Theme.SmallFont, ForeColor = Theme.Text, MaximumSize = new Size(200, 0) });
         header.Controls.Add(toggle, 0, 0); header.Controls.Add(title, 1, 0); header.Controls.Add(identity, 2, 0);
         right.Controls.Add(workspace); right.Controls.Add(toast); right.Controls.Add(header);

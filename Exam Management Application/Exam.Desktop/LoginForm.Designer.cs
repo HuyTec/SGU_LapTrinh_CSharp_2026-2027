@@ -503,7 +503,7 @@ public sealed partial class LoginForm
         settings.RowCount = 1;
         settings.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
         settings.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-        address.Text = "http://localhost:5180";
+        address.Text = "https://localhost:60012";
         address.AccessibleName = "Địa chỉ máy chủ";
         address.Dock = DockStyle.Fill;
         settings.Controls.Add(address, 0, 0);

@@ -427,6 +427,10 @@ public class SqlExamTests : IAsyncLifetime
         await using (var setup = NewContext())
         {
             var service = Service(setup);
+            var classId = await setup.Set<SessionClass>().Where(x => x.SessionId == sessionId)
+                .Select(x => x.ClassId).SingleAsync();
+            setup.Set<ClassStudent>().Add(new ClassStudent { ClassId = classId, StudentId = otherStudentId });
+            await setup.SaveChangesAsync();
             healthyId = await service.StartAsync(otherStudentId, sessionId);
             var answers = await setup.AttemptOptions.Where(x => x.Question.AttemptId == failingId && x.IsCorrect)
                 .Select(x => new { QuestionId = x.AttemptQuestionId, OptionId = x.Id }).ToListAsync();

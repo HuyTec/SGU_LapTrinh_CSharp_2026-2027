@@ -19,7 +19,7 @@ public class AccountController(AuthService auth):Controller{
          try
          {
              await auth.RegisterAsync(new(vm.UserName, vm.FullName, vm.AccountType == "Student" ? vm.StudentCode : null, vm.Email, vm.Password, vm.AccountType));
-             TempData["Success"] = vm.AccountType=="Student" ? "Đăng ký thành công. Bạn có thể đăng nhập ngay." : "Đã gửi yêu cầu đăng ký tài khoản giảng viên. Tài khoản đang chờ quản trị viên duyệt; sau khi được duyệt, hãy đăng nhập bằng ứng dụng Desktop.";
+             TempData["Success"] = vm.AccountType=="Student" ? "Đăng ký thành công. Bạn có thể đăng nhập ngay." : "Đã gửi yêu cầu đăng ký tài khoản giảng viên. Tài khoản đang chờ quản trị viên duyệt; sau khi được duyệt, hãy đăng nhập trên Web.";
              return RedirectToAction(nameof(Login));
          }
          catch (BusinessException ex) { ModelState.AddModelError("", ex.Message); }
@@ -31,7 +31,7 @@ public class AccountController(AuthService auth):Controller{
      return View(vm);
  }
  [HttpGet]public IActionResult Login(string? returnUrl)=>View(new LoginVm{ReturnUrl=returnUrl});
- [HttpPost,ValidateAntiForgeryToken]public async Task<IActionResult> Login(LoginVm vm){if(!ModelState.IsValid)return View(vm);try{var (u,role,s)=await auth.LoginAsync(new(vm.UserName,vm.Password),false);await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,new ClaimsPrincipal(new ClaimsIdentity(AuthService.Claims(u,role,s),CookieAuthenticationDefaults.AuthenticationScheme)),new AuthenticationProperties{ExpiresUtc=s.ExpiresAt});return LocalRedirect(Url.IsLocalUrl(vm.ReturnUrl)?vm.ReturnUrl!:"/Sessions");}catch(BusinessException ex){ModelState.AddModelError("",ex.Message);return View(vm);}}
+ [HttpPost,ValidateAntiForgeryToken]public async Task<IActionResult> Login(LoginVm vm){if(!ModelState.IsValid)return View(vm);try{var (u,role,s)=await auth.LoginAsync(new(vm.UserName,vm.Password),false);await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,new ClaimsPrincipal(new ClaimsIdentity(AuthService.Claims(u,role,s),CookieAuthenticationDefaults.AuthenticationScheme)),new AuthenticationProperties{ExpiresUtc=s.ExpiresAt});if (role == "Lecturer") return RedirectToAction("Index", "Lecturer"); return LocalRedirect(Url.IsLocalUrl(vm.ReturnUrl)?vm.ReturnUrl!:"/Sessions");}catch(BusinessException ex){ModelState.AddModelError("",ex.Message);return View(vm);}}
  [HttpPost,ValidateAntiForgeryToken,Authorize]public async Task<IActionResult> Logout(){await auth.LogoutAsync(User);await HttpContext.SignOutAsync();return RedirectToAction("Login");}
  [HttpGet]public IActionResult AccessDenied()=>StatusCode(403,"Bạn không có quyền truy cập.");
 }
