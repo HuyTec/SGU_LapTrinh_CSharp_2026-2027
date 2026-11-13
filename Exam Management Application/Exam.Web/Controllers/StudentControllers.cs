@@ -46,6 +46,28 @@ public class HomeController(ExamService exams):Controller{public async Task<IAct
 public class SessionsController(ExamService exams):Controller{
  int Uid=>int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
  public async Task<IActionResult> Index(string? search,string? status)=>View(await exams.SessionsAsync(Uid,search,status));
+ [HttpGet]
+ public Task<IActionResult> Join(string? code) =>
+     string.IsNullOrWhiteSpace(code) ? Task.FromResult<IActionResult>(View()) : ShowSessionByCode(code);
+
+
+ [HttpPost, ActionName(nameof(Join)), ValidateAntiForgeryToken]
+ public Task<IActionResult> ConfirmJoin(string? code) => ShowSessionByCode(code);
+
+ private async Task<IActionResult> ShowSessionByCode(string? code)
+ {
+     try
+     {
+         var id = await exams.FindSessionByCodeAsync(Uid, code);
+         return RedirectToAction(nameof(Details), new { id });
+     }
+     catch (BusinessException ex)
+     {
+         ModelState.AddModelError("", ex.Message);
+         return View("Join", code);
+     }
+ }
+
  public async Task<IActionResult> Details(int id)=>View(await exams.DetailAsync(Uid,id));
  [HttpPost,ValidateAntiForgeryToken]public async Task<IActionResult> Start(int id){try{return RedirectToAction("Take","Attempts",new{id=await exams.StartAsync(Uid,id)});}catch(BusinessException ex){TempData["Error"]=ex.Message;return RedirectToAction("Details",new{id});}}
 }

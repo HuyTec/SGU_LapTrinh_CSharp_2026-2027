@@ -42,7 +42,7 @@ public sealed class MainForm : Form
         frame.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
         sidebar.BackColor = Theme.Primary;
         var brand = new TableLayoutPanel { Dock = DockStyle.Top, Height = 120, Padding = new Padding(24, 24, 12, 20), ColumnCount = 1, RowCount = 2 };
-        brandName.Font = new Font("Segoe UI", 26, FontStyle.Bold);
+        brandName.Font = new Font("Arial", 26, FontStyle.Bold);
         brandSubtitle.Font = Theme.BodyFont;
         brand.Controls.Add(brandName); brand.Controls.Add(brandSubtitle);
         var sidebarFooter = new FlowLayoutPanel { Dock = DockStyle.Bottom, Height = 116, Padding = new Padding(12), FlowDirection = FlowDirection.TopDown, WrapContents = false };

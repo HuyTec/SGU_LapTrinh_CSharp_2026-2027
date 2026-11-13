@@ -1,0 +1,10 @@
+@model string
+@{ ViewData["Title"] = "Vào thi bằng mã"; }
+<h1>Vào thi bằng mã</h1>
+<form asp-action="Join" method="post" class="surface p-3">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <label for="code" class="form-label">Mã vào thi</label>
+    <input id="code" name="code" value="@Model" required maxlength="32" class="form-control mb-3" />
+    <button type="submit" class="btn btn-primary">Xác nhận vào thi</button>
+    <a asp-action="Index" class="btn btn-outline-secondary">Quay lại</a>
+</form>

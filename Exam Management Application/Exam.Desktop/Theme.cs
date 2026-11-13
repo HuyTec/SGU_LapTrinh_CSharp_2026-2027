@@ -18,10 +18,10 @@ public static class Theme
     public static readonly Color Info = ColorTranslator.FromHtml("#3B82F6");
     public static readonly Color SoftPrimary = ColorTranslator.FromHtml("#EAF0F8");
     public static readonly Color SoftAccent = ColorTranslator.FromHtml("#E8F5F1");
-    public static readonly Font BodyFont = new("Segoe UI", 10F);
-    public static readonly Font SmallFont = new("Segoe UI", 9F);
-    public static readonly Font TitleFont = new("Segoe UI", 20F, FontStyle.Bold);
-    public static readonly Font SectionFont = new("Segoe UI", 13F, FontStyle.Bold);
+    public static readonly Font BodyFont = new("Arial", 10F);
+    public static readonly Font SmallFont = new("Arial", 9F);
+    public static readonly Font TitleFont = new("Arial", 20F, FontStyle.Bold);
+    public static readonly Font SectionFont = new("Arial", 13F, FontStyle.Bold);
 
     public static void Apply(Form form)
     {
@@ -53,7 +53,7 @@ public static class Theme
         grid.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
         grid.ColumnHeadersDefaultCellStyle = new DataGridViewCellStyle
         {
-            BackColor=Background, ForeColor=Muted, Font=new Font("Segoe UI",9F,FontStyle.Bold),
+            BackColor=Background, ForeColor=Muted, Font=new Font("Arial",9F,FontStyle.Bold),
             Padding=new Padding(12,0,8,0), SelectionBackColor=Background, SelectionForeColor=Text
         };
         grid.ColumnHeadersHeight = 42;

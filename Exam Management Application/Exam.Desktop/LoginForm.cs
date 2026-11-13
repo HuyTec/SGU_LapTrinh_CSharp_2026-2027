@@ -31,7 +31,7 @@ public sealed class LoginForm:Form
         var form=new TableLayoutPanel{AutoSize=true,AutoSizeMode=AutoSizeMode.GrowAndShrink,Dock=DockStyle.Top,ColumnCount=1,Padding=Padding.Empty,Margin=Padding.Empty};
         form.ColumnStyles.Add(new ColumnStyle(SizeType.Percent,100));right.Controls.Add(form);
         form.SizeChanged+=(_,_)=>{foreach(var label in form.Controls.OfType<Label>())label.MaximumSize=new Size(Math.Max(220,form.ClientSize.Width),0);};
-        form.Controls.Add(new Label{Text="KHÔNG GIAN KHẢO THÍ",Font=new Font("Segoe UI",9F,FontStyle.Bold),ForeColor=Theme.Primary,AutoSize=true,Margin=new Padding(0,8,0,12)});
+        form.Controls.Add(new Label{Text="KHÔNG GIAN KHẢO THÍ",Font=new Font("Arial",9F,FontStyle.Bold),ForeColor=Theme.Primary,AutoSize=true,Margin=new Padding(0,8,0,12)});
         form.Controls.Add(new Label{Text="Chào mừng trở lại",Font=Theme.TitleFont,ForeColor=Theme.Text,AutoSize=true,Margin=new Padding(0,0,0,8)});
         form.Controls.Add(new Label{Text="Đăng nhập bằng tài khoản quản trị viên.",ForeColor=Theme.Muted,AutoSize=true,MaximumSize=new Size(520,0),Margin=new Padding(0,0,0,24)});
         AddField(form,"Tên đăng nhập",userName);

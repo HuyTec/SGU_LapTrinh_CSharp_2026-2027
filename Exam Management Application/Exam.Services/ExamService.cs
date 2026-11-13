@@ -9,16 +9,41 @@ public class ExamService(ExamDbContext db, TimeProvider clock)
     DateTime Now => clock.GetUtcNow().UtcDateTime;
     public static string SessionState(ExamSession s, DateTime now) => s.Status == "Active" ? (now < s.OpensAt ? "Scheduled" : now >= s.ClosesAt ? "Closed" : "Open") : s.Status;
     SessionDto Dto(ExamSession s, long? attempt) => new(s.Id, s.Title, s.Exam.Subject.Name, s.OpensAt, s.ClosesAt, s.DurationMinutes, SessionState(s, Now), attempt, s.Published, s.ReviewPolicy);
+    // Keep list, detail and new attempts on the same admission rule.
+    IQueryable<ExamSession> AssignedSessions(int student) =>
+        db.ExamSessions.Where(session =>
+            db.Attempts.Any(a => a.SessionId == session.Id && a.StudentId == student) || (session.AccessCode == null
+                ? session.Candidates.Any(candidate => candidate.StudentId == student)
+                : session.Classes.Any(link => link.Class.IsActive &&
+                    link.Class.SubjectId == session.Exam.SubjectId &&
+                    link.Class.Students.Any(member => member.StudentId == student))));
+
+    public async Task<int> FindSessionByCodeAsync(int student, string? code)
+    {
+        var normalized = code?.Trim().ToUpperInvariant();
+        if (string.IsNullOrEmpty(normalized) || normalized.Length > 32)
+            throw new BusinessException("Mã vào thi không hợp lệ.", 404);
+
+        var session = await AssignedSessions(student)
+            .Where(x => x.AccessCode == normalized &&
+                (x.Status == "Active" || db.Attempts.Any(a => a.SessionId == x.Id && a.StudentId == student)))
+            .Select(x => (int?)x.Id).SingleOrDefaultAsync();
+        if (session == null)
+            throw new BusinessException("Không tìm thấy đợt thi theo mã này.", 404);
+
+        return session.Value;
+    }
+
     public async Task<SessionListVm> SessionsAsync(int student, string? search = null, string? status = null)
     {
-        var list = await db.ExamSessions.Include(x => x.Exam).ThenInclude(x => x.Subject).Where(x => x.Candidates.Any(c => c.StudentId == student) && x.Status != "Draft").OrderByDescending(x => x.OpensAt).ToListAsync();
+        var list = await AssignedSessions(student).Include(x => x.Exam).ThenInclude(x => x.Subject).Where(x => x.Status != "Draft").OrderByDescending(x => x.OpensAt).ToListAsync();
         var attempts = await db.Attempts.Where(x => x.StudentId == student).ToDictionaryAsync(x => x.SessionId, x => x.Id);
         var rows = list.Select(s => Dto(s, attempts.TryGetValue(s.Id, out var a) ? a : null)).Where(s => (string.IsNullOrWhiteSpace(search) || (s.Title + " " + s.Subject).Contains(search, StringComparison.OrdinalIgnoreCase)) && (string.IsNullOrWhiteSpace(status) || s.Status == status)).ToList();
         return new(rows, search, status);
     }
     public async Task<SessionDetailVm> DetailAsync(int student, int id)
     {
-        var s = await db.ExamSessions.Include(x => x.Exam).ThenInclude(x => x.Subject).SingleOrDefaultAsync(x => x.Id == id && x.Candidates.Any(c => c.StudentId == student)) ?? throw new BusinessException("Không tìm thấy đợt thi.", 404);
+        var s = await AssignedSessions(student).Include(x => x.Exam).ThenInclude(x => x.Subject).SingleOrDefaultAsync(x => x.Id == id && x.Status != "Draft") ?? throw new BusinessException("Không tìm thấy đợt thi.", 404);
         var a = await db.Attempts.Where(x => x.SessionId == id && x.StudentId == student).Select(x => (long?)x.Id).SingleOrDefaultAsync();
         return new(Dto(s, a), "Một lượt thi mỗi đợt. Đáp án chỉ được chấm khi đã được máy chủ xác nhận lưu. Hết giờ hệ thống tự kết thúc; tải lại trang không làm tăng thời gian.");
     }
@@ -28,11 +53,66 @@ public class ExamService(ExamDbContext db, TimeProvider clock)
         return await db.Database.CreateExecutionStrategy().ExecuteAsync(async () => { db.ChangeTracker.Clear(); await using var tx = await db.Database.BeginTransactionAsync(IsolationLevel.Serializable); var result = await work(); await db.SaveChangesAsync(); await tx.CommitAsync(); return result; });
     }
     /// <summary>Create one immutable, shuffled snapshot per candidate and session, or return the existing attempt.</summary>
-    public Task<long> StartAsync(int student, int sessionId) => Serial(async () => { var old = await db.Attempts.SingleOrDefaultAsync(x => x.StudentId == student && x.SessionId == sessionId); if (old != null) return old.Id; var s = await db.ExamSessions.Include(x => x.Candidates).Include(x => x.Exam).ThenInclude(x => x.Questions).ThenInclude(x => x.Question).ThenInclude(x => x.Options).SingleOrDefaultAsync(x => x.Id == sessionId) ?? throw new BusinessException("Không tìm thấy đợt thi.", 404); if (!s.Candidates.Any(x => x.StudentId == student)) throw new BusinessException("Bạn không được phân công đợt này.", 403); var now = Now; if (s.Status != "Active" || now < s.OpensAt || now >= s.ClosesAt) throw new BusinessException("Đợt thi chưa mở hoặc đã đóng.", 409); if (s.Exam.Status != "Ready") throw new BusinessException("Đề chưa sẵn sàng.", 409); s.HasOpened = true; var a = new Attempt { SessionId = s.Id, StudentId = student, StartedAt = now, Deadline = ExamRules.Deadline(now, s.DurationMinutes, s.ClosesAt) }; var questions = s.Exam.Questions.OrderBy(q => q.Order).ToList(); if (s.ShuffleQuestions) Random.Shared.Shuffle(System.Runtime.InteropServices.CollectionsMarshal.AsSpan(questions)); foreach (var q in questions) { var aq = new AttemptQuestion { SourceQuestionId = q.QuestionId, Text = q.Question.Text, Points = q.Points, Order = a.Questions.Count + 1 }; var opts = q.Question.Options.OrderBy(x => x.Order).ToList(); if (s.ShuffleOptions) Random.Shared.Shuffle(System.Runtime.InteropServices.CollectionsMarshal.AsSpan(opts)); foreach (var o in opts) aq.Options.Add(new() { Text = o.Text, IsCorrect = o.IsCorrect, Order = aq.Options.Count + 1 }); aq.Response = new Response { SavedAt = now }; a.Questions.Add(aq); } db.Attempts.Add(a); await db.SaveChangesAsync(); return a.Id; });
+    public Task<long> StartAsync(int student, int sessionId) => Serial(async () =>
+    {
+        var old = await db.Attempts.SingleOrDefaultAsync(x => x.StudentId == student && x.SessionId == sessionId);
+        if (old != null)
+            return old.Id;
+
+        var s = await AssignedSessions(student)
+            .Include(x => x.Exam).ThenInclude(x => x.Questions)
+            .ThenInclude(x => x.Question).ThenInclude(x => x.Options)
+            .SingleOrDefaultAsync(x => x.Id == sessionId);
+        if (s == null)
+        {
+            if (!await db.ExamSessions.AnyAsync(x => x.Id == sessionId))
+                throw new BusinessException("Không tìm thấy đợt thi.", 404);
+            throw new BusinessException("Bạn không được phân công đợt này.", 403);
+        }
+
+        var now = Now;
+        if (s.Status != "Active" || now < s.OpensAt || now >= s.ClosesAt)
+            throw new BusinessException("Đợt thi chưa mở hoặc đã đóng.", 409);
+        if (s.Exam.Status != "Ready")
+            throw new BusinessException("Đề chưa sẵn sàng.", 409);
+
+        s.HasOpened = true;
+        var a = new Attempt
+        {
+            SessionId = s.Id,
+            StudentId = student,
+            StartedAt = now,
+            Deadline = ExamRules.Deadline(now, s.DurationMinutes, s.ClosesAt)
+        };
+        var questions = s.Exam.Questions.OrderBy(q => q.Order).ToList();
+        if (s.ShuffleQuestions)
+            Random.Shared.Shuffle(System.Runtime.InteropServices.CollectionsMarshal.AsSpan(questions));
+        foreach (var q in questions)
+        {
+            var aq = new AttemptQuestion
+            {
+                SourceQuestionId = q.QuestionId,
+                Text = q.Question.Text,
+                Points = q.Points,
+                Order = a.Questions.Count + 1
+            };
+            var opts = q.Question.Options.OrderBy(x => x.Order).ToList();
+            if (s.ShuffleOptions)
+                Random.Shared.Shuffle(System.Runtime.InteropServices.CollectionsMarshal.AsSpan(opts));
+            foreach (var o in opts)
+                aq.Options.Add(new() { Text = o.Text, IsCorrect = o.IsCorrect, Order = aq.Options.Count + 1 });
+            aq.Response = new Response { SavedAt = now };
+            a.Questions.Add(aq);
+        }
+
+        db.Attempts.Add(a);
+        await db.SaveChangesAsync(); // Materialize the generated ID before returning it.
+        return a.Id;
+    });
     IQueryable<Attempt> Full => db.Attempts.Include(a => a.Session).ThenInclude(s => s.Exam).Include(a => a.Result).Include(a => a.Questions).ThenInclude(q => q.Options).Include(a => a.Questions).ThenInclude(q => q.Response);
     async Task<Attempt> Own(int student, long id)
     {
-        var a = await Full.SingleOrDefaultAsync(x => x.Id == id) ?? throw new BusinessException("Không tìm thấy bài thi.", 404);
+        var a = await Full.SingleOrDefaultAsync(x => x.Id == id && x.Status != "Draft") ?? throw new BusinessException("Không tìm thấy bài thi.", 404);
         if (a.StudentId != student)
             throw new BusinessException("Bạn không có quyền xem bài thi này.", 403);
         return a;
