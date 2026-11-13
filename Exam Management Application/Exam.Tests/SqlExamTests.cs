@@ -79,6 +79,36 @@ public class SqlExamTests : IAsyncLifetime
     private ExamDbContext NewContext() => new(options);
     private ExamService Service(ExamDbContext db) => new(db, clock);
 
+    [SqlFact]
+    public async Task CodeLookupRequiresClassAndDoesNotCreateAttempt()
+    {
+        await using var db = NewContext();
+        var session = await db.ExamSessions.Include(x => x.Exam).SingleAsync();
+        session.AccessCode = "CLASS-TEST";
+        session.Classes.Add(new()
+        {
+            Class = new ExamClass
+            {
+                SubjectId = session.Exam.SubjectId,
+                Code = "TS01",
+                Students = [new() { StudentId = studentId }]
+            }
+        });
+        await db.SaveChangesAsync();
+
+        var service = Service(db);
+        Assert.Equal(sessionId, await service.FindSessionByCodeAsync(studentId, " class-test "));
+        await Assert.ThrowsAsync<BusinessException>(() => service.FindSessionByCodeAsync(otherStudentId, "CLASS-TEST"));
+        Assert.Empty(await db.Attempts.ToListAsync());
+
+        var attempt = await service.StartAsync(studentId, sessionId);
+        var membership = await db.Set<ClassStudent>().SingleAsync();
+        db.Remove(membership);
+        await db.SaveChangesAsync();
+        Assert.Equal(attempt, await service.StartAsync(studentId, sessionId));
+        Assert.Equal(1, await db.Attempts.CountAsync());
+    }
+
     private async Task<long> Start()
     {
         await using var db = NewContext();
@@ -97,6 +127,25 @@ public class SqlExamTests : IAsyncLifetime
         Assert.Equal(ids[0], ids[1]);
         await using var verify = NewContext();
         Assert.Equal(1, await verify.Attempts.CountAsync());
+    }
+
+    [SqlFact]
+    public async Task RepeatedStartKeepsTheOriginalAttemptAndDeadline()
+    {
+        var id = await Start();
+        await using var before = NewContext();
+        var original = await before.Attempts.AsNoTracking().SingleAsync();
+
+        clock.Set(clock.GetUtcNow().AddMinutes(5));
+        Assert.Equal(id, await Start());
+
+        clock.Set(clock.GetUtcNow().AddMinutes(26));
+
+        Assert.Equal(id, await Start());
+        await using var after = NewContext();
+        var resumed = await after.Attempts.AsNoTracking().SingleAsync();
+        Assert.Equal(original.StartedAt, resumed.StartedAt);
+        Assert.Equal(original.Deadline, resumed.Deadline);
     }
 
     [SqlFact]

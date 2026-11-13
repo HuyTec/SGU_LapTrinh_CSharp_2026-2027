@@ -55,7 +55,17 @@ public class ExamDbContext(DbContextOptions<ExamDbContext> options) : IdentityDb
         b.Entity<AttemptQuestion>().HasIndex(x => new { x.AttemptId, x.Order }).IsUnique();
         b.Entity<AttemptOption>().HasIndex(x => new { x.AttemptQuestionId, x.Order }).IsUnique();
         b.Entity<SessionCandidate>().HasAlternateKey(x => new { x.SessionId, x.StudentId });
-        b.Entity<Attempt>().HasOne<SessionCandidate>().WithMany().HasForeignKey(x => new { x.SessionId, x.StudentId }).HasPrincipalKey(x => new { x.SessionId, x.StudentId }).OnDelete(DeleteBehavior.Restrict);
+        b.Entity<ExamSession>().Property(x => x.AccessCode).HasMaxLength(32);
+        b.Entity<ExamSession>().HasIndex(x => x.AccessCode).IsUnique();
+        b.Entity<ExamClass>().ToTable("Classes");
+        b.Entity<ExamClass>().Property(x => x.Code).HasMaxLength(50);
+        b.Entity<ExamClass>().HasIndex(x => new { x.SubjectId, x.Code }).IsUnique();
+        b.Entity<ExamClass>().HasOne<Subject>().WithMany().HasForeignKey(x => x.SubjectId).OnDelete(DeleteBehavior.Restrict);
+        b.Entity<ClassStudent>().ToTable("ClassStudents").HasKey(x => new { x.ClassId, x.StudentId });
+        b.Entity<ClassStudent>().HasOne<AppUser>().WithMany().HasForeignKey(x => x.StudentId).OnDelete(DeleteBehavior.Restrict);
+        b.Entity<SessionClass>().ToTable("SessionClasses").HasKey(x => new { x.SessionId, x.ClassId });
+        b.Entity<ExamSession>().HasMany(x => x.Classes).WithOne().HasForeignKey(x => x.SessionId);
+        b.Entity<SessionClass>().HasOne(x => x.Class).WithMany().HasForeignKey(x => x.ClassId).OnDelete(DeleteBehavior.Restrict);
         b.Entity<AttemptOption>().HasAlternateKey(x => new { x.AttemptQuestionId, x.Id });
         b.Entity<Response>().HasOne(x => x.SelectedOption).WithMany().HasForeignKey(x => new { x.AttemptQuestionId, x.SelectedOptionId }).HasPrincipalKey(x => new { x.AttemptQuestionId, x.Id }).OnDelete(DeleteBehavior.Restrict);
         b.Entity<AttemptQuestion>().HasOne<Question>().WithMany().HasForeignKey(x => x.SourceQuestionId).OnDelete(DeleteBehavior.Restrict);

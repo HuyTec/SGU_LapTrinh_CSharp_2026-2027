@@ -71,15 +71,14 @@ public static class DemoSeeder
         db.Exams.Add(paper);
         await db.SaveChangesAsync();
         var session = new ExamSession { ExamId = paper.Id, ManagedBy = officer.Id, Title = "Thi thử C#", OpensAt = DateTime.UtcNow.AddMinutes(-10), ClosesAt = DateTime.UtcNow.AddDays(7), DurationMinutes = 30, Status = "Active", ShuffleOptions = true, ShuffleQuestions = true, ReviewPolicy = "CorrectAnswers" };
+        var demoClass = new ExamClass { SubjectId = subject.Id, Code = "DEMO-TS01" };
+        foreach (var name in new[] { "student", "student2" })
+            demoClass.Students.Add(new() { StudentId = (await users.FindByNameAsync(name))!.Id });
+        session.AccessCode = Convert.ToHexString(System.Security.Cryptography.RandomNumberGenerator.GetBytes(8));
+        session.Classes.Add(new() { Class = demoClass });
         db.ExamSessions.Add(session);
         await db.SaveChangesAsync();
-        foreach (var name in new[] { "student", "student2" })
-            db.SessionCandidates.Add(new()
-            {
-                SessionId = session.Id,
-                StudentId = (await users.FindByNameAsync(name))!.Id
-            });
-        await db.SaveChangesAsync();
+        Console.WriteLine($"Mã vào thi demo: {session.AccessCode}");
     }
 }
 
