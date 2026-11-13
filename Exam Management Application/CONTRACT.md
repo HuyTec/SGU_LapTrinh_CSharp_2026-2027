@@ -62,6 +62,7 @@ Nguồn chữ ký: `Exam.Core/Contracts.cs`. ID người dùng/môn/chủ đề/
 | GET/POST `/Account/Login` | `Exam.Web.ViewModels.LoginVm`; POST form antiforgery |
 | POST `/Account/Logout` | Thu hồi phiên và xóa cookie |
 | GET `/`, `/Sessions?search=&status=` | `SessionListVm` |
+| GET/POST `/Sessions/Join` | Nhập mã vào thi sau khi đăng nhập, tra đợt trong phạm vi quyền và chuyển tới Details |
 | GET `/Sessions/Details/{id}` | `SessionDetailVm` |
 | POST `/Sessions/Start/{id}` | Tạo/tiếp tục đúng lượt cũ, chuyển trang Take |
 | GET `/Attempts/Take/{id}` | `AttemptVm`; đã nộp chuyển Result |
@@ -72,6 +73,8 @@ Nguồn chữ ký: `Exam.Core/Contracts.cs`. ID người dùng/môn/chủ đề/
 | GET `/Attempts/History` | `HistoryVm` |
 
 Cookie POST phải gửi form token hoặc header `RequestVerificationToken`. `Status` đợt được tính máy chủ: Draft/Scheduled/Open/Closed/Cancelled. Lượt: InProgress/Submitted. `ReviewPolicy`: ScoreOnly/Answers/CorrectAnswers. Chưa công bố: Score/CorrectCount null, Questions rỗng.
+
+Quyền tạo lượt mới dựa trên thành viên của lớp đang hoạt động, cùng môn và đã gán cho đợt. Đợt chưa có lớp hợp lệ từ chối tạo lượt mới dù có danh sách phân công cũ. Mã vào thi dùng để tra đợt và người dùng vẫn phải đăng nhập. Lượt đã phát sinh được truy cập theo chủ sở hữu, thời hạn và chính sách công bố, kể cả sau khi thay đổi thành viên lớp. [UC19](https://docs.google.com/spreadsheets/d/10sSsgNXNt2c-S9SLn9rWQej7txwzoXuFAWfPI9gzFOc/edit#gid=899770140&range=A392%3AB401) · [FR-F03 và FR-F04](https://docs.google.com/spreadsheets/d/10sSsgNXNt2c-S9SLn9rWQej7txwzoXuFAWfPI9gzFOc/edit#gid=482467226&range=A70%3AF71)
 
 ### Desktop API
 

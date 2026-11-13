@@ -739,3 +739,107 @@ END;
 COMMIT;
 GO
 
+BEGIN TRANSACTION;
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20261113090207_StudentClassAdmission'
+)
+BEGIN
+    ALTER TABLE [Attempts] DROP CONSTRAINT [FK_Attempts_SessionCandidates_SessionId_StudentId];
+END;
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20261113090207_StudentClassAdmission'
+)
+BEGIN
+    ALTER TABLE [ExamSessions] ADD [AccessCode] nvarchar(32) NULL;
+END;
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20261113090207_StudentClassAdmission'
+)
+BEGIN
+    CREATE TABLE [Classes] (
+        [Id] int NOT NULL IDENTITY,
+        [SubjectId] int NOT NULL,
+        [Code] nvarchar(50) NOT NULL,
+        [IsActive] bit NOT NULL,
+        CONSTRAINT [PK_Classes] PRIMARY KEY ([Id]),
+        CONSTRAINT [FK_Classes_Subjects_SubjectId] FOREIGN KEY ([SubjectId]) REFERENCES [Subjects] ([Id]) ON DELETE NO ACTION
+    );
+END;
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20261113090207_StudentClassAdmission'
+)
+BEGIN
+    CREATE TABLE [ClassStudents] (
+        [ClassId] int NOT NULL,
+        [StudentId] int NOT NULL,
+        CONSTRAINT [PK_ClassStudents] PRIMARY KEY ([ClassId], [StudentId]),
+        CONSTRAINT [FK_ClassStudents_Classes_ClassId] FOREIGN KEY ([ClassId]) REFERENCES [Classes] ([Id]) ON DELETE NO ACTION,
+        CONSTRAINT [FK_ClassStudents_Users_StudentId] FOREIGN KEY ([StudentId]) REFERENCES [Users] ([UserID]) ON DELETE NO ACTION
+    );
+END;
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20261113090207_StudentClassAdmission'
+)
+BEGIN
+    CREATE TABLE [SessionClasses] (
+        [SessionId] int NOT NULL,
+        [ClassId] int NOT NULL,
+        CONSTRAINT [PK_SessionClasses] PRIMARY KEY ([SessionId], [ClassId]),
+        CONSTRAINT [FK_SessionClasses_Classes_ClassId] FOREIGN KEY ([ClassId]) REFERENCES [Classes] ([Id]) ON DELETE NO ACTION,
+        CONSTRAINT [FK_SessionClasses_ExamSessions_SessionId] FOREIGN KEY ([SessionId]) REFERENCES [ExamSessions] ([Id]) ON DELETE NO ACTION
+    );
+END;
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20261113090207_StudentClassAdmission'
+)
+BEGIN
+    EXEC(N'CREATE UNIQUE INDEX [IX_ExamSessions_AccessCode] ON [ExamSessions] ([AccessCode]) WHERE [AccessCode] IS NOT NULL');
+END;
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20261113090207_StudentClassAdmission'
+)
+BEGIN
+    CREATE UNIQUE INDEX [IX_Classes_SubjectId_Code] ON [Classes] ([SubjectId], [Code]);
+END;
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20261113090207_StudentClassAdmission'
+)
+BEGIN
+    CREATE INDEX [IX_ClassStudents_StudentId] ON [ClassStudents] ([StudentId]);
+END;
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20261113090207_StudentClassAdmission'
+)
+BEGIN
+    CREATE INDEX [IX_SessionClasses_ClassId] ON [SessionClasses] ([ClassId]);
+END;
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20261113090207_StudentClassAdmission'
+)
+BEGIN
+    INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+    VALUES (N'20261113090207_StudentClassAdmission', N'10.0.13');
+END;
+
+COMMIT;
+GO
+

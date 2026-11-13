@@ -12,11 +12,10 @@ public class ExamService(ExamDbContext db, TimeProvider clock)
     // Keep list, detail and new attempts on the same admission rule.
     IQueryable<ExamSession> AssignedSessions(int student) =>
         db.ExamSessions.Where(session =>
-            db.Attempts.Any(a => a.SessionId == session.Id && a.StudentId == student) || (session.AccessCode == null
-                ? session.Candidates.Any(candidate => candidate.StudentId == student)
-                : session.Classes.Any(link => link.Class.IsActive &&
-                    link.Class.SubjectId == session.Exam.SubjectId &&
-                    link.Class.Students.Any(member => member.StudentId == student))));
+            db.Attempts.Any(a => a.SessionId == session.Id && a.StudentId == student) ||
+            session.Classes.Any(link => link.Class.IsActive &&
+                link.Class.SubjectId == session.Exam.SubjectId &&
+                link.Class.Students.Any(member => member.StudentId == student)));
 
     public async Task<int> FindSessionByCodeAsync(int student, string? code)
     {
@@ -100,7 +99,12 @@ public class ExamService(ExamDbContext db, TimeProvider clock)
             if (s.ShuffleOptions)
                 Random.Shared.Shuffle(System.Runtime.InteropServices.CollectionsMarshal.AsSpan(opts));
             foreach (var o in opts)
-                aq.Options.Add(new() { Text = o.Text, IsCorrect = o.IsCorrect, Order = aq.Options.Count + 1 });
+                aq.Options.Add(new()
+                {
+                    Text = o.Text,
+                    IsCorrect = o.IsCorrect,
+                    Order = aq.Options.Count + 1
+                });
             aq.Response = new Response { SavedAt = now };
             a.Questions.Add(aq);
         }
