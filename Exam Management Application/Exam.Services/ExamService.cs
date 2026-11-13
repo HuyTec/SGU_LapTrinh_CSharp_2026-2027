@@ -17,6 +17,34 @@ public class ExamService(ExamDbContext db, TimeProvider clock)
                 link.Class.SubjectId == session.Exam.SubjectId &&
                 link.Class.Students.Any(member => member.StudentId == student)));
 
+    public sealed record StudentClassRow(string Code, string Subject, bool Active,
+        IReadOnlyList<string> Lecturers, IReadOnlyList<SessionDto> Sessions);
+
+    public async Task<IReadOnlyList<StudentClassRow>> StudentClassesAsync(int studentId)
+    {
+        var classes = await (from c in db.Set<ExamClass>().AsNoTracking()
+                             join subject in db.Subjects on c.SubjectId equals subject.Id
+                             where c.Students.Any(m => m.StudentId == studentId)
+                             orderby subject.Name, c.Code
+                             select new { c.Id, c.Code, c.SubjectId, Subject = subject.Name, Active = c.IsActive && subject.IsActive })
+            .ToListAsync();
+        var subjectIds = classes.Select(c => c.SubjectId).Distinct().ToArray();
+        var classIds = classes.Select(c => c.Id).ToArray();
+        var lecturers = await db.LecturerSubjects.Where(a => subjectIds.Contains(a.SubjectId) && a.Lecturer.IsActive)
+            .OrderBy(a => a.Lecturer.FullName)
+            .Select(a => new { a.SubjectId, a.Lecturer.FullName }).ToListAsync();
+        var links = await db.Set<SessionClass>().Where(l => classIds.Contains(l.ClassId))
+            .Select(l => new { l.ClassId, l.SessionId }).ToListAsync();
+        var visibleSessions = (await SessionsAsync(studentId)).Sessions.ToDictionary(s => s.Id);
+        var lecturersBySubject = lecturers.ToLookup(x => x.SubjectId, x => x.FullName);
+        var sessionsByClass = links.Where(l => visibleSessions.ContainsKey(l.SessionId))
+            .ToLookup(l => l.ClassId, l => visibleSessions[l.SessionId]);
+
+        return classes.Select(c => new StudentClassRow(c.Code, c.Subject, c.Active,
+            lecturersBySubject[c.SubjectId].ToList(),
+            sessionsByClass[c.Id].OrderByDescending(s => s.OpensAt).ToList())).ToList();
+    }
+
     public async Task<int> FindSessionByCodeAsync(int student, string? code)
     {
         var normalized = code?.Trim().ToUpperInvariant();

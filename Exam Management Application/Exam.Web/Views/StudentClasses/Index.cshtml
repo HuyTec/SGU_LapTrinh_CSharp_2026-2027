@@ -1,25 +1,38 @@
-@model IReadOnlyList<Exam.Services.StudentClassService.ClassRow>
+@model IReadOnlyList<Exam.Services.ExamService.StudentClassRow>
 @{ ViewData["Title"] = "Lớp của tôi"; }
 <h1>Lớp của tôi</h1>
-@if (ViewData["DemoEnrollment"] is true)
-{
-    <form asp-action="JoinDemo" method="post" class="surface mb-4">
-        <label for="code" class="form-label">Mã lớp thử</label>
-        <input id="code" name="code" class="form-control mb-3" maxlength="50" required />
-        <button type="submit" class="btn btn-primary">Tham gia lớp thử</button>
-    </form>
-}
 @if (Model.Count == 0)
 {
-    <p>Bạn chưa tham gia lớp nào.</p>
+    <p>Bạn chưa được thêm vào lớp nào.</p>
 }
-else
+@foreach (var item in Model)
 {
-    <ul class="list-group mb-4">
-        @foreach (var item in Model)
+    <section class="surface mb-3">
+        <h2>@item.Code · @item.Subject</h2>
+        @if (!item.Active)
         {
-            <li class="list-group-item"><strong>@item.Code</strong> · @item.Subject · @(item.IsActive ? "Đang hoạt động" : "Đã ngừng")</li>
+            <p class="muted">Lớp hoặc môn đã ngừng hoạt động.</p>
         }
-    </ul>
+        <p><strong>Giảng viên được phân công theo môn:</strong>
+            @(item.Lecturers.Count == 0 ? "Chưa có giảng viên" : string.Join(", ", item.Lecturers))
+        </p>
+        <h3>Đợt thi của lớp</h3>
+        @if (item.Sessions.Count == 0)
+        {
+            <p class="muted">Chưa có đợt thi hiển thị cho bạn.</p>
+        }
+        else
+        {
+            <ul>
+                @foreach (var session in item.Sessions)
+                {
+                    var state = session.Status switch { "Scheduled" => "Sắp mở", "Open" => "Đang mở", "Closed" => "Đã đóng", "Cancelled" => "Đã hủy", _ => session.Status };
+                    <li>
+                        <a asp-controller="Sessions" asp-action="Details" asp-route-id="@session.Id">@session.Title</a>
+                        · @state · @session.OpensAt.AddHours(7).ToString("dd/MM/yyyy HH:mm") – @session.ClosesAt.AddHours(7).ToString("dd/MM/yyyy HH:mm")
+                    </li>
+                }
+            </ul>
+        }
+    </section>
 }
-<a asp-controller="Sessions" asp-action="Index">Xem đợt thi</a>

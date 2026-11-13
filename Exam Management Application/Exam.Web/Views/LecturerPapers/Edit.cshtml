@@ -1,0 +1,63 @@
+@model Exam.Web.Controllers.LecturerPapersController.PaperEditor
+@{
+    var ready = Model.Status == "Ready";
+    ViewData["Title"] = Model.Id.HasValue ? "Chi tiết đề thi" : "Tạo đề thi";
+    var subject = Model.Subjects.FirstOrDefault(s => s.Value == Model.SubjectId.ToString(System.Globalization.CultureInfo.InvariantCulture));
+}
+<h1>@ViewData["Title"]</h1>
+@if (!Model.Id.HasValue)
+{
+    <form method="get" asp-action="Create" class="surface mb-3">
+        <label for="subject-choice" class="form-label">Môn học</label>
+        <select id="subject-choice" name="subjectId" class="form-select mb-3" required>
+            <option value="">Chọn môn học</option>
+            @foreach (var option in Model.Subjects)
+            {
+                <option value="@option.Value" selected="@(option == subject)">@option.Label</option>
+            }
+        </select>
+        <button type="submit" class="btn btn-outline-primary">Xem câu hỏi của môn</button>
+    </form>
+}
+@if (subject is not null)
+{
+    <p><strong>Môn học:</strong> @subject.Label · @(ready ? "Sẵn sàng" : "Nháp")</p>
+    <form asp-action="Save" method="post" class="surface mb-3">
+        <div asp-validation-summary="All" class="text-danger" role="alert"></div>
+        <input asp-for="Id" type="hidden" />
+        <input asp-for="SubjectId" type="hidden" />
+        <label asp-for="Title" class="form-label">Tên đề</label>
+        <input asp-for="Title" class="form-control mb-3" readonly="@ready" required maxlength="2000" />
+        <p class="muted">Trọng số phải dương. Hệ thống quy đổi kết quả về thang 10 khi chấm.</p>
+        @if (Model.Questions.Count == 0) { <p>Môn này chưa có câu hỏi đang hoạt động.</p> }
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead><tr><th scope="col">Chọn</th><th scope="col">Câu hỏi</th><th scope="col">Trọng số</th></tr></thead>
+                <tbody>
+                @for (var i = 0; i < Model.Questions.Count; i++)
+                {
+                    var question = Model.Questions[i];
+                    if (ready && !question.Selected) { continue; }
+                    <tr>
+                        <td><input asp-for="Questions[i].Id" type="hidden" />
+                            <input asp-for="Questions[i].Selected" class="form-check-input" aria-label="Chọn câu @question.Id" disabled="@ready" />
+                        </td>
+                        <td>@question.Text</td>
+                        <td><input asp-for="Questions[i].Points" type="number" class="form-control" step="0.01" max="999999.99" aria-label="Trọng số câu @question.Id" readonly="@ready" /></td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+        @if (!ready) { <button type="submit" class="btn btn-primary">Lưu đề nháp</button> }
+    </form>
+    @if (Model.Id.HasValue)
+    {
+        <form asp-action="ChangeStatus" method="post" class="mb-3">
+            <input name="id" type="hidden" value="@Model.Id" />
+            <input name="ready" type="hidden" value="@(!ready ? "true" : "false")" />
+            <button type="submit" class="btn btn-outline-primary">@(ready ? "Chuyển về nháp" : "Xác nhận sẵn sàng")</button>
+        </form>
+    }
+}
+<a asp-action="Index">Về danh sách đề thi</a>

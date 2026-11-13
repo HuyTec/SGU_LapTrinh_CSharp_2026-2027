@@ -23,9 +23,16 @@
                     @if (User.IsInRole("Lecturer"))
                     {
                         <a asp-controller="Lecturer" asp-action="Index">Môn được phân công</a>
+                        <a asp-controller="Lecturer" asp-action="Materials" asp-route-resource="topics">Chủ đề</a>
+                        <a asp-controller="Lecturer" asp-action="Materials" asp-route-resource="questions">Ngân hàng câu hỏi</a>
+                        <a asp-controller="LecturerClasses" asp-action="Index">Lớp và thí sinh</a>
+                        <a asp-controller="LecturerPapers" asp-action="Index">Đề thi</a>
+                        <a asp-controller="LecturerSessions" asp-action="Index">Đợt thi</a>
+                        <a asp-controller="LecturerResults" asp-action="Index">Kết quả</a>
                     }
                     else if (User.IsInRole("Student"))
                     {
+                    <a asp-controller="StudentClasses" asp-action="Index">Lớp của tôi</a>
                     <a asp-controller="Sessions" asp-action="Index">Đợt thi</a>
                     <a asp-controller="Attempts" asp-action="History">Lịch sử &amp; kết quả</a>
                     }
