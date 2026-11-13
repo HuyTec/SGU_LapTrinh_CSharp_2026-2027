@@ -6,7 +6,7 @@ internal static class Program
     private static void Main()
     {
         ApplicationConfiguration.Initialize();
-        Application.SetDefaultFont(new Font("Segoe UI", 10));
+        Application.SetDefaultFont(new Font("Arial", 10));
         using var api = new ExamApiClient();
         Application.Run(new LoginForm(api));
     }

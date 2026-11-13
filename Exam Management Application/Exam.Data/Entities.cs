@@ -140,8 +140,32 @@ public class ExamQuestion
     }
     public decimal Points { get; set; } = 1;
 }
+public class ExamClass
+{
+    public int Id { get; set; }
+    public int SubjectId { get; set; }
+    public string Code { get; set; } = "";
+    public bool IsActive { get; set; } = true;
+    public ICollection<ClassStudent> Students { get; set; } = new List<ClassStudent>();
+}
+
+public class ClassStudent
+{
+    public int ClassId { get; set; }
+    public int StudentId { get; set; }
+}
+
+public class SessionClass
+{
+    public int SessionId { get; set; }
+    public int ClassId { get; set; }
+    public ExamClass Class { get; set; } = null!;
+}
+
 public class ExamSession
 {
+    public string? AccessCode { get; set; }
+    public ICollection<SessionClass> Classes { get; set; } = new List<SessionClass>();
     public int Id
     {
         get; set;
