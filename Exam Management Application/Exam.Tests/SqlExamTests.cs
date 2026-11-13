@@ -80,6 +80,38 @@ public class SqlExamTests : IAsyncLifetime
     private ExamService Service(ExamDbContext db) => new(db, clock);
 
     [SqlFact]
+    public async Task DemoClassMembershipIsPrivateAndJoiningTwiceIsIdempotent()
+    {
+        await using var db = NewContext();
+        var subject = new Subject { Code = "DEMO-NV", Name = "Môn demo" };
+        db.Add(subject);
+        await db.SaveChangesAsync();
+        db.Add(new ExamClass { Code = StudentClassService.DemoCode, SubjectId = subject.Id });
+        await db.SaveChangesAsync();
+        var service = new StudentClassService(db);
+
+        Assert.Empty(await service.ListAsync(studentId));
+        Assert.True(await service.JoinDemoAsync(studentId));
+        Assert.True(await service.JoinDemoAsync(studentId));
+        Assert.Single(await service.ListAsync(studentId));
+        Assert.Empty(await service.ListAsync(otherStudentId));
+        Assert.Single(await db.Set<ClassStudent>().ToListAsync());
+
+        var demoClass = await db.Set<ExamClass>().SingleAsync();
+        demoClass.IsActive = false;
+        await db.SaveChangesAsync();
+        Assert.False(await service.JoinDemoAsync(otherStudentId));
+
+        demoClass = await db.Set<ExamClass>().SingleAsync();
+        demoClass.IsActive = true;
+        var demoSubject = await db.Subjects.SingleAsync(s => s.Id == demoClass.SubjectId);
+        demoSubject.IsActive = false;
+        await db.SaveChangesAsync();
+        Assert.False(await service.JoinDemoAsync(otherStudentId));
+        Assert.Empty(await service.ListAsync(otherStudentId));
+    }
+
+    [SqlFact]
     public async Task CodeLookupRequiresClassAndDoesNotCreateAttempt()
     {
         await using var db = NewContext();

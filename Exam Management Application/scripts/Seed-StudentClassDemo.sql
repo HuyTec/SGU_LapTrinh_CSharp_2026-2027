@@ -1,4 +1,4 @@
-﻿-- Run on the local ExamAppDocker development database after EF migrations and demo account seeding.
+-- Run on the local ExamAppDocker development database after EF migrations and demo account seeding.
 SET NOCOUNT ON;
 SET XACT_ABORT ON;
 SET QUOTED_IDENTIFIER ON;
@@ -18,9 +18,8 @@ FROM dbo.ExamSessions WITH (UPDLOCK, HOLDLOCK) WHERE AccessCode = @ExamCode;
 IF @SessionId IS NULL
 BEGIN
     DECLARE @LecturerId int = (SELECT UserID FROM dbo.Users WHERE NormalizedUserName = N'LECTURER');
-    DECLARE @ManagerId int = (SELECT UserID FROM dbo.Users WHERE NormalizedUserName = N'OFFICER');
-    IF @LecturerId IS NULL OR @ManagerId IS NULL
-        THROW 50002, N'Chạy seeder demo để tạo tài khoản lecturer và officer trước.', 1;
+    IF @LecturerId IS NULL
+        THROW 50002, N'Chạy seeder demo để tạo tài khoản lecturer trước.', 1;
     IF EXISTS (SELECT 1 FROM dbo.Subjects WHERE Code = N'DEMO-NV')
         THROW 50003, N'Mã môn DEMO-NV đã tồn tại nhưng chưa có đợt THI-NV10; kiểm tra dữ liệu trước khi chạy lại.', 1;
 
@@ -70,7 +69,7 @@ BEGIN
     DECLARE @Now datetime2 = SYSUTCDATETIME();
     INSERT dbo.ExamSessions (ExamId, ManagedBy, Title, OpensAt, ClosesAt, DurationMinutes,
         Status, ShuffleQuestions, ShuffleOptions, ReviewPolicy, Published, HasOpened, AccessCode)
-        VALUES (@ExamId, @ManagerId, N'Thi thử nghiệp vụ ứng dụng', DATEADD(minute,-1,@Now),
+        VALUES (@ExamId, @LecturerId, N'Thi thử nghiệp vụ ứng dụng', DATEADD(minute,-1,@Now),
             DATEADD(day,7,@Now), 20, N'Active', 0, 0, N'CorrectAnswers', 0, 0, @ExamCode);
     SET @SessionId = CONVERT(int, SCOPE_IDENTITY());
     INSERT dbo.SessionClasses (SessionId, ClassId) VALUES (@SessionId, @ClassId);
