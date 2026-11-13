@@ -12,5 +12,6 @@
     <PackageReference Include="xunit.runner.visualstudio" Version="4.0.1"><PrivateAssets>all</PrivateAssets></PackageReference>
     <ProjectReference Include="..\Exam.Services\Exam.Services.csproj" />
     <ProjectReference Include="..\Exam.Data\Exam.Data.csproj" />
+    <ProjectReference Include="..\Exam.Web\Exam.Web.csproj" />
   </ItemGroup>
 </Project>
