@@ -4,51 +4,32 @@ using Exam.Core;
 namespace Exam.Desktop;
 
 /// <summary>Application shell: role navigation and lifecycle only. Workspaces and presenters own screen interaction.</summary>
-public sealed class MainForm : Form
+public sealed partial class MainForm : Form
 {
-    private readonly ExamApiClient api;
-    private readonly TableLayoutPanel frame = new() { Dock = DockStyle.Fill, ColumnCount = 2, RowCount = 1, Margin = Padding.Empty };
-    private readonly Panel sidebar = new() { Dock = DockStyle.Fill };
-    private readonly FlowLayoutPanel navigation = new() { Dock = DockStyle.Fill, FlowDirection = FlowDirection.TopDown, WrapContents = false, AutoScroll = true, Padding = new Padding(12, 4, 12, 8) };
-    private readonly Panel workspace = new() { Dock = DockStyle.Fill, Padding = new Padding(24, 0, 24, 8) };
-    private readonly Label heading = new() { Dock = DockStyle.Fill, TextAlign = ContentAlignment.MiddleLeft, UseMnemonic = false };
-    private readonly Label breadcrumb = new() { Dock = DockStyle.Fill, TextAlign = ContentAlignment.BottomLeft };
-    private readonly Label brandName = new() { Text = "Exam", AutoSize = true, ForeColor = Color.White };
-    private readonly Label brandSubtitle = new() { Text = "Không gian khảo thí", AutoSize = true, ForeColor = Color.White };
-    private readonly UiToast toast = new() { Dock = DockStyle.Bottom };
+    private readonly ExamApiClient api = null!;
     private readonly Dictionary<string, AcademicNavigationButton> menu = new();
     private readonly ToolTip hints = new();
-    private readonly NavigationService navigator;
+    private readonly NavigationService navigator = null!;
     private AdminCatalogDto? catalog;
     private bool compact;
     private bool navigating;
     private bool signingOut;
     private bool canClose;
-    public string? LogoutNotice { get; private set; }
+    public string? LogoutNotice
+    {
+        get; private set;
+    }
 
-    public MainForm(ExamApiClient api)
+    public MainForm()
+    {
+        InitializeComponent();
+    }
+
+    public MainForm(ExamApiClient api) : this()
     {
         this.api = api;
         navigator = new NavigationService(workspace, CreateView);
-        Theme.Apply(this);
-        Text = "Exam • Không gian khảo thí";
-        StartPosition = FormStartPosition.CenterScreen;
-        ClientSize = new Size(1366, 820);
-        MinimumSize = new Size(1024, 680);
-        WindowState = FormWindowState.Maximized;
-        KeyPreview = true;
-        frame.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 244));
-        frame.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
-        frame.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
-        sidebar.BackColor = Theme.Primary;
-        var brand = new TableLayoutPanel { Dock = DockStyle.Top, Height = 120, Padding = new Padding(24, 24, 12, 20), ColumnCount = 1, RowCount = 2 };
-        brandName.Font = new Font("Arial", 26, FontStyle.Bold);
-        brandSubtitle.Font = Theme.BodyFont;
-        brand.Controls.Add(brandName); brand.Controls.Add(brandSubtitle);
-        var sidebarFooter = new FlowLayoutPanel { Dock = DockStyle.Bottom, Height = 116, Padding = new Padding(12), FlowDirection = FlowDirection.TopDown, WrapContents = false };
-        var help = new AcademicNavigationButton("Hướng dẫn", "\uE897");
         help.Click += (_, _) => { using var dialog = new HelpForm(api.Role); dialog.ShowDialog(this); };
-        var logout = new AcademicNavigationButton("Đăng xuất", "\uE8AC");
         logout.Click += (_, _) => Close();
         sidebarFooter.Controls.Add(help); sidebarFooter.Controls.Add(logout);
         sidebar.Controls.Add(navigation); sidebar.Controls.Add(sidebarFooter); sidebar.Controls.Add(brand);
@@ -78,10 +59,23 @@ public sealed class MainForm : Form
         FormClosing += OnClosingAsync;
         KeyDown += async (_, e) =>
         {
-            if (navigator.Current is not IWorkspaceView view || navigating) return;
-            if (e.KeyCode == Keys.F5) { e.SuppressKeyPress = true; await RunAsync(view.RefreshAsync); }
-            else if (e.Control && e.KeyCode == Keys.F) { e.SuppressKeyPress = true; await FocusCurrentSearchAsync(); }
-            else if (e.Control && e.KeyCode == Keys.N) { e.SuppressKeyPress = true; await RunAsync(view.AddNewAsync); }
+            if (navigator.Current is not IWorkspaceView view || navigating)
+                return;
+            if (e.KeyCode == Keys.F5)
+            {
+                e.SuppressKeyPress = true;
+                await RunAsync(view.RefreshAsync);
+            }
+            else if (e.Control && e.KeyCode == Keys.F)
+            {
+                e.SuppressKeyPress = true;
+                await FocusCurrentSearchAsync();
+            }
+            else if (e.Control && e.KeyCode == Keys.N)
+            {
+                e.SuppressKeyPress = true;
+                await RunAsync(view.AddNewAsync);
+            }
         };
     }
 
@@ -90,33 +84,40 @@ public sealed class MainForm : Form
         await RunAsync(async () =>
         {
             catalog = await api.CatalogAsync();
-            navigation.Controls.Clear(); menu.Clear();
+            navigation.Controls.Clear();
+            menu.Clear();
             AddMenu("dashboard", "Tổng quan", "\uE80F");
             foreach (var resource in catalog.Resources)
                 AddMenu(resource.Key, ScreenTitle(resource.Key, resource.Label), Theme.IconFor(resource.Key));
             ResizeNavigation();
         });
-        if (catalog != null) await OpenWorkspaceAsync("dashboard");
+        if (catalog != null)
+            await OpenWorkspaceAsync("dashboard");
     }
 
     private void AddMenu(string key, string text, string glyph)
     {
         var button = new AcademicNavigationButton(text, glyph) { Tag = key, Compact = compact };
         button.Click += async (_, _) => await OpenWorkspaceAsync(key);
-        hints.SetToolTip(button, text); menu[key] = button; navigation.Controls.Add(button);
+        hints.SetToolTip(button, text);
+        menu[key] = button;
+        navigation.Controls.Add(button);
     }
 
     public async Task OpenWorkspaceAsync(string key)
     {
-        if (navigating) return;
-        navigating = true; navigation.Enabled = false;
+        if (navigating)
+            return;
+        navigating = true;
+        navigation.Enabled = false;
         try
         {
             if (key != "dashboard" && catalog?.Resources.All(r => r.Key != key) != false)
                 throw new InvalidOperationException("Chức năng không thuộc vai trò hiện tại.");
             heading.Text = key == "dashboard" ? "Tổng quan" : ScreenTitle(key, catalog!.Resources.First(r => r.Key == key).Label);
             breadcrumb.Text = $"Exam / {UiLabels.Of(api.Role ?? "")} / Không gian làm việc";
-            foreach (var pair in menu) pair.Value.Selected = pair.Key == key;
+            foreach (var pair in menu)
+                pair.Value.Selected = pair.Key == key;
             await navigator.NavigateAsync(key);
         }
         catch (Exception ex) { toast.ShowMessage(ex.Message, true); }
@@ -133,11 +134,16 @@ public sealed class MainForm : Form
         }
         ResourceView view = key switch
         {
-            "questions" => new QuestionBankView(api), "topics" => new TopicsView(api),
-            "exams" => new ExamPapersView(api), "sessions" => new ExamSessionsView(api),
-            "users" => new UsersView(api), "subjects" => new SubjectsView(api),
-            "assignments" => new AssignmentsView(api), "candidates" => new CandidatesView(api),
-            "monitor" => new MonitorView(api), _ => throw new InvalidOperationException("Không tìm thấy màn hình.")
+            "questions" => new QuestionBankView(api),
+            "topics" => new TopicsView(api),
+            "exams" => new ExamPapersView(api),
+            "sessions" => new ExamSessionsView(api),
+            "users" => new UsersView(api),
+            "subjects" => new SubjectsView(api),
+            "assignments" => new AssignmentsView(api),
+            "candidates" => new CandidatesView(api),
+            "monitor" => new MonitorView(api),
+            _ => throw new InvalidOperationException("Không tìm thấy màn hình.")
         };
         view.NavigateRequested += async (_, target) => await OpenWorkspaceAsync(target);
         return view;
@@ -148,33 +154,53 @@ public sealed class MainForm : Form
         compact = !compact;
         frame.ColumnStyles[0].Width = compact ? 76 : 244;
         brandName.Visible = brandSubtitle.Visible = !compact;
-        foreach (var button in sidebar.Controls.OfType<FlowLayoutPanel>().SelectMany(f => f.Controls.OfType<AcademicNavigationButton>())) button.Compact = compact;
+        foreach (var button in sidebar.Controls.OfType<FlowLayoutPanel>().SelectMany(f => f.Controls.OfType<AcademicNavigationButton>()))
+            button.Compact = compact;
         ResizeNavigation();
     }
     private async Task FocusCurrentSearchAsync()
     {
         if (navigator.CurrentKey == "dashboard")
         {
-            var key = api.Role switch { "Administrator" => "users", "Lecturer" => "questions", _ => "sessions" };
+            var key = api.Role switch
+            {
+                "Administrator" => "users",
+                "Lecturer" => "questions",
+                _ => "sessions"
+            };
             await OpenWorkspaceAsync(key);
         }
         (navigator.Current as IWorkspaceView)?.FocusSearch();
     }
     private void ResizeNavigation()
     {
-        foreach (var button in menu.Values) { button.Width = Math.Max(44, navigation.ClientSize.Width - 28); button.Compact = compact; }
+        foreach (var button in menu.Values)
+        {
+            button.Width = Math.Max(44, navigation.ClientSize.Width - 28);
+            button.Compact = compact;
+        }
     }
     private async Task RunAsync(Func<Task> action)
     {
-        try { await action(); } catch (Exception ex) { toast.ShowMessage(ex.Message, true); }
+        try
+        {
+            await action();
+        }
+        catch (Exception ex) { toast.ShowMessage(ex.Message, true); }
     }
     private async void OnClosingAsync(object? sender, FormClosingEventArgs e)
     {
-        if (canClose) return;
+        if (canClose)
+            return;
         e.Cancel = true;
-        if (signingOut) return;
-        signingOut = true; Enabled = false;
-        try { await api.LogoutAsync(); }
+        if (signingOut)
+            return;
+        signingOut = true;
+        Enabled = false;
+        try
+        {
+            await api.LogoutAsync();
+        }
         catch (Exception) { LogoutNotice = "Đã xóa token trên máy này; máy chủ chưa xác nhận thu hồi phiên."; }
         finally { canClose = true; Close(); }
     }
@@ -186,25 +212,46 @@ public sealed class MainForm : Form
     };
     protected override void Dispose(bool disposing)
     {
-        if (disposing) { navigator?.Dispose(); hints.Dispose(); }
+        if (disposing)
+        {
+            navigator?.Dispose();
+            hints.Dispose();
+        }
         base.Dispose(disposing);
     }
+
+    private void brandName_Click(object sender, EventArgs e)
+    {
+
+    }
+
+
 }
 
-internal sealed class AcademicNavigationButton : Button
+public sealed class AcademicNavigationButton : Button
 {
     private bool selected;
     private bool compact;
     private bool hover;
-    private readonly string glyph;
+    [System.ComponentModel.DefaultValue("")]
+    public string Glyph { get; set; } = "";
     [System.ComponentModel.DefaultValue(false)]
     public bool Selected { get => selected; set { selected = value; Invalidate(); } }
     [System.ComponentModel.DefaultValue(false)]
     public bool Compact { get => compact; set { compact = value; Invalidate(); } }
-    public AcademicNavigationButton(string text, string glyph)
+    public AcademicNavigationButton(string text, string glyph) : this()
     {
-        Text = text; this.glyph = glyph; AccessibleName = text;
-        Width = 216; Height = text.Length > 22 ? 62 : 48; Margin = new Padding(0, 0, 0, 6);
+        Text = text;
+        Glyph = glyph;
+        AccessibleName = text;
+        Height = text.Length > 22 ? 62 : 48;
+    }
+
+    public AcademicNavigationButton()
+    {
+        Width = 216;
+        Height = 48;
+        Margin = new Padding(0, 0, 0, 6);
         FlatStyle = FlatStyle.Flat; FlatAppearance.BorderSize = 0; Cursor = Cursors.Hand;
         Font = Theme.BodyFont; SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
     }
@@ -219,7 +266,7 @@ internal sealed class AcademicNavigationButton : Button
         using var background = new SolidBrush(selected ? Color.White : hover ? Theme.PrimaryHover : Theme.Primary);
         e.Graphics.FillPath(background, path);
         using var iconFont = new Font("Segoe MDL2 Assets", 17);
-        TextRenderer.DrawText(e.Graphics, glyph, iconFont, new Rectangle(10, 0, 30, Height), foreground, TextFormatFlags.VerticalCenter | TextFormatFlags.HorizontalCenter);
+        TextRenderer.DrawText(e.Graphics, Glyph, iconFont, new Rectangle(10, 0, 30, Height), foreground, TextFormatFlags.VerticalCenter | TextFormatFlags.HorizontalCenter);
         if (!compact)
         {
             var flags = TextFormatFlags.Left | TextFormatFlags.WordBreak | TextFormatFlags.NoPrefix;
@@ -236,12 +283,15 @@ internal sealed class AcademicNavigationButton : Button
     }
 }
 
-internal sealed class AcademicAvatar(string initials) : Control
+public sealed class AcademicAvatar : Control
 {
+    [System.ComponentModel.DefaultValue("")]
+    public string Initials { get; set; } = "";
+
     protected override void OnPaint(PaintEventArgs e)
     {
         base.OnPaint(e); e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
         using var background = new SolidBrush(Theme.SoftPrimary); e.Graphics.FillEllipse(background, 1, 1, Width - 2, Height - 2);
-        TextRenderer.DrawText(e.Graphics, initials, Theme.BodyFont, ClientRectangle, Theme.Primary, TextFormatFlags.VerticalCenter | TextFormatFlags.HorizontalCenter);
+        TextRenderer.DrawText(e.Graphics, Initials, Theme.BodyFont, ClientRectangle, Theme.Primary, TextFormatFlags.VerticalCenter | TextFormatFlags.HorizontalCenter);
     }
 }

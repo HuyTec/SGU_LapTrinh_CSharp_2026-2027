@@ -8,7 +8,7 @@ public class RegisterVm : IValidatableObject
     public string FullName {get;set;}="";
     [StringLength(30,ErrorMessage="Mã thí sinh tối đa 30 ký tự.")]
     public string? StudentCode {get;set;}="";
-    [Required,RegularExpression("^(Student|Lecturer|ExamOfficer|Administrator)$",ErrorMessage="Loại tài khoản không hợp lệ.")]
+    [Required,RegularExpression("^(Student|Lecturer)$",ErrorMessage="Loại tài khoản không hợp lệ.")]
     public string AccountType {get;set;}="Student";
     [Required(ErrorMessage="Vui lòng nhập email."),EmailAddress(ErrorMessage="Email không đúng định dạng."),StringLength(256)]
     public string Email {get;set;}="";

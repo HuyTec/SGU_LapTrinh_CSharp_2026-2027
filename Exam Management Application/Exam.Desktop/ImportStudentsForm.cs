@@ -4,42 +4,25 @@ using Microsoft.VisualBasic.FileIO;
 
 namespace Exam.Desktop;
 
-public sealed class ImportStudentsForm : Form
+public sealed partial class ImportStudentsForm : Form
 {
     private const string Header = "UserName,FullName,StudentCode,Email,Password";
-    private readonly ExamApiClient api;
-    private readonly UiDataGridView preview = new() { Dock = DockStyle.Fill, ReadOnly = true, AllowUserToAddRows = false, RowHeadersVisible = false, AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill };
-    private readonly Label status = new() { Dock = DockStyle.Fill, AutoSize = true, ForeColor = Theme.Muted, Padding = new Padding(0, 8, 16, 0), Text = "Chọn tệp CSV để xem trước. Chưa có dữ liệu được nhập." };
-    private readonly UiButton import = new() { Text = "Kiểm tra và nhập", Kind = UiButtonKind.Primary, AutoSize = true, Enabled = false };
+    private readonly ExamApiClient api = null!;
     private string? csv;
     private int count;
     private bool importing;
     private readonly List<Control> fileActions = [];
 
-    public ImportStudentsForm(ExamApiClient api)
+    public ImportStudentsForm() => InitializeComponent();
+
+    public ImportStudentsForm(ExamApiClient api) : this()
     {
         this.api = api; Text = "Nhập danh sách thí sinh từ CSV"; Theme.Apply(this);
         var area = Screen.FromControl(this).WorkingArea;
         StartPosition = FormStartPosition.CenterParent; Size = new Size(Math.Min(1040, area.Width - 48), Math.Min(720, area.Height - 48)); MinimumSize = new Size(Math.Min(700, area.Width - 48), Math.Min(450, area.Height - 48));
-        var header = new TableLayoutPanel { Dock = DockStyle.Top, AutoSize = true, ColumnCount = 1, Padding = new Padding(24, 20, 24, 12), BackColor = Theme.Surface };
-        header.Controls.Add(new Label { Text = "Nhập danh sách thí sinh", Font = Theme.SectionFont, AutoSize = true, Margin = new Padding(0, 0, 0, 8) });
-        header.Controls.Add(new Label { AutoSize = true, ForeColor = Theme.Muted, Text = "Chọn tệp → xem trước → máy chủ kiểm tra → xác nhận nhập", Margin = new Padding(0, 0, 0, 4) });
-        var toolbar = new FlowLayoutPanel { Dock = DockStyle.Top, AutoSize = true, Padding = new Padding(24, 16, 24, 8) };
-        var choose = new UiButton { Text = "Chọn tệp CSV UTF-8", Kind = UiButtonKind.Secondary, AutoSize = true };
-        var template = new UiButton { Text = "Tải mẫu CSV", Kind = UiButtonKind.Ghost, AutoSize = true };
-        toolbar.Controls.Add(choose); toolbar.Controls.Add(template);
+        Theme.StyleGrid(preview);
         fileActions.Add(choose); fileActions.Add(template);
-        var instructions = new Label { Dock = DockStyle.Top, AutoSize = true, Padding = new Padding(24, 0, 24, 12), ForeColor = Theme.Muted, Font = Theme.SmallFont, Text = "Cột bắt buộc: " + Header + "\nCSV UTF-8 · tối đa 500 thí sinh / 1 MB · mật khẩu luôn được ẩn trong bản xem trước." };
-        var card = new UiCard { Dock = DockStyle.Fill, Padding = new Padding(16), Margin = new Padding(24) };
-        Theme.StyleGrid(preview); card.Controls.Add(preview);
-        var content = new Panel { Dock = DockStyle.Fill, Padding = new Padding(24, 0, 24, 16), AutoScroll = true }; content.Controls.Add(card);
-        var footer = new TableLayoutPanel { Dock = DockStyle.Bottom, AutoSize = true, ColumnCount = 2, Padding = new Padding(24, 12, 24, 12), BackColor = Theme.Surface };
-        footer.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100)); footer.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
-        var actions = new FlowLayoutPanel { AutoSize = true, WrapContents = false, Margin = Padding.Empty };
-        var close = new UiButton { Text = "Đóng", Kind = UiButtonKind.Secondary, AutoSize = true, DialogResult = DialogResult.Cancel, CausesValidation = false };
-        actions.Controls.Add(close); actions.Controls.Add(import); footer.Controls.Add(status, 0, 0); footer.Controls.Add(actions, 1, 0);
         footer.Resize += (_, _) => status.MaximumSize = new Size(Math.Max(180, footer.ClientSize.Width - actions.Width - 64), 0);
-        Controls.Add(content); Controls.Add(instructions); Controls.Add(toolbar); Controls.Add(header); Controls.Add(footer); CancelButton = close;
         FormClosing += (_, e) => { if (importing) e.Cancel = true; };
         choose.Click += (_, _) => ChooseFile();
         template.Click += async (_, _) =>

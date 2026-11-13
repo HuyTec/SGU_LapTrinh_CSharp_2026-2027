@@ -21,7 +21,7 @@ flowchart LR
 
 ## Nguyên tắc giao tiếp
 
-- Đăng ký: `GET/POST /Account/Register` công khai, POST có antiforgery. RegisterVm gồm UserName, FullName, StudentCode, Email, Password, ConfirmPassword, AccountType (Student/Lecturer/ExamOfficer/Administrator; mặc định Student). StudentCode bắt buộc chỉ khi Student. AuthService.RegisterAsync tạo Student hoạt động và gán vai trò ngay; nhân sự tạo IsActive=false, RequestedRole theo yêu cầu, chưa có UserRoles và chưa được đăng nhập. Trường Role/Roles giả mạo không cấp quyền. Thành công chuyển về Login với hướng dẫn phù hợp. `GET /Help` công khai hướng dẫn sử dụng.
+- Đăng ký: `GET/POST /Account/Register` công khai, POST có antiforgery. RegisterVm gồm UserName, FullName, StudentCode, Email, Password, ConfirmPassword, AccountType (Student/Lecturer; mặc định Student). StudentCode bắt buộc chỉ khi Student. AuthService.RegisterAsync tạo Student hoạt động và gán vai trò ngay; giảng viên tạo IsActive=false, RequestedRole theo yêu cầu, chưa có UserRoles và chưa được đăng nhập. Trường Role/Roles giả mạo không cấp quyền. Tài khoản quản trị đầu tiên của môi trường demo do seeder tạo. Quản trị viên hiện có cấp thêm tài khoản quản trị trong Desktop → Tài khoản / thí sinh. Thành công chuyển về Login với hướng dẫn phù hợp. `GET /Help` công khai hướng dẫn sử dụng.
 - Duyệt nhân sự: `POST /api/admin/users/{id}/action` với `{ "action": "approve" }`, chỉ Administrator. Kiểm tra pending trong giao dịch SERIALIZABLE, cấp vai trò được đề nghị, kích hoạt, xóa RequestedRole và thu hồi phiên. Duyệt lại trả 409; unlock hồ sơ pending trả 409. User list/detail có requestedRole. Đăng nhập đúng mật khẩu khi pending trả 403 và thông báo chờ duyệt; sai mật khẩu vẫn 401 chung.
 
 - `questions` list/detail có `version` base64; PUT sửa câu hỏi bắt buộc gửi lại `values.version` gốc, thiếu/sai/cũ trả 409. Metadata có kiểu `hidden`: client giữ token khi sửa nhưng không dựng ô nhập hoặc cột danh sách. Tạo mới không gửi phiên bản.
@@ -62,6 +62,7 @@ Nguồn chữ ký: `Exam.Core/Contracts.cs`. ID người dùng/môn/chủ đề/
 | GET/POST `/Account/Login` | `Exam.Web.ViewModels.LoginVm`; POST form antiforgery |
 | POST `/Account/Logout` | Thu hồi phiên và xóa cookie |
 | GET `/`, `/Sessions?search=&status=` | `SessionListVm` |
+| GET/POST `/Sessions/Join` | Nhập mã vào thi sau khi đăng nhập, tra đợt trong phạm vi quyền và chuyển tới Details |
 | GET `/Sessions/Details/{id}` | `SessionDetailVm` |
 | POST `/Sessions/Start/{id}` | Tạo/tiếp tục đúng lượt cũ, chuyển trang Take |
 | GET `/Attempts/Take/{id}` | `AttemptVm`; đã nộp chuyển Result |
@@ -72,6 +73,8 @@ Nguồn chữ ký: `Exam.Core/Contracts.cs`. ID người dùng/môn/chủ đề/
 | GET `/Attempts/History` | `HistoryVm` |
 
 Cookie POST phải gửi form token hoặc header `RequestVerificationToken`. `Status` đợt được tính máy chủ: Draft/Scheduled/Open/Closed/Cancelled. Lượt: InProgress/Submitted. `ReviewPolicy`: ScoreOnly/Answers/CorrectAnswers. Chưa công bố: Score/CorrectCount null, Questions rỗng.
+
+Quyền tạo lượt mới dựa trên thành viên của lớp đang hoạt động, cùng môn và đã gán cho đợt. Đợt chưa có lớp hợp lệ từ chối tạo lượt mới dù có danh sách phân công cũ. Mã vào thi dùng để tra đợt và người dùng vẫn phải đăng nhập. Lượt đã phát sinh được truy cập theo chủ sở hữu, thời hạn và chính sách công bố, kể cả sau khi thay đổi thành viên lớp. [UC19](https://docs.google.com/spreadsheets/d/10sSsgNXNt2c-S9SLn9rWQej7txwzoXuFAWfPI9gzFOc/edit#gid=899770140&range=A392%3AB401) · [FR-F03 và FR-F04](https://docs.google.com/spreadsheets/d/10sSsgNXNt2c-S9SLn9rWQej7txwzoXuFAWfPI9gzFOc/edit#gid=482467226&range=A70%3AF71)
 
 ### Desktop API
 

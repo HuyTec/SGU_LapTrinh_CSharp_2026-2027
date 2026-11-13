@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Exam.Web.Controllers;
 public class AccountController(AuthService auth):Controller{
  [HttpGet,AllowAnonymous]
- public IActionResult Register() => View(new RegisterVm());
+ public IActionResult Register(string? accountType) => View(new RegisterVm { AccountType = accountType == "Lecturer" ? "Lecturer" : "Student" });
 
  [HttpPost,AllowAnonymous,ValidateAntiForgeryToken]
  public async Task<IActionResult> Register(RegisterVm vm)
@@ -18,8 +18,8 @@ public class AccountController(AuthService auth):Controller{
      {
          try
          {
-             await auth.RegisterAsync(new(vm.UserName, vm.FullName, vm.StudentCode, vm.Email, vm.Password, vm.AccountType));
-             TempData["Success"] = vm.AccountType=="Student" ? "Đăng ký thành công. Hãy đăng nhập; cán bộ sẽ phân công đợt thi cho bạn." : "Đã gửi yêu cầu đăng ký tài khoản nhân sự. Tài khoản đang chờ quản trị viên duyệt; sau khi được duyệt, hãy đăng nhập bằng ứng dụng Desktop.";
+             await auth.RegisterAsync(new(vm.UserName, vm.FullName, vm.AccountType == "Student" ? vm.StudentCode : null, vm.Email, vm.Password, vm.AccountType));
+             TempData["Success"] = vm.AccountType=="Student" ? "Đăng ký thành công. Bạn có thể đăng nhập ngay." : "Đã gửi yêu cầu đăng ký tài khoản giảng viên. Tài khoản đang chờ quản trị viên duyệt; sau khi được duyệt, hãy đăng nhập bằng ứng dụng Desktop.";
              return RedirectToAction(nameof(Login));
          }
          catch (BusinessException ex) { ModelState.AddModelError("", ex.Message); }

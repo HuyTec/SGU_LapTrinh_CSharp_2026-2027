@@ -4,6 +4,8 @@ using Exam.Data;
 using Exam.Services;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Xunit;
 
 namespace Exam.Tests;
@@ -34,7 +36,7 @@ public class SqlExamTests : IAsyncLifetime
         options = new DbContextOptionsBuilder<ExamDbContext>().UseSqlServer(connection.ConnectionString,
             sql => sql.EnableRetryOnFailure()).Options;
         await using var db = NewContext();
-        await db.Database.EnsureCreatedAsync();
+        await db.Database.MigrateAsync();
         var student = new AppUser { UserName = "student", FullName = "Thí sinh A", StudentCode = "TEST001" };
         var other = new AppUser { UserName = "other", FullName = "Thí sinh B", StudentCode = "TEST002" };
         var teacher = new AppUser { UserName = "teacher", FullName = "Giảng viên" };
@@ -57,10 +59,19 @@ public class SqlExamTests : IAsyncLifetime
             Exam = exam, Manager = officer, Title = "Đợt kiểm thử", Status = "Active",
             OpensAt = clock.GetUtcNow().UtcDateTime.AddMinutes(-10),
             ClosesAt = clock.GetUtcNow().UtcDateTime.AddMinutes(30), DurationMinutes = 20,
-            ShuffleQuestions = true, ShuffleOptions = true,
-            Candidates = [new() { Student = student }, new() { Student = other }]
+            ShuffleQuestions = true, ShuffleOptions = true
         };
         db.ExamSessions.Add(session);
+        await db.SaveChangesAsync();
+        session.Classes.Add(new()
+        {
+            Class = new ExamClass
+            {
+                SubjectId = subject.Id,
+                Code = "TEST-CLASS",
+                Students = [new() { StudentId = student.Id }]
+            }
+        });
         await db.SaveChangesAsync();
         sessionId = session.Id;
         studentId = student.Id;
@@ -83,17 +94,8 @@ public class SqlExamTests : IAsyncLifetime
     public async Task CodeLookupRequiresClassAndDoesNotCreateAttempt()
     {
         await using var db = NewContext();
-        var session = await db.ExamSessions.Include(x => x.Exam).SingleAsync();
+        var session = await db.ExamSessions.Include(x => x.Exam).Include(x => x.Classes).SingleAsync();
         session.AccessCode = "CLASS-TEST";
-        session.Classes.Add(new()
-        {
-            Class = new ExamClass
-            {
-                SubjectId = session.Exam.SubjectId,
-                Code = "TS01",
-                Students = [new() { StudentId = studentId }]
-            }
-        });
         await db.SaveChangesAsync();
 
         var secondClass = new ExamClass
@@ -121,6 +123,123 @@ public class SqlExamTests : IAsyncLifetime
         await db.SaveChangesAsync();
         Assert.Equal(attempt, await service.StartAsync(studentId, sessionId));
         Assert.Equal(1, await db.Attempts.CountAsync());
+    }
+
+    [SqlFact]
+    public async Task UpgradingLegacySessionPreservesAttemptsWithoutGrantingNewAccessFromRoster()
+    {
+        const string previousMigration = "20261024110741_StaffRegistrationApproval";
+        long inProgressId;
+        long submittedId;
+        int rosterOnlyId;
+        var startedAt = clock.GetUtcNow().UtcDateTime.AddMinutes(-5);
+        var deadline = startedAt.AddMinutes(20);
+        var submittedAt = startedAt.AddMinutes(2);
+
+        await using (var legacy = NewContext())
+        {
+            await legacy.GetService<IMigrator>().MigrateAsync(previousMigration);
+            var rosterOnly = new AppUser { UserName = "roster-only", FullName = "Thí sinh chưa bắt đầu" };
+            legacy.Users.Add(rosterOnly);
+            await legacy.SaveChangesAsync();
+            rosterOnlyId = rosterOnly.Id;
+            legacy.SessionCandidates.AddRange(
+                new SessionCandidate { SessionId = sessionId, StudentId = studentId },
+                new SessionCandidate { SessionId = sessionId, StudentId = otherStudentId },
+                new SessionCandidate { SessionId = sessionId, StudentId = rosterOnlyId });
+            // The old database requires roster rows before inserting attempts.
+            await legacy.SaveChangesAsync();
+
+            var questionId = await legacy.Questions.OrderBy(q => q.Id).Select(q => q.Id).FirstAsync();
+            var inProgress = new Attempt
+            {
+                SessionId = sessionId, StudentId = studentId, StartedAt = startedAt, Deadline = deadline,
+                Questions = [new() { SourceQuestionId = questionId, Text = "Câu hỏi đã giao", Order = 1, Points = 10m,
+                    Options = [new() { Text = "Đáp án đã lưu", Order = 1, IsCorrect = true }] }]
+            };
+            var submitted = new Attempt
+            {
+                SessionId = sessionId, StudentId = otherStudentId, StartedAt = startedAt, Deadline = deadline,
+                Status = "Submitted", SubmittedAt = submittedAt, EndReason = "Manual",
+                Result = new() { Score = 10m, CorrectCount = 1, GradedAt = submittedAt }
+            };
+            legacy.Attempts.AddRange(inProgress, submitted);
+            await legacy.SaveChangesAsync();
+            var snapshot = inProgress.Questions.Single();
+            snapshot.Response = new() { SelectedOptionId = snapshot.Options.Single().Id, IsFlagged = true, SavedAt = startedAt };
+            await legacy.SaveChangesAsync();
+            inProgressId = inProgress.Id;
+            submittedId = submitted.Id;
+        }
+
+        await using var upgraded = NewContext();
+        await upgraded.Database.MigrateAsync();
+        var service = Service(upgraded);
+        var session = await upgraded.ExamSessions.Include(s => s.Classes).SingleAsync();
+        Assert.Null(session.AccessCode);
+        Assert.Empty(session.Classes);
+        Assert.Empty(await upgraded.Set<ClassStudent>().ToListAsync());
+        Assert.Equal(3, await upgraded.SessionCandidates.CountAsync());
+        Assert.Equal(2, await upgraded.Attempts.CountAsync());
+
+        Assert.Equal(inProgressId, await service.StartAsync(studentId, sessionId));
+        var resumed = await service.TakeAsync(studentId, inProgressId);
+        Assert.Equal("InProgress", resumed.Status);
+        Assert.Equal(deadline, resumed.Deadline);
+        var resumedQuestion = Assert.Single(resumed.Questions);
+        Assert.Equal("Câu hỏi đã giao", resumedQuestion.Text);
+        Assert.True(resumedQuestion.IsFlagged);
+        Assert.Equal(Assert.Single(resumedQuestion.Options).Id, resumedQuestion.SelectedOptionId);
+        Assert.Equal(403, (await Assert.ThrowsAsync<BusinessException>(
+            () => service.TakeAsync(otherStudentId, inProgressId))).Status);
+
+        var storedResult = await upgraded.ExamResults.AsNoTracking().SingleAsync();
+        Assert.Equal(submittedId, storedResult.AttemptId);
+        Assert.Equal(10m, storedResult.Score);
+        Assert.Equal(submittedAt, storedResult.GradedAt);
+        var history = Assert.Single((await service.HistoryAsync(otherStudentId)).Results);
+        Assert.Equal(submittedId, history.AttemptId);
+        Assert.Equal("Submitted", history.Status);
+        Assert.Equal(submittedAt, history.SubmittedAt);
+        Assert.Null(history.Score);
+        Assert.Equal(403, (await Assert.ThrowsAsync<BusinessException>(
+            () => service.ResultAsync(studentId, submittedId))).Status);
+
+        Assert.Empty((await service.SessionsAsync(rosterOnlyId)).Sessions);
+        Assert.Equal(404, (await Assert.ThrowsAsync<BusinessException>(
+            () => service.DetailAsync(rosterOnlyId, sessionId))).Status);
+        Assert.Equal(403, (await Assert.ThrowsAsync<BusinessException>(
+            () => service.StartAsync(rosterOnlyId, sessionId))).Status);
+        Assert.Equal(2, await upgraded.Attempts.CountAsync());
+    }
+
+    [SqlFact]
+    public async Task DatabaseRejectsDuplicateSessionClassAndAccessCode()
+    {
+        int classId;
+        await using (var setup = NewContext())
+        {
+            classId = await setup.Set<SessionClass>().Select(x => x.ClassId).SingleAsync();
+            var session = await setup.ExamSessions.SingleAsync();
+            session.AccessCode = "UNIQUE-CODE";
+            await setup.SaveChangesAsync();
+        }
+
+        await using (var duplicateClass = NewContext())
+        {
+            duplicateClass.Add(new SessionClass { SessionId = sessionId, ClassId = classId });
+            await Assert.ThrowsAsync<DbUpdateException>(() => duplicateClass.SaveChangesAsync());
+        }
+
+        await using var duplicateCode = NewContext();
+        var original = await duplicateCode.ExamSessions.SingleAsync();
+        duplicateCode.ExamSessions.Add(new()
+        {
+            ExamId = original.ExamId, ManagedBy = original.ManagedBy, Title = "Đợt thứ hai",
+            AccessCode = original.AccessCode, OpensAt = original.OpensAt, ClosesAt = original.ClosesAt,
+            DurationMinutes = original.DurationMinutes
+        });
+        await Assert.ThrowsAsync<DbUpdateException>(() => duplicateCode.SaveChangesAsync());
     }
 
     private async Task<long> Start()
@@ -205,6 +324,22 @@ public class SqlExamTests : IAsyncLifetime
     }
 
     [SqlFact]
+    public async Task AnotherStudentCannotTriggerGradingOfAnExpiredAttempt()
+    {
+        var id = await Start();
+        clock.Set(clock.GetUtcNow().AddMinutes(21));
+        await using (var request = NewContext())
+        {
+            var error = await Assert.ThrowsAsync<BusinessException>(() => Service(request).StatusAsync(otherStudentId, id));
+            Assert.Equal(403, error.Status);
+        }
+
+        await using var verify = NewContext();
+        Assert.Equal("InProgress", (await verify.Attempts.SingleAsync(x => x.Id == id)).Status);
+        Assert.Empty(await verify.ExamResults.ToListAsync());
+    }
+
+    [SqlFact]
     public async Task AttemptPayloadNeverContainsCorrectAnswerFields()
     {
         var id = await Start();
@@ -282,6 +417,47 @@ public class SqlExamTests : IAsyncLifetime
         Assert.Equal("Timeout", attempt.EndReason);
         Assert.Equal(attempt.Deadline, attempt.SubmittedAt);
         Assert.Equal(1, await verify.ExamResults.CountAsync());
+    }
+
+    [SqlFact]
+    public async Task ExpiryCommitsHealthyAttemptsWhenOneResultCannotBeWritten()
+    {
+        var failingId = await Start();
+        long healthyId;
+        await using (var setup = NewContext())
+        {
+            var service = Service(setup);
+            healthyId = await service.StartAsync(otherStudentId, sessionId);
+            var answers = await setup.AttemptOptions.Where(x => x.Question.AttemptId == failingId && x.IsCorrect)
+                .Select(x => new { QuestionId = x.AttemptQuestionId, OptionId = x.Id }).ToListAsync();
+            Assert.NotEmpty(answers);
+            foreach (var answer in answers)
+                await service.SaveAsync(studentId, failingId, new(answer.QuestionId, answer.OptionId, false));
+            // Fail the perfect score at the SQL boundary; the unanswered attempt still scores zero.
+            await setup.Database.ExecuteSqlRawAsync(
+                "ALTER TABLE dbo.ExamResults ADD CONSTRAINT CK_Test_ResultWrite CHECK (Score = 0)");
+        }
+
+        clock.Set(clock.GetUtcNow().AddMinutes(21));
+        await using (var worker = NewContext())
+        {
+            await Assert.ThrowsAsync<AggregateException>(() => Service(worker).ExpireAsync());
+            await worker.Database.ExecuteSqlRawAsync("ALTER TABLE dbo.ExamResults DROP CONSTRAINT CK_Test_ResultWrite");
+        }
+
+        await using (var verify = NewContext())
+        {
+            Assert.Equal("InProgress", (await verify.Attempts.SingleAsync(x => x.Id == failingId)).Status);
+            Assert.Equal("Submitted", (await verify.Attempts.SingleAsync(x => x.Id == healthyId)).Status);
+            Assert.Equal(healthyId, (await verify.ExamResults.SingleAsync()).AttemptId);
+        }
+
+        await using (var retry = NewContext())
+            Assert.Equal(1, await Service(retry).ExpireAsync());
+        await using var completed = NewContext();
+        Assert.Equal(2, await completed.ExamResults.CountAsync());
+        Assert.Equal(10m, (await completed.ExamResults.SingleAsync(x => x.AttemptId == failingId)).Score);
+        Assert.All(await completed.Attempts.ToListAsync(), attempt => Assert.Equal("Timeout", attempt.EndReason));
     }
 
     [SqlFact]

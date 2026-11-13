@@ -6,10 +6,10 @@ using Exam.Core;
 namespace Exam.Desktop;
 
 /// <summary>Reusable staff workspace with resource-specific columns, actions and question preview.</summary>
-public class ResourceView : UserControl, IWorkspaceView, IResourceView
+public partial class ResourceView : UserControl, IWorkspaceView, IResourceView
 {
     private readonly string resourceKey;
-    private readonly ResourcePresenter presenter;
+    private readonly ResourcePresenter presenter = null!;
     private readonly BindingSource source = new();
     private readonly UiDataGridView grid = new() { Dock = DockStyle.Fill, ReadOnly = true, AllowUserToAddRows = false, AllowUserToDeleteRows = false, SelectionMode = DataGridViewSelectionMode.FullRowSelect, MultiSelect = false, AutoGenerateColumns = false, AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill };
     private readonly TextBox search = new() { Width = 280, PlaceholderText = "Tìm kiếm trong danh sách…" };
@@ -54,19 +54,28 @@ public class ResourceView : UserControl, IWorkspaceView, IResourceView
     public event EventHandler<string>? NavigateRequested;
     public bool IsResourceVisible => Visible && IsHandleCreated && !IsDisposed;
     public IWin32Window DialogOwner => (IWin32Window?)FindForm() ?? this;
+    [System.ComponentModel.Browsable(false)]
+    [System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
     public ResourceQuery Query => new(search.Text.Trim(), resourceKey == "questions" ? Value(subjectFilter) : null,
         resourceKey == "questions" ? Value(topicFilter) : null, resourceKey == "questions" ? Value(difficultyFilter) : null,
         resourceKey == "subjects" && subjectStatusFilter.SelectedIndex > 0 ? subjectStatusFilter.SelectedIndex == 1 : null);
     public int? SelectedRecordId => grid.CurrentRow is { } row && int.TryParse(row.Cells["_id"].Value?.ToString(), out var id) ? id : null;
     public int? SelectedSessionId => SelectedRecordId is int id && rowsById.TryGetValue(id, out var row) ? Integer(row.GetValueOrDefault("sessionId")) : null;
 
-    public ResourceView(ExamApiClient api, string resourceKey)
+    public ResourceView() : this("") { }
+
+    protected ResourceView(string resourceKey)
     {
         this.resourceKey = resourceKey;
         title = Titles.GetValueOrDefault(resourceKey, "Danh sách dữ liệu");
+        InitializeComponent();
+        countLabel.Text = title;
+        filters.Visible = previewCard.Visible = sideGap.Visible = resourceKey is "" or "questions";
+    }
+
+    public ResourceView(ExamApiClient api, string resourceKey) : this(resourceKey)
+    {
         presenter = new ResourcePresenter(api, this, resourceKey);
-        Dock = DockStyle.Fill; BackColor = Theme.Background; Font = Theme.BodyFont; ForeColor = Theme.Text;
-        AutoScaleMode = AutoScaleMode.Dpi;
         Theme.StyleInput(search); Theme.StyleInput(subjectFilter); Theme.StyleInput(topicFilter); Theme.StyleInput(difficultyFilter);
         search.Margin = new Padding(0, 5, 12, 0); search.Height = 30;
         primaryActions.Controls.Add(search);
@@ -95,25 +104,8 @@ public class ResourceView : UserControl, IWorkspaceView, IResourceView
         }
         toolbar.Controls.Add(primaryActions); toolbar.Controls.Add(filters); toolbar.Controls.Add(resourceActions);
         toolbar.SizeChanged += (_, _) => LayoutToolbar();
-        var dataArea = new Panel { Dock = DockStyle.Fill, Padding = new Padding(0, 16, 0, 0) };
-        var listCard = new UiCard { Dock = DockStyle.Fill, Padding = new Padding(1) };
-        var listHeader = new Panel { Dock = DockStyle.Top, Height = 54, Padding = new Padding(16, 14, 16, 8) };
-        listHeader.Controls.Add(countLabel);
-        var listFooter = new FlowLayoutPanel { Dock = DockStyle.Bottom, Height = 56, Padding = new Padding(10, 8, 10, 8), WrapContents = false };
-        listFooter.Controls.Add(previous); listFooter.Controls.Add(pageLabel); listFooter.Controls.Add(next);
-        var listContent = new Panel { Dock = DockStyle.Fill };
-        grid.DataSource = source; ConfigureColumns();
-        listContent.Controls.Add(grid); listContent.Controls.Add(empty); listContent.Controls.Add(progress);
-        listCard.Controls.Add(listContent); listCard.Controls.Add(listFooter); listCard.Controls.Add(listHeader);
-        var emptyLayout = new FlowLayoutPanel { AutoSize = true, FlowDirection = FlowDirection.TopDown, WrapContents = false, Padding = new Padding(28), Location = new Point(12, 32) };
-        emptyTitle.Text = "Chưa có dữ liệu"; emptyMessage.Text = "Danh sách sẽ xuất hiện tại đây sau khi bạn thêm dữ liệu.";
-        emptyTitle.Margin = new Padding(0, 0, 0, 12); emptyMessage.Margin = new Padding(0, 0, 0, 20);
-        emptyLayout.Controls.Add(emptyTitle); emptyLayout.Controls.Add(emptyMessage); emptyLayout.Controls.Add(emptyAction); empty.Controls.Add(emptyLayout);
         empty.SizeChanged += (_, _) => emptyLayout.MaximumSize = new Size(Math.Max(200, empty.Width - 32), 0);
-        previewCard.Controls.Add(previewContent);
-        dataArea.Controls.Add(listCard); dataArea.Controls.Add(sideGap); dataArea.Controls.Add(previewCard);
-        var statusPanel = new Panel { Dock = DockStyle.Bottom, Height = 32, Padding = new Padding(2, 8, 2, 0) }; statusPanel.Controls.Add(status);
-        Controls.Add(dataArea); Controls.Add(statusPanel); Controls.Add(toast); Controls.Add(toolbar);
+        grid.DataSource = source; ConfigureColumns();
         find.Click += async (_, _) => await presenter.SearchAsync();
         refresh.Click += async (_, _) => await RefreshAsync();
         add.Click += async (_, _) => await AddNewAsync(); emptyAction.Click += async (_, _) => await AddNewAsync();
@@ -423,14 +415,7 @@ public class ResourceView : UserControl, IWorkspaceView, IResourceView
     private static int? Integer(object? value) => int.TryParse(value?.ToString(), out var id) ? id : null;
     private static string? Value(ComboBox combo) => (combo.SelectedItem as ChoiceDto)?.Value;
     private static string VietNamNow() => TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, VietNamTime.Zone).ToString("HH:mm:ss");
-    private static ComboBox Lookup() => new() { DropDownStyle = ComboBoxStyle.DropDownList, DisplayMember = "Label", Width = 230 };
     private static UiButton Button(string text, UiButtonKind kind = UiButtonKind.Secondary) => new() { Text = text, Kind = kind, AutoSize = true, Margin = new Padding(0, 0, 8, 8) };
-    private static FlowLayoutPanel Flow() => new() { Dock = DockStyle.Top, AutoSize = true, AutoSizeMode = AutoSizeMode.GrowAndShrink, WrapContents = true, Margin = Padding.Empty };
-    private static Control LabeledLookup(string label, ComboBox combo)
-    {
-        var panel = new FlowLayoutPanel { FlowDirection = FlowDirection.TopDown, WrapContents = false, AutoSize = true, AutoSizeMode = AutoSizeMode.GrowAndShrink, Margin = new Padding(0, 10, 14, 0) };
-        panel.Controls.Add(new Label { Text = label, Font = Theme.SmallFont, ForeColor = Theme.Muted, AutoSize = true, Margin = new Padding(0, 0, 0, 1) }); panel.Controls.Add(combo); return panel;
-    }
 
     private sealed record Column(string Key, string Label, float Weight = 100, int MinimumWidth = 100);
     private static IReadOnlyList<Column> ColumnsFor(string key) => key switch
@@ -462,7 +447,7 @@ public class ResourceView : UserControl, IWorkspaceView, IResourceView
 
     protected override void Dispose(bool disposing)
     {
-        if (disposing) { presenter.Dispose(); source.Dispose(); }
+        if (disposing) { presenter?.Dispose(); source.Dispose(); }
         base.Dispose(disposing);
     }
 }

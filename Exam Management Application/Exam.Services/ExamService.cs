@@ -12,11 +12,10 @@ public class ExamService(ExamDbContext db, TimeProvider clock)
     // Keep list, detail and new attempts on the same admission rule.
     IQueryable<ExamSession> AssignedSessions(int student) =>
         db.ExamSessions.Where(session =>
-            db.Attempts.Any(a => a.SessionId == session.Id && a.StudentId == student) || (session.AccessCode == null
-                ? session.Candidates.Any(candidate => candidate.StudentId == student)
-                : session.Classes.Any(link => link.Class.IsActive &&
-                    link.Class.SubjectId == session.Exam.SubjectId &&
-                    link.Class.Students.Any(member => member.StudentId == student))));
+            db.Attempts.Any(a => a.SessionId == session.Id && a.StudentId == student) ||
+            session.Classes.Any(link => link.Class.IsActive &&
+                link.Class.SubjectId == session.Exam.SubjectId &&
+                link.Class.Students.Any(member => member.StudentId == student)));
 
     public async Task<int> FindSessionByCodeAsync(int student, string? code)
     {
@@ -100,7 +99,12 @@ public class ExamService(ExamDbContext db, TimeProvider clock)
             if (s.ShuffleOptions)
                 Random.Shared.Shuffle(System.Runtime.InteropServices.CollectionsMarshal.AsSpan(opts));
             foreach (var o in opts)
-                aq.Options.Add(new() { Text = o.Text, IsCorrect = o.IsCorrect, Order = aq.Options.Count + 1 });
+                aq.Options.Add(new()
+                {
+                    Text = o.Text,
+                    IsCorrect = o.IsCorrect,
+                    Order = aq.Options.Count + 1
+                });
             aq.Response = new Response { SavedAt = now };
             a.Questions.Add(aq);
         }
@@ -119,13 +123,13 @@ public class ExamService(ExamDbContext db, TimeProvider clock)
     }
     public async Task<AttemptVm> TakeAsync(int student, long id)
     {
-        await ExpireAsync(id);
+        await ExpireAttemptAsync(id, student);
         var a = await Own(student, id);
         return new(a.Id, a.SessionId, a.Session.Title, Now, a.Deadline, a.Status, a.Questions.OrderBy(x => x.Order).Select(q => new QuestionDto(q.Id, q.Text, q.Order, q.Points, q.Options.OrderBy(x => x.Order).Select(o => new OptionDto(o.Id, o.Text, o.Order)).ToList(), q.Response?.SelectedOptionId, q.Response?.IsFlagged ?? false)).ToList());
     }
     public async Task<AttemptStatusDto> StatusAsync(int student, long id)
     {
-        await ExpireAsync(id);
+        await ExpireAttemptAsync(id, student);
         var a = await Own(student, id);
         return new(a.Id, Now, a.Deadline, a.Status);
     }
@@ -143,11 +147,52 @@ public class ExamService(ExamDbContext db, TimeProvider clock)
         var correct = a.Questions.Where(q => q.Options.Any(o => o.Id == q.Response?.SelectedOptionId && o.IsCorrect)).ToList();
         a.Result = new ExamResult { Score = ExamRules.Score(correct.Sum(q => q.Points), a.Questions.Sum(q => q.Points)), CorrectCount = correct.Count, GradedAt = Now };
     }
-    /// <summary>Recover expired or incompletely graded attempts at startup and during periodic sweeps.</summary>
-    public Task<int> ExpireAsync(long? id = null) => Serial(async () => { var now = Now; var query = Full.Where(a => (a.Status == "InProgress" && a.Deadline <= now) || (a.Status == "Submitted" && a.Result == null)); if (id != null) query = query.Where(a => a.Id == id); var rows = await query.ToListAsync(); foreach (var a in rows) Grade(a, "Timeout"); return rows.Count; });
+    IQueryable<Attempt> DueAttempts(IQueryable<Attempt> attempts, DateTime now) =>
+        attempts.Where(a => (a.Status == "InProgress" && a.Deadline <= now) ||
+                            (a.Status == "Submitted" && a.Result == null));
+
+    Task<int> ExpireAttemptAsync(long id, int? student = null) => Serial(async () =>
+    {
+        var attempt = await DueAttempts(Full, Now)
+            .SingleOrDefaultAsync(a => a.Id == id && (student == null || a.StudentId == student));
+        if (attempt == null)
+            return 0;
+
+        Grade(attempt, "Timeout");
+        return 1;
+    });
+
+    /// <summary>Retry due attempts independently so a failed attempt cannot roll back successful grading.</summary>
+    public async Task<int> ExpireAsync(long? id = null, CancellationToken cancellationToken = default)
+    {
+        if (id is long attemptId)
+            return await ExpireAttemptAsync(attemptId);
+
+        var dueIds = await DueAttempts(db.Attempts, Now).OrderBy(a => a.Id)
+            .Select(a => a.Id).ToListAsync(cancellationToken);
+        var completed = 0;
+        List<Exception> failures = [];
+        foreach (var dueId in dueIds)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            try
+            {
+                completed += await ExpireAttemptAsync(dueId);
+            }
+            catch (Exception ex) when (ex is not OperationCanceledException)
+            {
+                failures.Add(new InvalidOperationException($"Timeout grading failed for attempt {dueId}.", ex));
+            }
+        }
+
+        if (failures.Count > 0)
+            throw new AggregateException("One or more due attempts could not be graded.", failures);
+        return completed;
+    }
+
     public async Task<ResultVm> ResultAsync(int student, long id)
     {
-        await ExpireAsync(id);
+        await ExpireAttemptAsync(id, student);
         var a = await Own(student, id);
         var pub = a.Session.Published && a.Result != null;
         var review = pub && a.Session.ReviewPolicy != "ScoreOnly";
