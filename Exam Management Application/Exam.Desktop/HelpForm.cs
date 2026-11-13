@@ -1,32 +1,35 @@
+using System.ComponentModel;
+
 namespace Exam.Desktop;
 
-public sealed class HelpForm : Form
+public sealed partial class HelpForm : Form
 {
-    public HelpForm(string? role = null)
+    public HelpForm()
     {
-        Text = "Hướng dẫn sử dụng Exam";
-        Theme.Apply(this); StartPosition = FormStartPosition.CenterParent;
-        var area = Screen.FromControl(this).WorkingArea;
-        Size = new Size(Math.Min(900, area.Width - 48), Math.Min(720, area.Height - 48)); MinimumSize = new Size(Math.Min(650, area.Width - 48), Math.Min(450, area.Height - 48));
-        var title = new Label
+        InitializeComponent();
+        body.Text = Content(null);
+    }
+
+    public HelpForm(string? role) : this()
+    {
+        ApplyRole(role);
+    }
+
+    protected override void OnLoad(EventArgs e)
+    {
+        if (LicenseManager.UsageMode != LicenseUsageMode.Designtime && !DesignMode)
         {
-            Dock = DockStyle.Top, Height = 76, Padding = new Padding(24, 20, 24, 12),
-            Font = Theme.SectionFont, BackColor = Theme.Surface,
-            Text = role is null ? "Bắt đầu sử dụng" : "Hướng dẫn — " + UiLabels.Of(role)
-        };
-        var body = new RichTextBox
-        {
-            Dock = DockStyle.Fill, ReadOnly = true, BorderStyle = BorderStyle.None,
-            BackColor = Theme.Surface, ForeColor = Theme.Text,
-            Font = Theme.BodyFont, DetectUrls = false, ScrollBars = RichTextBoxScrollBars.Vertical,
-            Text = Content(role)
-        };
-        var content = new Panel { Dock = DockStyle.Fill, Padding = new Padding(24, 20, 24, 20) };
-        var card = new UiCard { Dock = DockStyle.Fill, Padding = new Padding(20) }; card.Controls.Add(body); content.Controls.Add(card);
-        var footer = new FlowLayoutPanel { Dock = DockStyle.Bottom, AutoSize = true, Padding = new Padding(24, 12, 24, 12), FlowDirection = FlowDirection.RightToLeft, BackColor = Theme.Surface };
-        var close = new UiButton { Text = "Đóng hướng dẫn", Kind = UiButtonKind.Secondary, AutoSize = true, DialogResult = DialogResult.Cancel };
-        footer.Controls.Add(close);
-        Controls.Add(content); Controls.Add(title); Controls.Add(footer); CancelButton = close;
+            var area = Screen.FromControl(this).WorkingArea;
+            MinimumSize = new Size(Math.Min(MinimumSize.Width, area.Width - 48), Math.Min(MinimumSize.Height, area.Height - 48));
+            Size = new Size(Math.Min(Width, area.Width - 48), Math.Min(Height, area.Height - 48));
+        }
+        base.OnLoad(e);
+    }
+
+    private void ApplyRole(string? role)
+    {
+        title.Text = role is null ? "Bắt đầu sử dụng" : "Hướng dẫn — " + UiLabels.Of(role);
+        body.Text = Content(role);
     }
 
     private static string Content(string? role)

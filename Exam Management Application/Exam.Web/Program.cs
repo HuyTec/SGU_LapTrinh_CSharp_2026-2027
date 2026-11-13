@@ -56,10 +56,11 @@ public class ExpiryWorker(IServiceScopeFactory scopes, ILogger<ExpiryWorker> log
             try
             {
                 using var scope = scopes.CreateScope();
-                var count = await scope.ServiceProvider.GetRequiredService<ExamService>().ExpireAsync();
+                var count = await scope.ServiceProvider.GetRequiredService<ExamService>().ExpireAsync(cancellationToken: stoppingToken);
                 if (count > 0)
                     logger.LogInformation("Expired grading batch {RequestId}: {Count} attempts completed", "worker-" + Guid.NewGuid().ToString("N"), count);
             }
+            catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested) { return; }
             catch (Exception ex) { logger.LogError(ex, "Timeout grading retry will run in 5 seconds."); }
         } while (await timer.WaitForNextTickAsync(stoppingToken));
     }

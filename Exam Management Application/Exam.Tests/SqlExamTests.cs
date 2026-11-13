@@ -324,6 +324,22 @@ public class SqlExamTests : IAsyncLifetime
     }
 
     [SqlFact]
+    public async Task AnotherStudentCannotTriggerGradingOfAnExpiredAttempt()
+    {
+        var id = await Start();
+        clock.Set(clock.GetUtcNow().AddMinutes(21));
+        await using (var request = NewContext())
+        {
+            var error = await Assert.ThrowsAsync<BusinessException>(() => Service(request).StatusAsync(otherStudentId, id));
+            Assert.Equal(403, error.Status);
+        }
+
+        await using var verify = NewContext();
+        Assert.Equal("InProgress", (await verify.Attempts.SingleAsync(x => x.Id == id)).Status);
+        Assert.Empty(await verify.ExamResults.ToListAsync());
+    }
+
+    [SqlFact]
     public async Task AttemptPayloadNeverContainsCorrectAnswerFields()
     {
         var id = await Start();
@@ -401,6 +417,47 @@ public class SqlExamTests : IAsyncLifetime
         Assert.Equal("Timeout", attempt.EndReason);
         Assert.Equal(attempt.Deadline, attempt.SubmittedAt);
         Assert.Equal(1, await verify.ExamResults.CountAsync());
+    }
+
+    [SqlFact]
+    public async Task ExpiryCommitsHealthyAttemptsWhenOneResultCannotBeWritten()
+    {
+        var failingId = await Start();
+        long healthyId;
+        await using (var setup = NewContext())
+        {
+            var service = Service(setup);
+            healthyId = await service.StartAsync(otherStudentId, sessionId);
+            var answers = await setup.AttemptOptions.Where(x => x.Question.AttemptId == failingId && x.IsCorrect)
+                .Select(x => new { QuestionId = x.AttemptQuestionId, OptionId = x.Id }).ToListAsync();
+            Assert.NotEmpty(answers);
+            foreach (var answer in answers)
+                await service.SaveAsync(studentId, failingId, new(answer.QuestionId, answer.OptionId, false));
+            // Fail the perfect score at the SQL boundary; the unanswered attempt still scores zero.
+            await setup.Database.ExecuteSqlRawAsync(
+                "ALTER TABLE dbo.ExamResults ADD CONSTRAINT CK_Test_ResultWrite CHECK (Score = 0)");
+        }
+
+        clock.Set(clock.GetUtcNow().AddMinutes(21));
+        await using (var worker = NewContext())
+        {
+            await Assert.ThrowsAsync<AggregateException>(() => Service(worker).ExpireAsync());
+            await worker.Database.ExecuteSqlRawAsync("ALTER TABLE dbo.ExamResults DROP CONSTRAINT CK_Test_ResultWrite");
+        }
+
+        await using (var verify = NewContext())
+        {
+            Assert.Equal("InProgress", (await verify.Attempts.SingleAsync(x => x.Id == failingId)).Status);
+            Assert.Equal("Submitted", (await verify.Attempts.SingleAsync(x => x.Id == healthyId)).Status);
+            Assert.Equal(healthyId, (await verify.ExamResults.SingleAsync()).AttemptId);
+        }
+
+        await using (var retry = NewContext())
+            Assert.Equal(1, await Service(retry).ExpireAsync());
+        await using var completed = NewContext();
+        Assert.Equal(2, await completed.ExamResults.CountAsync());
+        Assert.Equal(10m, (await completed.ExamResults.SingleAsync(x => x.AttemptId == failingId)).Score);
+        Assert.All(await completed.Attempts.ToListAsync(), attempt => Assert.Equal("Timeout", attempt.EndReason));
     }
 
     [SqlFact]

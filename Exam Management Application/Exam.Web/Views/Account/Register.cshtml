@@ -1,15 +1,23 @@
 @model Exam.Web.ViewModels.RegisterVm
-@{ ViewData["Title"] = "Đăng ký tài khoản"; }
+@{ ViewData["Title"] = "Đăng ký tài khoản"; var lecturer = Model.AccountType == "Lecturer"; }
 <section class="login-panel surface" aria-labelledby="register-heading">
     <h1 id="register-heading">Đăng ký tài khoản</h1>
-    <p class="muted">Chọn loại tài khoản phù hợp. Tài khoản nhân sự cần được quản trị viên duyệt trước khi sử dụng.</p>
+    <nav class="nav nav-tabs mb-3" aria-label="Loại tài khoản đăng ký">
+        <a class="nav-link @(!lecturer ? "active" : "")" aria-current="@(!lecturer ? "page" : null)" asp-action="Register" asp-route-accountType="Student">Thí sinh</a>
+        <a class="nav-link @(lecturer ? "active" : "")" aria-current="@(lecturer ? "page" : null)" asp-action="Register" asp-route-accountType="Lecturer">Giảng viên</a>
+    </nav>
+    <h2>@(lecturer ? "Đăng ký giảng viên" : "Đăng ký thí sinh")</h2>
+    <p class="muted">@(lecturer ? "Tài khoản cần được quản trị viên duyệt trước khi sử dụng." : "Dùng mã thí sinh do nhà trường cấp. Bạn có thể đăng nhập ngay sau khi đăng ký.")</p>
     <form asp-controller="Account" asp-action="Register" method="post">
+        <input type="hidden" name="AccountType" value="@(lecturer ? "Lecturer" : "Student")" />
         <div asp-validation-summary="ModelOnly" class="validation-summary text-danger" role="alert"></div>
-        <div class="mb-3"><label asp-for="AccountType" class="form-label">Loại tài khoản</label><select asp-for="AccountType" class="form-select" aria-describedby="account-type-help"><option value="Student">Thí sinh</option><option value="Lecturer">Giảng viên</option><option value="ExamOfficer">Cán bộ quản lý thi</option><option value="Administrator">Quản trị viên</option></select><span asp-validation-for="AccountType" class="text-danger"></span></div>
-        <p id="account-type-help" class="notice small">Thí sinh có thể đăng nhập Web sau khi đăng ký và cần được cán bộ phân công đợt thi. Giảng viên, cán bộ quản lý thi và quản trị viên phải chờ duyệt; sau khi được duyệt, đăng nhập ứng dụng Desktop bằng tài khoản đã đăng ký.</p>
+        <span asp-validation-for="AccountType" class="text-danger"></span>
         <div class="mb-3"><label asp-for="UserName" class="form-label">Tên đăng nhập</label><input asp-for="UserName" class="form-control" autocomplete="username" maxlength="60" required /><span asp-validation-for="UserName" class="text-danger"></span></div>
         <div class="mb-3"><label asp-for="FullName" class="form-label">Họ và tên</label><input asp-for="FullName" class="form-control" autocomplete="name" maxlength="120" required /><span asp-validation-for="FullName" class="text-danger"></span></div>
-        <div class="mb-3" id="student-code-field"><label asp-for="StudentCode" class="form-label">Mã thí sinh <span class="small muted">(chỉ dành cho thí sinh)</span></label><input asp-for="StudentCode" class="form-control" maxlength="30" aria-describedby="student-code-help" /><div id="student-code-help" class="form-text">Thí sinh nhập mã do nhà trường cấp. Tài khoản nhân sự để trống trường này.</div><span asp-validation-for="StudentCode" class="text-danger"></span></div>
+        @if (!lecturer)
+        {
+            <div class="mb-3"><label asp-for="StudentCode" class="form-label">Mã thí sinh</label><input asp-for="StudentCode" class="form-control" maxlength="30" required /><span asp-validation-for="StudentCode" class="text-danger"></span></div>
+        }
         <div class="mb-3"><label asp-for="Email" class="form-label">Email</label><input asp-for="Email" type="email" class="form-control" autocomplete="email" maxlength="256" required /><span asp-validation-for="Email" class="text-danger"></span></div>
         <div class="mb-3"><label asp-for="Password" class="form-label">Mật khẩu</label><input asp-for="Password" type="password" class="form-control" autocomplete="new-password" minlength="8" required aria-describedby="password-help" /><div id="password-help" class="form-text">Ít nhất 8 ký tự, gồm chữ hoa, chữ thường, chữ số và ký tự đặc biệt.</div><span asp-validation-for="Password" class="text-danger"></span></div>
         <div class="mb-4"><label asp-for="ConfirmPassword" class="form-label">Nhập lại mật khẩu</label><input asp-for="ConfirmPassword" type="password" class="form-control" autocomplete="new-password" minlength="8" required /><span asp-validation-for="ConfirmPassword" class="text-danger"></span></div>
@@ -18,4 +26,3 @@
     <p class="mt-4 mb-2">Đã có tài khoản? <a asp-action="Login">Đăng nhập</a></p>
     <a asp-controller="Help" asp-action="Index">Hướng dẫn sử dụng</a>
 </section>
-@section Scripts { <script src="~/js/register.js" asp-append-version="true" defer></script> }
