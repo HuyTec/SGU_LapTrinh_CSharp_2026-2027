@@ -11,6 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 var connection = builder.Configuration.GetConnectionString("ExamDb") ?? throw new InvalidOperationException("Set ConnectionStrings:ExamDb using user-secrets or environment variables.");
 var key = builder.Configuration["Jwt:Key"] ?? throw new InvalidOperationException("Set Jwt:Key using user-secrets or environment variables.");
 if (Encoding.UTF8.GetByteCount(key) < 32) throw new InvalidOperationException("Jwt:Key must contain at least 32 bytes.");
+builder.Services.AddScoped<StudentClassService>();
 builder.Services.AddDbContext<ExamDbContext>(o => o.UseSqlServer(connection, s => s.EnableRetryOnFailure()));
 builder.Services.AddIdentityCore<AppUser>(o => { o.Password.RequiredLength = 8; o.Lockout.MaxFailedAccessAttempts = 5; o.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(10); o.User.RequireUniqueEmail = false; }).AddRoles<AppRole>().AddEntityFrameworkStores<ExamDbContext>().AddDefaultTokenProviders();
 builder.Services.AddSingleton(TimeProvider.System);

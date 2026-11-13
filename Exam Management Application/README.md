@@ -51,3 +51,14 @@ Link báo cáo: GG Docs:
 Link báo cáo Nghiệp vụ GG Sheets:
 
 [docs.google.com/spreadsheets/d/10sSsgNXNt2c-S9SLn9rWQej7txwzoXuFAWfPI9gzFOc/edit?usp=sharing](https://docs.google.com/spreadsheets/d/10sSsgNXNt2c-S9SLn9rWQej7txwzoXuFAWfPI9gzFOc/edit?usp=sharing)
+
+### Thử lớp trên Web thí sinh
+
+Chỉ chạy trên SQL Docker local, database **ExamAppDocker**, sau migration và seed tài khoản demo:
+
+```powershell
+sqlcmd -S 'tcp:127.0.0.1,14333' -U sa -d ExamAppDocker -C -b -i .\scripts\Seed-StudentClassDemo.sql
+```
+
+Đăng nhập thí sinh → **Lớp của tôi** → nhập `DEMO-NV10` → vào thi bằng `THI-NV10`.
+Tự tham gia lớp thử chỉ bật trong Development. QT03 quản lý danh mục lớp trên Desktop, QT04 quản lý thành viên, UC-19 gán lớp vào đợt thi trên Web giảng viên.
