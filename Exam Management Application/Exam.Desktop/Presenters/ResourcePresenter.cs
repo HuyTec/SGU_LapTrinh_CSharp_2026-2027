@@ -3,7 +3,7 @@ using Exam.Core;
 
 namespace Exam.Desktop;
 
-public sealed record ResourceQuery(string Search, string? SubjectId, string? TopicId, string? Difficulty);
+public sealed record ResourceQuery(string Search, string? SubjectId, string? TopicId, string? Difficulty, bool? IsActive = null);
 
 public interface IResourceView
 {
@@ -71,13 +71,13 @@ public sealed class ResourcePresenter : IDisposable
             view.Configure(catalog, resource, preserveFilters);
         }
         var query = view.Query;
-        var result = await api.ListAsync(resourceKey, query.Search, page, query.SubjectId, query.TopicId, query.Difficulty);
+        var result = await api.ListAsync(resourceKey, query.Search, page, query.SubjectId, query.TopicId, query.Difficulty, query.IsActive);
         if (Unavailable) return;
         var lastPage = Math.Max(1, (int)Math.Ceiling(result.Total / 25d));
         if (page > lastPage)
         {
             page = lastPage;
-            result = await api.ListAsync(resourceKey, query.Search, page, query.SubjectId, query.TopicId, query.Difficulty);
+            result = await api.ListAsync(resourceKey, query.Search, page, query.SubjectId, query.TopicId, query.Difficulty, query.IsActive);
         }
         if (Unavailable) return;
         view.RenderPage(result);
@@ -99,7 +99,7 @@ public sealed class ResourcePresenter : IDisposable
             view.Notify(id.HasValue ? "Đã lưu thay đổi." : "Đã thêm dữ liệu mới.");
             await LoadPageAsync(true, true);
         }
-    }, "Đang mở biểu mẫu…");
+    }, "");
 
     public Task DeleteSelectedAsync() => RunAsync(async () =>
     {

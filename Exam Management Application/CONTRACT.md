@@ -81,14 +81,14 @@ Quyền tạo lượt mới dựa trên thành viên của lớp đang hoạt đ
 - POST `/api/auth/login` (`LoginRequest`) → `LoginResponse`; POST `/api/auth/logout` thu hồi JWT hiện tại.
 - JWT Bearer cho mọi `/api/admin` route.
 - GET `/api/admin/catalog` → `AdminCatalogDto` theo vai trò và phạm vi.
-- GET `/api/admin/{resource}?search=&page=1&pageSize=100` → `AdminPageDto`. `questions` còn nhận `subjectId`, `topicId`, `difficulty`; lọc và phân trang câu hỏi bằng SQL.
+- GET `/api/admin/{resource}?search=&page=1&pageSize=100` → `AdminPageDto`. `questions` còn nhận `subjectId`, `topicId`, `difficulty`; lọc và phân trang câu hỏi bằng SQL. Danh mục môn học nhận bộ lọc tùy chọn `isActive=true|false`.
 - GET `/api/admin/{resource}/{id}` → dictionary chi tiết (chính các key field metadata).
 - POST `/api/admin/{resource}` và PUT `/api/admin/{resource}/{id}` nhận `AdminSaveRequest { values: { ... } }`, trả `{ id }`.
 - DELETE `/api/admin/{resource}/{id}` xóa khi chưa tham chiếu; câu hỏi đã tham chiếu chuyển ngừng sử dụng.
 - POST `/api/admin/{resource}/{id}/action` nhận `{ action }`: users lock/unlock; exams ready/draft; sessions activate/postpone/cancel/publish.
 - GET `/api/admin/sessions/{id}/export?format=csv|xlsx`: kiểm tra scope đợt; đủ toàn bộ kết quả, UTF-8 BOM CSV và XLSX OpenXML; không có chức năng sửa điểm.
 
-Resource: Administrator users/assignments; Lecturer topics/questions/exams/monitor; ExamOfficer subjects/sessions/candidates/monitor. `monitor` chỉ đọc; row `id` là ID phân công thí sinh, `sessionId` dành xuất kết quả.
+Resource: Administrator users/subjects/assignments; Lecturer topics/questions/exams/monitor; ExamOfficer sessions/candidates/monitor. `monitor` chỉ đọc; row `id` là ID phân công thí sinh, `sessionId` dành xuất kết quả.
 
 Field types metadata: text/password/number/datetime/checkbox/select/questionpoints. questionPoints là object `{ "questionId": decimalPoints }`; editor gửi thêm questionIds là mảng key đã chọn. Backend vẫn nhận pointsPerQuestion nếu cần tương thích; điểm từng câu tối đa 2 chữ số thập phân, tổng 10 mới xác nhận Ready. Câu hỏi gồm option1..option4 và correctIndex 1..4. Người dùng chỉ chọn nhãn qua control, không nhập JSON hay ID thô.
 
