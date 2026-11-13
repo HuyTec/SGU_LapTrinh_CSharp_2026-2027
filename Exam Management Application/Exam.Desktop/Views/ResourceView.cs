@@ -11,6 +11,7 @@ public partial class ResourceView : UserControl, IWorkspaceView, IResourceView
     private readonly string resourceKey;
     private readonly ResourcePresenter presenter = null!;
     private readonly BindingSource source = new();
+    private readonly ComboBox subjectStatusFilter = new() { DropDownStyle = ComboBoxStyle.DropDownList, DisplayMember = nameof(ChoiceDto.Label), Width = 180 };
     private readonly Dictionary<int, Dictionary<string, object?>> rowsById = new();
     private readonly List<UiButton> selectedActions = [];
     private ResourceDto? resource;
@@ -30,7 +31,8 @@ public partial class ResourceView : UserControl, IWorkspaceView, IResourceView
     [System.ComponentModel.Browsable(false)]
     [System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
     public ResourceQuery Query => new(search.Text.Trim(), resourceKey == "questions" ? Value(subjectFilter) : null,
-        resourceKey == "questions" ? Value(topicFilter) : null, resourceKey == "questions" ? Value(difficultyFilter) : null);
+        resourceKey == "questions" ? Value(topicFilter) : null, resourceKey == "questions" ? Value(difficultyFilter) : null,
+        resourceKey == "subjects" && subjectStatusFilter.SelectedIndex > 0 ? subjectStatusFilter.SelectedIndex == 1 : null);
     public int? SelectedRecordId => grid.CurrentRow is { } row && int.TryParse(row.Cells["_id"].Value?.ToString(), out var id) ? id : null;
     public int? SelectedSessionId => SelectedRecordId is int id && rowsById.TryGetValue(id, out var row) ? Integer(row.GetValueOrDefault("sessionId")) : null;
 
@@ -49,6 +51,23 @@ public partial class ResourceView : UserControl, IWorkspaceView, IResourceView
     {
         presenter = new ResourcePresenter(api, this, resourceKey);
         Theme.StyleInput(search); Theme.StyleInput(subjectFilter); Theme.StyleInput(topicFilter); Theme.StyleInput(difficultyFilter);
+        if (resourceKey == "subjects")
+        {
+            search.PlaceholderText = "Tìm theo mã hoặc tên môn…";
+            add.Text = "Thêm môn học";
+            Theme.StyleInput(subjectStatusFilter);
+            subjectStatusFilter.Items.AddRange([
+                new ChoiceDto("", "Tất cả"),
+                new ChoiceDto("true", "Đang sử dụng"),
+                new ChoiceDto("false", "Ngừng sử dụng")
+            ]);
+            subjectStatusFilter.SelectedIndex = 0;
+            var statusGroup = new FlowLayoutPanel { AutoSize = true, FlowDirection = FlowDirection.TopDown, WrapContents = false };
+            statusGroup.Controls.Add(new Label { Text = "Trạng thái", AutoSize = true });
+            statusGroup.Controls.Add(subjectStatusFilter);
+            filters.Controls.Add(statusGroup);
+            subjectStatusFilter.SelectedIndexChanged += async (_, _) => await presenter.SearchAsync();
+        }
         toolbar.SizeChanged += (_, _) => LayoutToolbar();
         empty.SizeChanged += (_, _) => emptyLayout.MaximumSize = new Size(Math.Max(200, empty.Width - 32), 0);
         grid.DataSource = source; ConfigureColumns();
@@ -75,7 +94,8 @@ public partial class ResourceView : UserControl, IWorkspaceView, IResourceView
             if (resourceKey == "questions" && width != renderedPreviewWidth) RenderQuestionDetail(lastPreviewDetail, lastPreviewMessage);
         };
         VisibleChanged += (_, _) => LayoutToolbar();
-        filters.Visible = resourceKey == "questions";
+        subjectGroup.Visible = topicGroup.Visible = difficultyGroup.Visible = resourceKey == "questions";
+        filters.Visible = resourceKey is "subjects" or "questions";
         previewCard.Visible = sideGap.Visible = resourceKey == "questions";
         RenderQuestionDetail(null); countLabel.Text = title;
         LayoutToolbar();
@@ -156,7 +176,7 @@ public partial class ResourceView : UserControl, IWorkspaceView, IResourceView
             var y = toolbar.Padding.Top;
             foreach (var row in new[] { primaryActions, filters, resourceActions })
             {
-                var include = row == primaryActions || row == filters && resourceKey == "questions" || row == resourceActions && row.Controls.Count > 0;
+                var include = row == primaryActions || row.Controls.Count > 0;
                 row.Visible = include;
                 row.Dock = DockStyle.None; row.AutoSize = false; row.MaximumSize = Size.Empty;
                 if (!include) { row.Height = 0; continue; }
@@ -203,7 +223,7 @@ public partial class ResourceView : UserControl, IWorkspaceView, IResourceView
             empty.Visible = !hasRows; grid.Visible = hasRows;
             if (!hasRows)
             {
-                var filtering = !string.IsNullOrWhiteSpace(Query.Search) || new[] { Query.SubjectId, Query.TopicId, Query.Difficulty }.Any(v => !string.IsNullOrEmpty(v));
+                var filtering = Query.IsActive.HasValue || !string.IsNullOrWhiteSpace(Query.Search) || new[] { Query.SubjectId, Query.TopicId, Query.Difficulty }.Any(v => !string.IsNullOrEmpty(v));
                 emptyTitle.Text = filtering ? "Không tìm thấy dữ liệu phù hợp" : resourceKey == "monitor" ? "Chưa có thí sinh được phân công" : "Danh sách đang trống";
                 emptyMessage.Text = filtering ? "Thử đổi từ khóa hoặc bộ lọc rồi tìm lại." : EmptyDescriptions.GetValueOrDefault(resourceKey, "Thêm dữ liệu đầu tiên để bắt đầu quản lý.");
                 emptyAction.Visible = !filtering && resource?.CanCreate == true;

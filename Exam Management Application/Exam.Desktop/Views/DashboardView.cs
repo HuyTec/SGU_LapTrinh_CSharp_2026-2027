@@ -94,7 +94,7 @@ public sealed partial class DashboardView : UserControl, IWorkspaceView
         }
         var insight = new UiCard { Dock = DockStyle.Fill, Margin = new Padding(10, 0, 0, 0) };
         if (role == "Administrator")
-            insight.Controls.Add(new Label { Text = "Quy trình chuẩn bị\n\n01  Tạo hoặc duyệt tài khoản\n\n02  Phân công giảng viên theo môn\n\n03  Cán bộ tổ chức đợt thi\n\nMỗi người có một không gian làm việc đúng với vai trò được giao.", Font = Theme.BodyFont, ForeColor = Theme.Text, Dock = DockStyle.Fill });
+            insight.Controls.Add(new Label { Text = "Quy trình chuẩn bị\n\n01  Tạo hoặc duyệt tài khoản\n\n02  Phân công giảng viên theo môn\n\n03  Giảng viên tổ chức đợt thi\n\nMỗi người có một không gian làm việc đúng với vai trò được giao.", Font = Theme.BodyFont, ForeColor = Theme.Text, Dock = DockStyle.Fill });
         else insight.Controls.Add(new ScoreDistributionView(snapshot.ScoreBins, snapshot.GradedCount, snapshot.AverageScore) { Dock = DockStyle.Fill });
         bottom.Controls.Add(recent, 0, 0); bottom.Controls.Add(insight, 1, 0); layout.Controls.Add(bottom, 0, 2); layout.Visible = true;
     }

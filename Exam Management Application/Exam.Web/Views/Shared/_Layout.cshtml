@@ -11,7 +11,7 @@
     <a class="skip-link" href="#main-content">Chuyển đến nội dung</a>
     <header class="site-header">
         <nav class="container app-nav" aria-label="Điều hướng chính">
-            <a class="brand" asp-controller="Home" asp-action="Index">Exam <span>Thi trắc nghiệm</span></a>
+            <a class="brand" asp-controller="@(User.IsInRole("Lecturer") ? "Lecturer" : "Home")" asp-action="Index">Exam <span>Thi trắc nghiệm</span></a>
             @if (User.Identity?.IsAuthenticated != true)
             {
                 <a asp-controller="Help" asp-action="Index">Hướng dẫn sử dụng</a>
@@ -20,12 +20,15 @@
             {
                 <div class="nav-links">
                     <a asp-controller="Help" asp-action="Index">Hướng dẫn</a>
-                    @if (User.IsInRole("Student"))
+                    @if (User.IsInRole("Lecturer"))
                     {
-                        <a asp-controller="StudentClasses" asp-action="Index">Lớp của tôi</a>
+                        <a asp-controller="Lecturer" asp-action="Index">Môn được phân công</a>
                     }
+                    else if (User.IsInRole("Student"))
+                    {
                     <a asp-controller="Sessions" asp-action="Index">Đợt thi</a>
                     <a asp-controller="Attempts" asp-action="History">Lịch sử &amp; kết quả</a>
+                    }
                     <form asp-controller="Account" asp-action="Logout" method="post">
                         <button class="btn btn-outline-secondary btn-sm" type="submit">Đăng xuất</button>
                     </form>

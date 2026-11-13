@@ -3,7 +3,7 @@
 <section class="login-panel surface" aria-labelledby="login-heading">
     <p class="uc-label">UC-01 · Tài khoản</p>
     <h1 id="login-heading">Đăng nhập</h1>
-    <p class="muted">Thí sinh đăng nhập để xem đợt thi và làm bài. Nhân sự quản lý đăng nhập bằng ứng dụng Desktop.</p>
+    <p class="muted">Giảng viên và thí sinh đăng nhập trên Web. Quản trị viên đăng nhập bằng ứng dụng Desktop.</p>
     <form asp-controller="Account" asp-action="Login" method="post">
         <input asp-for="ReturnUrl" type="hidden" />
         <div asp-validation-summary="ModelOnly" class="validation-summary text-danger" role="alert"></div>
@@ -21,5 +21,5 @@
     </form>
     <p class="mt-4 mb-2">Chưa có tài khoản? Đăng ký <a asp-action="Register" asp-route-accountType="Student">Thí sinh</a> hoặc <a asp-action="Register" asp-route-accountType="Lecturer">Giảng viên</a>.</p>
     <p class="mb-3"><a asp-controller="Help" asp-action="Index">Hướng dẫn sử dụng</a></p>
-    <p class="small muted mb-0">Nếu không đăng nhập được, liên hệ cán bộ phụ trách kỳ thi. Nhân sự quản lý sử dụng ứng dụng Desktop.</p>
+    <p class="small muted mb-0">Nếu không đăng nhập được, liên hệ quản trị viên. Quản trị viên sử dụng ứng dụng Desktop.</p>
 </section>

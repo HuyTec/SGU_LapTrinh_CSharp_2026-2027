@@ -13,11 +13,11 @@ public class AuthApiController(AuthService auth,IConfiguration config):Controlle
  [HttpPost("login")]public async Task<LoginResponse> Login(LoginRequest request){var(u,role,s)=await auth.LoginAsync(request,true);var token=new JwtSecurityToken(config["Jwt:Issuer"]??"Exam.Web",config["Jwt:Audience"]??"Exam.Desktop",AuthService.Claims(u,role,s),DateTime.UtcNow,s.ExpiresAt,new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"]!)),SecurityAlgorithms.HmacSha256));return new(new JwtSecurityTokenHandler().WriteToken(token),s.ExpiresAt,u.FullName,role);}
  [HttpPost("logout"),Authorize(AuthenticationSchemes=JwtBearerDefaults.AuthenticationScheme)]public async Task<IActionResult> Logout(){await auth.LogoutAsync(User);return NoContent();}
 }
-[ApiController,Route("api/admin"),Authorize(AuthenticationSchemes=JwtBearerDefaults.AuthenticationScheme,Roles="Administrator,Lecturer,ExamOfficer")]
+[ApiController,Route("api/admin"),Authorize(AuthenticationSchemes=JwtBearerDefaults.AuthenticationScheme,Roles="Administrator")]
 public class AdminController(AdminService admin,ExportService export):ControllerBase{
  int Uid=>int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);string Role=>User.FindFirstValue(ClaimTypes.Role)!;
  [HttpGet("catalog")]public Task<AdminCatalogDto> Catalog()=>admin.CatalogAsync(Uid,Role);
- [HttpGet("{resource}")]public Task<AdminPageDto> List(string resource,string? search,int page=1,int pageSize=100,int? subjectId=null,int? topicId=null,string? difficulty=null)=>admin.ListAsync(Uid,Role,resource,search,page,pageSize,null,subjectId,topicId,difficulty);
+ [HttpGet("{resource}")]public Task<AdminPageDto> List(string resource,string? search,int page=1,int pageSize=100,int? subjectId=null,int? topicId=null,string? difficulty=null,bool? isActive=null)=>admin.ListAsync(Uid,Role,resource,search,page,pageSize,null,subjectId,topicId,difficulty,isActive);
  [HttpGet("{resource}/{id:int}")]public async Task<Dictionary<string,object?>> Get(string resource,int id){var row=(await admin.ListAsync(Uid,Role,resource,null,1,1,id)).Items.SingleOrDefault(x=>Convert.ToInt32(x["id"])==id);return row??throw new BusinessException("Không tìm thấy dữ liệu.",404);}
  [HttpPost("users/import")]public async Task<object> Import(ImportStudentsRequest request)=>new{imported=await admin.ImportStudentsAsync(Uid,Role,request.Csv,request.Preview)};
  [HttpPost("{resource}")]public async Task<object> Create(string resource,AdminSaveRequest request)=>new{id=await admin.SaveAsync(Uid,Role,resource,null,request)};

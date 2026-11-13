@@ -1,4 +1,3 @@
-using Exam.Core;
 using System.Diagnostics;
 using System.Drawing.Drawing2D;
 namespace Exam.Desktop;
@@ -11,6 +10,7 @@ public sealed partial class LoginForm : Form
     public LoginForm()
     {
         InitializeComponent();
+        roleLabel.Visible = role.Visible = roleNote.Visible = register.Visible = false;
     }
 
     public LoginForm(ExamApiClient api) : this()
@@ -19,11 +19,6 @@ public sealed partial class LoginForm : Form
         settings.Visible = false;
         form.SizeChanged += (_, _) => UpdateLabelWidths();
         UpdateLabelWidths();
-
-        role.Items.Add(new ChoiceDto("", "Tự động chọn vai trò"));
-        foreach (var name in new[] { "Administrator", "Lecturer", "ExamOfficer" })
-            role.Items.Add(new ChoiceDto(name, UiLabels.Of(name)));
-        role.SelectedIndex = 0;
 
         reveal.Click += (_, _) =>
         {
@@ -95,18 +90,17 @@ public sealed partial class LoginForm : Form
         if(string.IsNullOrWhiteSpace(userName.Text)){errors.SetError(userName,"Vui lòng nhập tên đăng nhập.");userName.Focus();ShowStatus("Vui lòng nhập tài khoản và mật khẩu.",true);return;}
         if(string.IsNullOrEmpty(password.Text)){errors.SetError(password,"Vui lòng nhập mật khẩu.");password.Focus();ShowStatus("Vui lòng nhập tài khoản và mật khẩu.",true);return;}
         try{ValidServer();}catch(Exception ex){settings.Visible=true;ShowStatus(ex.Message,true);address.Focus();return;}
-        busy=true;login.Enabled=false;role.Enabled=false;address.Enabled=false;ShowStatus("Đang kết nối máy chủ…");
+        busy=true;login.Enabled=false;address.Enabled=false;ShowStatus("Đang kết nối máy chủ…");
         try
         {
-            var selectedRole=(role.SelectedItem as ChoiceDto)?.Value;
-            await api.LoginAsync(address.Text,userName.Text.Trim(),password.Text,string.IsNullOrEmpty(selectedRole)?null:selectedRole);
+            await api.LoginAsync(address.Text,userName.Text.Trim(),password.Text,"Administrator");
             password.Clear();Hide();
             string? logoutNotice;
             using(var main=new MainForm(api)){main.ShowDialog();logoutNotice=main.LogoutNotice;}
             Show();ShowStatus(logoutNotice??"Đã đăng xuất. Bạn có thể đăng nhập lại.",logoutNotice!=null);userName.Focus();
         }
         catch(Exception ex){ShowStatus(ex is HttpRequestException?"Không kết nối được máy chủ. Kiểm tra địa chỉ và chứng chỉ HTTPS.":ex.Message,true);}
-        finally{busy=false;login.Enabled=true;role.Enabled=true;address.Enabled=true;}
+        finally{busy=false;login.Enabled=true;address.Enabled=true;}
     }
     private void ShowStatus(string text,bool isError=false){status.ForeColor=isError?Theme.Danger:Theme.Muted;status.Text=text;status.AccessibleName=text;}
 }
