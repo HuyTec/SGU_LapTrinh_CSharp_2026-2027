@@ -96,13 +96,27 @@ public class SqlExamTests : IAsyncLifetime
         });
         await db.SaveChangesAsync();
 
+        var secondClass = new ExamClass
+        {
+            SubjectId = session.Exam.SubjectId,
+            Code = "TS01-OTHER",
+            Students = [new() { StudentId = studentId }]
+        };
+        db.Add(secondClass);
+        await db.SaveChangesAsync();
+        var classIds = await db.Set<ClassStudent>().Where(x => x.StudentId == studentId)
+            .Select(x => x.ClassId).ToListAsync();
+        Assert.Equal(2, classIds.Count);
+        Assert.Contains(session.Classes.Single().ClassId, classIds);
+        Assert.Contains(secondClass.Id, classIds);
+
         var service = Service(db);
         Assert.Equal(sessionId, await service.FindSessionByCodeAsync(studentId, " class-test "));
         await Assert.ThrowsAsync<BusinessException>(() => service.FindSessionByCodeAsync(otherStudentId, "CLASS-TEST"));
         Assert.Empty(await db.Attempts.ToListAsync());
 
         var attempt = await service.StartAsync(studentId, sessionId);
-        var membership = await db.Set<ClassStudent>().SingleAsync();
+        var membership = await db.Set<ClassStudent>().SingleAsync(x => x.ClassId != secondClass.Id);
         db.Remove(membership);
         await db.SaveChangesAsync();
         Assert.Equal(attempt, await service.StartAsync(studentId, sessionId));

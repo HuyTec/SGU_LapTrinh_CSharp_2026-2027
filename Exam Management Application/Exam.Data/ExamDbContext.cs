@@ -62,6 +62,7 @@ public class ExamDbContext(DbContextOptions<ExamDbContext> options) : IdentityDb
         b.Entity<ExamClass>().HasIndex(x => new { x.SubjectId, x.Code }).IsUnique();
         b.Entity<ExamClass>().HasOne<Subject>().WithMany().HasForeignKey(x => x.SubjectId).OnDelete(DeleteBehavior.Restrict);
         b.Entity<ClassStudent>().ToTable("ClassStudents").HasKey(x => new { x.ClassId, x.StudentId });
+        b.Entity<ExamClass>().HasMany(x => x.Students).WithOne().HasForeignKey(x => x.ClassId);
         b.Entity<ClassStudent>().HasOne<AppUser>().WithMany().HasForeignKey(x => x.StudentId).OnDelete(DeleteBehavior.Restrict);
         b.Entity<SessionClass>().ToTable("SessionClasses").HasKey(x => new { x.SessionId, x.ClassId });
         b.Entity<ExamSession>().HasMany(x => x.Classes).WithOne().HasForeignKey(x => x.SessionId);

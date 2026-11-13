@@ -47,15 +47,14 @@ namespace Exam.Data.Migrations
                 columns: table => new
                 {
                     ClassId = table.Column<int>(type: "int", nullable: false),
-                    StudentId = table.Column<int>(type: "int", nullable: false),
-                    ExamClassId = table.Column<int>(type: "int", nullable: true)
+                    StudentId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ClassStudents", x => new { x.ClassId, x.StudentId });
                     table.ForeignKey(
-                        name: "FK_ClassStudents_Classes_ExamClassId",
-                        column: x => x.ExamClassId,
+                        name: "FK_ClassStudents_Classes_ClassId",
+                        column: x => x.ClassId,
                         principalTable: "Classes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -104,10 +103,6 @@ namespace Exam.Data.Migrations
                 columns: new[] { "SubjectId", "Code" },
                 unique: true);
 
-            migrationBuilder.CreateIndex(
-                name: "IX_ClassStudents_ExamClassId",
-                table: "ClassStudents",
-                column: "ExamClassId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ClassStudents_StudentId",

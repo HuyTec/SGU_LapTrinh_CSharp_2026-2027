@@ -330,12 +330,7 @@ namespace Exam.Data.Migrations
                     b.Property<int>("StudentId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ExamClassId")
-                        .HasColumnType("int");
-
                     b.HasKey("ClassId", "StudentId");
-
-                    b.HasIndex("ExamClassId");
 
                     b.HasIndex("StudentId");
 
@@ -935,8 +930,9 @@ namespace Exam.Data.Migrations
                 {
                     b.HasOne("Exam.Data.ExamClass", null)
                         .WithMany("Students")
-                        .HasForeignKey("ExamClassId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("ClassId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("Exam.Data.AppUser", null)
                         .WithMany()
