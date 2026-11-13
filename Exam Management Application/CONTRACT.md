@@ -97,7 +97,7 @@ Field types metadata: text/password/number/datetime/checkbox/select/questionpoin
 - `ConnectionStrings:ExamDb`, `Jwt:Key` (ít nhất 32 byte) cấp qua user-secrets/environment; không có secret mặc định trong source.
 - Issuer mặc định Exam.Web, Audience Exam.Desktop; phiên cookie/JWT 4 giờ, kiểm tra bảng AuthSessions trên từng request.
 - `Seed:Password` cấp cục bộ; lệnh `dotnet run --project Exam.Web -- --seed` chỉ được phép Development; không tự migrate/create DB. `DemoSeeder.SeedAsync(IServiceProvider,string)` tạo dữ liệu idempotent cơ bản.
-- Seed usernames: admin, lecturer, lecturer2, officer, officer2, student, student2; vai trò tương ứng, môn CSHARP/DATABASE phân scope, đề 5 câu mỗi câu 2 điểm, đợt Active có 2 thí sinh.
+- Seed usernames: admin, lecturer, lecturer2, student, student2; vai trò tương ứng, môn CSHARP/DATABASE phân scope, đề 5 câu mỗi câu 2 điểm, đợt Active có 2 thí sinh.
 - Background worker quét/khôi phục chấm ngay lúc khởi động và mỗi 5 giây; lỗi ghi được retry ở lần quét tiếp theo.
 
 ### Bổ sung tích hợp đã thống nhất
