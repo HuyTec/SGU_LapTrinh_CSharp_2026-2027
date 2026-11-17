@@ -1,5 +1,9 @@
 # Lược đồ SQL Server triển khai
 
+Published/PublishedAt ghi việc giảng viên bật công bố cho đợt đã kích hoạt. Việc xem từng lượt yêu cầu lượt đã nộp và có ExamResult; không chờ đóng nhận lượt hoặc các thí sinh khác. ReviewPolicy quy định điểm, lựa chọn và đáp án đúng được hiển thị.
+
+Quy tắc ngày 18/11/2026: ExamSessions.OpensAt/ClosesAt là khung giờ được tạo lượt mới. Attempts.Deadline = StartedAt + DurationMinutes, độc lập giờ đóng nhận lượt. Lượt cũ còn làm và bị cắt hạn bởi giờ đóng được điều chỉnh bằng migration PersonalAttemptDeadlines; bài đã có kết quả giữ dữ liệu lịch sử.
+
 Nguồn chính xác có thể dựng lại: `Exam.Data/ExamDbContext.cs`, `Exam.Data/Entities.cs`, `Exam.Data/Migrations` và `schema.sql`. Đây là mô hình triển khai của 17 thực thể nghiệp vụ trong mục 3.3, bổ sung Identity và phiên truy cập theo DECISIONS.md.
 
 ## Bảng và trách nhiệm

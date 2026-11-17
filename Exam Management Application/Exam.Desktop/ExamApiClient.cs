@@ -36,6 +36,13 @@ public sealed class ExamApiClient : IDisposable
     }
 
     public Task<AdminCatalogDto> CatalogAsync() => SendAsync<AdminCatalogDto>(HttpMethod.Get, "api/admin/catalog");
+    public Task<ProfileDto> ProfileAsync() => SendAsync<ProfileDto>(HttpMethod.Get, "api/profile");
+    public async Task<ProfileDto> UpdateProfileAsync(UpdateProfileRequest request)
+    {
+        var profile = await SendAsync<ProfileDto>(HttpMethod.Put, "api/profile", request);
+        DisplayName = profile.FullName;
+        return profile;
+    }
     public Task<AdminPageDto> ListAsync(string key, string search, int page, string? subjectId = null, string? topicId = null, string? difficulty = null, bool? isActive = null) => SendAsync<AdminPageDto>(HttpMethod.Get,
         $"api/admin/{key}?search={Uri.EscapeDataString(search)}&page={page}&pageSize=25&subjectId={Uri.EscapeDataString(subjectId ?? "")}&topicId={Uri.EscapeDataString(topicId ?? "")}&difficulty={Uri.EscapeDataString(difficulty ?? "")}&isActive={isActive}");
     /// <summary>Read all authorized pages for presentation summaries; errors never become synthetic zero totals.</summary>

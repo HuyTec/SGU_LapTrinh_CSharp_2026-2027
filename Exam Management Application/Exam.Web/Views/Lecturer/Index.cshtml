@@ -2,6 +2,13 @@
 @{ ViewData["Title"] = "Môn được phân công"; }
 <section class="surface p-4">
     <h1>Môn được phân công</h1>
+    <nav class="action-row mb-4" aria-label="Chức năng giảng viên">
+        <a asp-action="Materials" asp-route-resource="questions" class="btn btn-primary">Ngân hàng câu hỏi</a>
+        <a asp-action="Materials" asp-route-resource="topics" class="btn btn-outline-primary">Chủ đề</a>
+        <a asp-controller="LecturerPapers" asp-action="Index" class="btn btn-outline-primary">Đề thi</a>
+        <a asp-controller="LecturerSessions" asp-action="Index" class="btn btn-outline-primary">Đợt thi</a>
+        <a asp-controller="LecturerResults" asp-action="Index" class="btn btn-outline-primary">Theo dõi và kết quả</a>
+    </nav>
     @if (Model.Count == 0)
     {
         <p>Bạn chưa được phân công môn học.</p>

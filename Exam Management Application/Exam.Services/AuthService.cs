@@ -17,6 +17,9 @@ public class AuthService(ExamDbContext db, UserManager<AppUser> users, TimeProvi
         var isStudent=request.AccountType=="Student";
         var studentCode = isStudent ? request.StudentCode?.Trim() : null;
         var email = request.Email.Trim();
+        var phone = string.IsNullOrWhiteSpace(request.PhoneNumber) ? null : request.PhoneNumber.Trim();
+        if (phone != null && (phone.Length > 20 || !new System.ComponentModel.DataAnnotations.PhoneAttribute().IsValid(phone)))
+            throw new BusinessException("Số điện thoại không hợp lệ.");
         if (userName.Length is 0 or > 60 || fullName.Length is 0 or > 120 || (isStudent && (string.IsNullOrWhiteSpace(studentCode) || studentCode.Length > 30)))
             throw new BusinessException("Tên đăng nhập, họ tên và mã thí sinh là bắt buộc, trong giới hạn độ dài cho phép.");
         if (email.Length > 256 || !System.Net.Mail.MailAddress.TryCreate(email, out var address) || address.Address != email)
@@ -31,9 +34,9 @@ public class AuthService(ExamDbContext db, UserManager<AppUser> users, TimeProvi
             if (await users.FindByNameAsync(userName) != null)
                 throw new BusinessException("Tên đăng nhập đã được sử dụng.", 409);
             if (isStudent && await db.Users.AnyAsync(u => u.StudentCode == studentCode))
-                throw new BusinessException("Mã thí sinh đã được sử dụng. Nếu đã được cấp tài khoản, hãy liên hệ cán bộ để lấy lại thông tin đăng nhập.", 409);
+                throw new BusinessException("Mã thí sinh đã được sử dụng. Nếu đã được cấp tài khoản, hãy liên hệ quản trị viên để lấy lại thông tin đăng nhập.", 409);
 
-            var user = new AppUser { UserName = userName, FullName = fullName, StudentCode = studentCode, Email = email, IsActive = isStudent, RequestedRole = isStudent ? null : request.AccountType };
+            var user = new AppUser { UserName = userName, FullName = fullName, StudentCode = studentCode, Email = email, PhoneNumber = phone, IsActive = isStudent, RequestedRole = isStudent ? null : request.AccountType };
             var created = await users.CreateAsync(user, request.Password);
             if (!created.Succeeded)
             {
@@ -104,6 +107,3 @@ public class AuthService(ExamDbContext db, UserManager<AppUser> users, TimeProvi
             await db.AuthSessions.Where(s => s.Id == sid).ExecuteUpdateAsync(s => s.SetProperty(x => x.Revoked, true));
     }
 }
-
-
-

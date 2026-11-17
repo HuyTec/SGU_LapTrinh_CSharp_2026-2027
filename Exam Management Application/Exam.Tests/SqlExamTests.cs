@@ -20,7 +20,7 @@ public sealed class SqlFactAttribute : FactAttribute
 }
 
 /// <summary>Each test owns a new database. No application or existing database is reset.</summary>
-public class SqlExamTests : IAsyncLifetime
+public partial class SqlExamTests : IAsyncLifetime
 {
     private readonly string databaseName = "ExamAppTests_" + Guid.NewGuid().ToString("N");
     private DbContextOptions<ExamDbContext> options = null!;
@@ -100,20 +100,24 @@ public class SqlExamTests : IAsyncLifetime
         db.Add(new ExamClass { Code = StudentClassService.DemoCode, SubjectId = subject.Id });
         await db.SaveChangesAsync();
         var service = new StudentClassService(db);
+        var demoStudent = new AppUser { UserName = "demo-only", FullName = "Demo", StudentCode = "DEMO-ONLY" };
+        db.Users.Add(demoStudent);
+        await db.SaveChangesAsync();
+        var demoStudentId = demoStudent.Id;
 
-        Assert.Empty(await service.ListAsync(studentId));
-        Assert.True(await service.JoinDemoAsync(studentId));
-        Assert.True(await service.JoinDemoAsync(studentId));
-        Assert.Single(await service.ListAsync(studentId));
+        Assert.Empty(await service.ListAsync(demoStudentId));
+        Assert.True(await service.JoinDemoAsync(demoStudentId));
+        Assert.True(await service.JoinDemoAsync(demoStudentId));
+        Assert.Single(await service.ListAsync(demoStudentId));
         Assert.Empty(await service.ListAsync(otherStudentId));
-        Assert.Single(await db.Set<ClassStudent>().ToListAsync());
+        Assert.Single(await db.Set<ClassStudent>().Where(s => s.StudentId == demoStudentId).ToListAsync());
 
-        var demoClass = await db.Set<ExamClass>().SingleAsync();
+        var demoClass = await db.Set<ExamClass>().SingleAsync(c => c.Code == StudentClassService.DemoCode);
         demoClass.IsActive = false;
         await db.SaveChangesAsync();
         Assert.False(await service.JoinDemoAsync(otherStudentId));
 
-        demoClass = await db.Set<ExamClass>().SingleAsync();
+        demoClass = await db.Set<ExamClass>().SingleAsync(c => c.Code == StudentClassService.DemoCode);
         demoClass.IsActive = true;
         var demoSubject = await db.Subjects.SingleAsync(s => s.Id == demoClass.SubjectId);
         demoSubject.IsActive = false;

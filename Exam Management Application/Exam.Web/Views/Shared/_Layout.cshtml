@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>@ViewData["Title"] · Exam</title>
     <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/lib/katex/katex.min.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
 <body>
@@ -20,13 +21,21 @@
             {
                 <div class="nav-links">
                     <a asp-controller="Help" asp-action="Index">Hướng dẫn</a>
+                    <a asp-controller="Profile" asp-action="Index">Hồ sơ của tôi</a>
                     @if (User.IsInRole("Lecturer"))
                     {
                         <a asp-controller="Lecturer" asp-action="Index">Môn được phân công</a>
+                        <a asp-controller="LecturerClasses" asp-action="Index">Lớp học</a>
+                        <a asp-controller="Lecturer" asp-action="Materials" asp-route-resource="topics">Chủ đề</a>
+                        <a asp-controller="Lecturer" asp-action="Materials" asp-route-resource="questions">Ngân hàng câu hỏi</a>
+                        <a asp-controller="LecturerPapers" asp-action="Index">Đề thi</a>
+                        <a asp-controller="LecturerSessions" asp-action="Index">Đợt thi</a>
+                        <a asp-controller="LecturerResults" asp-action="Index">Kết quả</a>
                     }
                     else if (User.IsInRole("Student"))
                     {
                     <a asp-controller="Sessions" asp-action="Index">Đợt thi</a>
+                    <a asp-controller="StudentClasses" asp-action="Index">Lớp của tôi</a>
                     <a asp-controller="Attempts" asp-action="History">Lịch sử &amp; kết quả</a>
                     }
                     <form asp-controller="Account" asp-action="Logout" method="post">
@@ -45,6 +54,10 @@
     </main>
     <footer class="container site-footer">Hệ thống thi trắc nghiệm · Giờ hiển thị: Việt Nam (UTC+7)</footer>
     <script src="~/js/site.js" asp-append-version="true" defer></script>
+    <script src="~/lib/markdown-it/markdown-it.min.js" asp-append-version="true" defer></script>
+    <script src="~/lib/katex/katex.min.js" asp-append-version="true" defer></script>
+    <script src="~/lib/markdown-it-texmath/texmath.js" asp-append-version="true" defer></script>
+    <script src="~/js/question-content.js" asp-append-version="true" defer></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

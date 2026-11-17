@@ -4,3 +4,15 @@
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
 
 button,input,select,textarea,code,pre,kbd,samp{font-family:var(--bs-body-font-family)}
+.review-correct .review-status,.review-correct .review-question,.review-correct .review-selection,.review-correct-answer{color:var(--success)}
+.review-incorrect .review-status,.review-incorrect .review-question,.review-incorrect .review-selection{color:var(--danger)}
+.review-status,.review-selection,.review-correct-answer{font-weight:600}
+.question-markdown{overflow-wrap:anywhere;min-width:0;white-space:normal}
+.question-markdown>:last-child{margin-bottom:0}
+.question-markdown .katex-display{overflow-x:auto;overflow-y:hidden;padding:.3rem 0;max-width:100%}
+.question-markdown pre{overflow-x:auto;padding:.75rem;background:var(--background,#f4f6fa)}
+.question-markdown blockquote{border-left:3px solid #a6b7ce;padding-left:.75rem}
+.question-preview{border:1px solid #ccd5e0;border-radius:.5rem;padding:.75rem;background:#fff}
+.preview-content{margin-top:.4rem}
+.answer-option>.question-markdown{flex:1}
+.review-selection,.review-correct-answer{margin-top:.75rem}

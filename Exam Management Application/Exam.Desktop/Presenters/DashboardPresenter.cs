@@ -63,7 +63,7 @@ public sealed class DashboardPresenter(ExamApiClient api)
                 "Mở ngân hàng câu hỏi", "questions", metrics, recent, bins, scores.Count, average, "Đề thi gần đây");
         }
         var sessions = Rows("sessions");
-        DashboardMetric[] officerMetrics =
+        DashboardMetric[] sessionMetrics =
         [
             Metric("Sắp diễn ra", sessions.Count(r => Value(r, "status") == "Scheduled"), "Đã kích hoạt, chưa mở"),
             Metric("Đang mở", sessions.Count(r => Value(r, "status") == "Open"), "Theo giờ máy chủ"),
@@ -73,7 +73,7 @@ public sealed class DashboardPresenter(ExamApiClient api)
         var recentSessions = sessions.OrderByDescending(r => Value(r, "opensAt")).Take(6)
             .Select(r => new DashboardItem(Value(r, "title"), DisplayDate(Value(r, "opensAt")), UiLabels.Of(Value(r, "status")))).ToList();
         return new("Một không gian cho kỳ thi được tổ chức tốt.", "Theo dõi lịch, danh sách dự thi và kết quả của các đợt bạn phụ trách.",
-            "Quản lý đợt thi", "sessions", officerMetrics, recentSessions, bins, scores.Count, average, "Lịch thi gần đây");
+            "Quản lý đợt thi", "sessions", sessionMetrics, recentSessions, bins, scores.Count, average, "Lịch thi gần đây");
     }
 
     public static string Value(Dictionary<string, object?> row, string key) => row.GetValueOrDefault(key)?.ToString() ?? "";

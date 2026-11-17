@@ -71,9 +71,12 @@ public class ExamService(ExamDbContext db, TimeProvider clock)
 
         var now = Now;
         if (s.Status != "Active" || now < s.OpensAt || now >= s.ClosesAt)
-            throw new BusinessException("Đợt thi chưa mở hoặc đã đóng.", 409);
+            throw new BusinessException("Chưa đến giờ vào thi hoặc đã hết giờ nhận lượt mới.", 409);
         if (s.Exam.Status != "Ready")
             throw new BusinessException("Đề chưa sẵn sàng.", 409);
+        if (await db.Attempts.AnyAsync(a => a.StudentId == student && a.SessionId != sessionId &&
+            a.Status == "InProgress" && a.Deadline > now))
+            throw new BusinessException("Bạn đang làm một bài thi khác. Nộp bài đó trước khi bắt đầu lượt mới.", 409);
 
         s.HasOpened = true;
         var a = new Attempt
@@ -81,7 +84,7 @@ public class ExamService(ExamDbContext db, TimeProvider clock)
             SessionId = s.Id,
             StudentId = student,
             StartedAt = now,
-            Deadline = ExamRules.Deadline(now, s.DurationMinutes, s.ClosesAt)
+            Deadline = ExamRules.Deadline(now, s.DurationMinutes)
         };
         var questions = s.Exam.Questions.OrderBy(q => q.Order).ToList();
         if (s.ShuffleQuestions)
@@ -194,9 +197,9 @@ public class ExamService(ExamDbContext db, TimeProvider clock)
     {
         await ExpireAttemptAsync(id, student);
         var a = await Own(student, id);
-        var pub = a.Session.Published && a.Result != null;
+        var pub = a.Session.Published && a.Status == "Submitted" && a.Result != null;
         var review = pub && a.Session.ReviewPolicy != "ScoreOnly";
-        return new(a.Id, a.Session.Title, a.Status == "Submitted" && a.Result == null ? "PendingGrading" : a.Status, pub, pub ? a.Result!.Score : null, pub ? a.Result!.CorrectCount : null, a.Questions.Count, a.SubmittedAt, a.Session.ReviewPolicy, review ? a.Questions.OrderBy(q => q.Order).Select(q => new ReviewQuestionDto(q.Text, q.Options.SingleOrDefault(o => o.Id == q.Response?.SelectedOptionId)?.Text, a.Session.ReviewPolicy == "CorrectAnswers" ? q.Options.Single(o => o.IsCorrect).Text : null, a.Session.ReviewPolicy == "CorrectAnswers" ? q.Options.Any(o => o.Id == q.Response?.SelectedOptionId && o.IsCorrect) : null, q.Points)).ToList() : []);
+        return new(a.Id, a.Session.Title, a.Status == "Submitted" && a.Result == null ? "PendingGrading" : a.Status, pub, pub ? a.Result!.Score : null, pub ? a.Result!.CorrectCount : null, a.Questions.Count, a.SubmittedAt, a.Session.ReviewPolicy, review ? a.Questions.OrderBy(q => q.Order).Select(q => new ReviewQuestionDto(q.Text, q.Options.SingleOrDefault(o => o.Id == q.Response?.SelectedOptionId)?.Text, a.Session.ReviewPolicy == "CorrectAnswers" ? q.Options.Single(o => o.IsCorrect).Text : null, q.Options.Any(o => o.Id == q.Response?.SelectedOptionId && o.IsCorrect), q.Points)).ToList() : []);
     }
     public async Task<HistoryVm> HistoryAsync(int student)
     {

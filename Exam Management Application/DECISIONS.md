@@ -4,6 +4,12 @@ Ngày xác nhận: 24/10/2026 (Asia/Saigon). Người dùng duyệt `1a, 2a 3a 4
 
 ### Thay đổi phạm vi ngày 10/11/2026
 
+Ngày 18/11/2026, giờ mở/đóng đợt được xác định là khung giờ nhận lượt thi mới [OpensAt, ClosesAt). Mỗi lượt có Deadline = StartedAt + DurationMinutes và được tiếp tục sau khi hết giờ nhận lượt. Thời lượng có thể dài hơn khung giờ vào thi. Worker chấm theo Deadline cá nhân. Theo điều chỉnh tiếp theo cùng ngày, giảng viên có thể bật công bố bất kỳ lúc nào sau khi kích hoạt; từng thí sinh được xem ngay khi bài của mình đã kết thúc và chấm xong. Bài nộp sau tự hiển thị theo chính sách, mặc định điểm và lựa chọn đã trả lời trên form công bố. Kiểm tra trùng lịch dùng khoảng từ giờ mở đến giờ đóng nhận lượt cộng thời lượng. Migration PersonalAttemptDeadlines điều chỉnh lượt InProgress chưa có kết quả bị cắt hạn bởi giờ đóng cũ.
+
+Ngày 18/11/2026, chủ dự án bổ sung hồ sơ cá nhân cho cả ba tác nhân (UC-03): Thí sinh và Giảng viên dùng Web, Quản trị viên dùng WinForms. Người dùng cập nhật họ tên, email và số điện thoại của chính mình. Trang thí sinh hiển thị mã và số lớp; trang giảng viên hiển thị môn được phân công. Tên đăng nhập, mã thí sinh và vai trò chỉ hiển thị. Các client gọi chung ProfileService, có kiểm tra phiên bản khi lưu.
+
+Ngày 17/11/2026, chủ dự án cho phép giảng viên tự tạo lớp học trên Web, giới hạn trong môn đang hoạt động được phân công. Thí sinh xem các lớp mình là thành viên qua mục “Lớp của tôi”. Đăng ký bổ sung số điện thoại tùy chọn; không tự điền số cho hồ sơ cũ. Migration RetireExamOfficer chuyển quyền cũ sang Lecturer, giữ ID/chủ sở hữu và bổ sung phân công môn cho các đợt do tài khoản cũ phụ trách.
+
 Theo chỉ đạo mới của người dùng, bỏ tác nhân/vai trò Cán bộ quản lý thi (`ExamOfficer`). Giảng viên nhận các nghiệp vụ UC-12/13/17–21 trong phạm vi môn được phân công; bổ sung UC-24 quản lý lớp học phần và đưa học viên từ lớp vào danh sách đợt thi. Giữ Thí sinh và Quản trị viên. Đây là thay đổi so với quyết định 24/10/2026.
 
 Mã nguồn hiện vẫn khai báo `ExamOfficer`, gán `ManagedBy` theo cán bộ và kiểm tra role này ở `AdminService`; thay đổi trên là mục tiêu cần triển khai, chưa phải trạng thái đã đạt. D25–D27 trong workbook cập nhật theo dõi gộp quyền, lớp và kiểm thử. Phải giữ giới hạn theo môn/lớp, xác nhận lại danh sách khi sao chép vào `SessionCandidates`, và không cho Admin/Student có quyền đợt ngoài scope. Không tạo role mới.

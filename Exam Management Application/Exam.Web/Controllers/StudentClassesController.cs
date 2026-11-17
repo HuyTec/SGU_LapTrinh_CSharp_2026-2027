@@ -11,6 +11,9 @@ public sealed class StudentClassesController(StudentClassService classes, IWebHo
     private int StudentId => int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
     [HttpGet]
+    public async Task<IActionResult> Details(int id) => View(await classes.DetailAsync(StudentId, id));
+
+    [HttpGet]
     public async Task<IActionResult> Index()
     {
         ViewData["DemoEnrollment"] = environment.IsDevelopment();

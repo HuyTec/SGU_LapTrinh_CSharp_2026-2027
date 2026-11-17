@@ -18,7 +18,7 @@ public class AccountController(AuthService auth):Controller{
      {
          try
          {
-             await auth.RegisterAsync(new(vm.UserName, vm.FullName, vm.AccountType == "Student" ? vm.StudentCode : null, vm.Email, vm.Password, vm.AccountType));
+             await auth.RegisterAsync(new(vm.UserName, vm.FullName, vm.AccountType == "Student" ? vm.StudentCode : null, vm.Email, vm.Password, vm.AccountType, vm.PhoneNumber));
              TempData["Success"] = vm.AccountType=="Student" ? "Đăng ký thành công. Bạn có thể đăng nhập ngay." : "Đã gửi yêu cầu đăng ký tài khoản giảng viên. Tài khoản đang chờ quản trị viên duyệt; sau khi được duyệt, hãy đăng nhập trên Web.";
              return RedirectToAction(nameof(Login));
          }

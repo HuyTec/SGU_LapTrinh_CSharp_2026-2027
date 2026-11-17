@@ -1,0 +1,26 @@
+@model Exam.Services.StudentClassService.ClassDetail
+@{ ViewData["Title"] = Model.Class.Code; }
+<a asp-action="Index">Lớp của tôi</a>
+<section class="surface p-4 mb-4">
+    <h1>@Model.Class.Code</h1>
+    <p>@Model.Class.Subject · @(Model.Class.IsActive ? "Đang hoạt động" : "Đã ngừng")</p>
+    <h2>Giảng viên được phân công môn</h2>
+    @if (Model.Lecturers.Count == 0) { <p>Chưa có giảng viên được phân công.</p> }
+    else { <ul>@foreach (var name in Model.Lecturers) { <li>@name</li> }</ul> }
+</section>
+<section class="surface p-4">
+    <h2>Đợt thi của lớp</h2>
+    @if (Model.Sessions.Count == 0) { <p>Chưa có đợt thi để xem.</p> }
+    else
+    {
+        <ul class="list-group">
+        @foreach (var session in Model.Sessions)
+        {
+            <li class="list-group-item">
+                <a asp-controller="Sessions" asp-action="Details" asp-route-id="@session.Id">@session.Title</a>
+                <div class="text-muted">Khung giờ vào thi: @session.OpensAt.AddHours(7).ToString("dd/MM/yyyy HH:mm") – @session.ClosesAt.AddHours(7).ToString("dd/MM/yyyy HH:mm") (UTC+7)</div>
+            </li>
+        }
+        </ul>
+    }
+</section>

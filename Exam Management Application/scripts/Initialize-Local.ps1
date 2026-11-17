@@ -14,7 +14,7 @@ if (Test-Path -LiteralPath $credentialPath) {
     $demoPassword = (Get-Content -LiteralPath $credentialPath | Where-Object { $_ -like 'password=*' } | Select-Object -First 1).Substring(9)
 } else {
     $demoPassword = [Convert]::ToBase64String([Security.Cryptography.RandomNumberGenerator]::GetBytes(18)) + 'Aa1!'
-    @('Local demo only - do not commit or share this file.', 'users=admin,lecturer,lecturer2,officer,officer2,student,student2', "password=$demoPassword") | Set-Content -LiteralPath $credentialPath -Encoding utf8
+    @('Local demo only - do not commit or share this file.', 'users=admin,lecturer,lecturer2,student,student2', "password=$demoPassword") | Set-Content -LiteralPath $credentialPath -Encoding utf8
 }
 $keyPath = Join-Path $localDirectory 'jwt-key.txt'
 if (Test-Path -LiteralPath $keyPath) { $signingKey = (Get-Content -LiteralPath $keyPath -Raw).Trim() }

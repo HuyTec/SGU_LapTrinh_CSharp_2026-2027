@@ -1,0 +1,63 @@
+@model Exam.Web.Controllers.LecturerResultsController.ResultsPage
+@{ ViewData["Title"] = "Theo dõi và kết quả"; }
+<h1>Theo dõi và kết quả</h1>
+<form method="get" class="surface mb-3">
+    <label for="id" class="form-label">Đợt thi</label>
+    <select id="id" name="id" class="form-select mb-3" required>
+        <option value="">Chọn đợt thi</option>
+        @foreach (var session in Model.Sessions)
+        {
+            <option value="@session["id"]" selected="@(Equals(session["id"], Model.SessionId))">@session["title"]</option>
+        }
+    </select>
+    <button type="submit" class="btn btn-primary">Xem kết quả</button>
+</form>
+@if (Model.SessionId is int id)
+{
+    var current = Model.Sessions.SingleOrDefault(s => Equals(s["id"], id));
+    var published = current?["published"] is true;
+    var canPublish = current?["status"] is "Scheduled" or "Open" or "Closed";
+    <p>@(published ? "Đã công bố" : "Chưa công bố")</p>
+    <div class="action-row mb-3">
+        @if (!published && canPublish)
+        {
+            <form asp-action="Publish" asp-route-id="@id" method="post" onsubmit="return confirm('Bật công bố ngay? Thí sinh xem kết quả của mình khi bài được chấm xong.');">
+                <label for="reviewPolicy" class="form-label">Nội dung thí sinh được xem</label>
+                <select id="reviewPolicy" name="reviewPolicy" class="form-select mb-2">
+                    <option value="Answers" selected="@(current?["reviewPolicy"] is not "CorrectAnswers")">Điểm và lựa chọn đã trả lời</option>
+                    <option value="ScoreOnly">Chỉ điểm</option>
+                    <option value="CorrectAnswers" selected="@(current?["reviewPolicy"] is "CorrectAnswers")">Điểm, lựa chọn và đáp án đúng</option>
+                </select>
+                <p class="form-text">Các bài đã chấm được xem ngay. Những bài nộp sau tự hiển thị kết quả khi chấm xong.</p>
+                <button type="submit" class="btn btn-primary">Công bố ngay</button>
+            </form>
+        }
+        <a asp-action="Export" asp-route-id="@id" class="btn btn-outline-primary">Xuất CSV</a>
+        <a asp-action="Export" asp-route-id="@id" asp-route-xlsx="true" class="btn btn-outline-primary">Xuất XLSX</a>
+    </div>
+    @if (published)
+    {
+        var policyLabel = current?["reviewPolicy"] switch { "Answers" => "Điểm và lựa chọn đã trả lời", "CorrectAnswers" => "Điểm, lựa chọn và đáp án đúng", _ => "Chỉ điểm" };
+        <p class="muted">@policyLabel. Thí sinh xem kết quả của mình ngay sau khi bài được chấm xong.</p>
+    }
+    @if (Model.Rows.Count == 0)
+    {
+        <p>Chưa có thí sinh trong đợt này.</p>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table">
+                <thead><tr><th>Mã thí sinh</th><th>Họ tên</th><th>Trạng thái</th><th>Điểm</th><th>Nộp lúc (UTC+7)</th></tr></thead>
+                <tbody>
+                @foreach (var row in Model.Rows)
+                {
+                    var status = row["status"] switch { "InProgress" => "Đang làm", "Submitted" when row["score"] is null => "Chờ chấm", "Submitted" => "Đã chấm", _ => "Chưa bắt đầu" };
+                    <tr><td>@row["studentCode"]</td><td>@row["student"]</td><td>@status</td><td>@(row["score"] ?? "—")</td>
+                    <td>@(row["submittedAt"] is DateTime submitted ? submitted.AddHours(7).ToString("dd/MM/yyyy HH:mm") : "—")</td></tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+}
