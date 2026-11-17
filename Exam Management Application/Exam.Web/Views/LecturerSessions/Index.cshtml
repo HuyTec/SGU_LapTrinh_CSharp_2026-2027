@@ -18,7 +18,7 @@ else
             {
                 <tr>
                     <td>@row.Title</td><td>@row.Paper</td>
-                    <td>@(row.State switch { "Draft" => "Nháp", "Scheduled" => "Sắp mở", "Open" => "Đang mở", "Closed" => "Đã đóng", "Cancelled" => "Đã hủy", _ => row.State })</td>
+                    <td>@(row.State switch { "Draft" => "Nháp", "Scheduled" => "Sắp mở", "Open" => "Đang mở", "Closed" => "Hết giờ vào thi", "Cancelled" => "Đã hủy", _ => row.State })</td>
                     <td>
                         @if (row.Code is not null)
                         {
@@ -40,7 +40,7 @@ else
                             {
                                 <form asp-action="ChangeState" asp-route-id="@row.Id" method="post">
                                     <button type="submit" class="btn btn-outline-secondary" name="command" value="postpone">Hoãn</button>
-                                    <button type="submit" class="btn btn-outline-danger" name="command" value="cancel">Hủy</button>
+                                    <button type="submit" class="btn btn-outline-danger" name="command" value="cancel" onclick="return confirm('Hủy đợt thi này? Lịch sử được giữ lại.')">Hủy</button>
                                 </form>
                             }
                             <a asp-controller="LecturerResults" asp-action="Index" asp-route-id="@row.Id" class="btn btn-outline-secondary">Theo dõi</a>

@@ -1,5 +1,7 @@
 # Hợp đồng tích hợp Exam
 
+Quy tắc thời gian cập nhật 18/11/2026: chỉ nhận lượt mới khi OpensAt ≤ giờ máy chủ < ClosesAt. Mỗi lượt được làm đủ DurationMinutes kể từ StartedAt. API lưu, nộp và worker dùng Attempts.Deadline. Giảng viên bật công bố ngay sau kích hoạt, tùy chọn ScoreOnly/Answers/CorrectAnswers. Mỗi lượt Submitted có kết quả được xem ngay theo chính sách; các bài nộp sau tự hiển thị khi chấm xong.
+
 Trạng thái: đã triển khai và kiểm tra tích hợp ngày 24/10/2026. Nguồn quyết định: DECISIONS.md; phạm vi bằng chứng: REPORT.md.
 
 ## Kiến trúc và quyền sở hữu

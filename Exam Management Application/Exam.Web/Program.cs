@@ -12,6 +12,8 @@ var connection = builder.Configuration.GetConnectionString("ExamDb") ?? throw ne
 var key = builder.Configuration["Jwt:Key"] ?? throw new InvalidOperationException("Set Jwt:Key using user-secrets or environment variables.");
 if (Encoding.UTF8.GetByteCount(key) < 32) throw new InvalidOperationException("Jwt:Key must contain at least 32 bytes.");
 builder.Services.AddScoped<StudentClassService>();
+builder.Services.AddScoped<LecturerClassService>();
+builder.Services.AddScoped<LecturerSessionService>();
 builder.Services.AddDbContext<ExamDbContext>(o => o.UseSqlServer(connection, s => s.EnableRetryOnFailure()));
 builder.Services.AddIdentityCore<AppUser>(o => { o.Password.RequiredLength = 8; o.Lockout.MaxFailedAccessAttempts = 5; o.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(10); o.User.RequireUniqueEmail = false; }).AddRoles<AppRole>().AddEntityFrameworkStores<ExamDbContext>().AddDefaultTokenProviders();
 builder.Services.AddSingleton(TimeProvider.System);
@@ -20,6 +22,7 @@ builder.Services.AddScoped<AdminService>();
 builder.Services.AddScoped<LecturerSessionService>();
 builder.Services.AddScoped<LecturerClassService>();
 builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<ProfileService>();
 builder.Services.AddScoped<ExportService>();
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(o => { o.LoginPath = "/Account/Login"; o.AccessDeniedPath = "/Account/AccessDenied"; o.Cookie.HttpOnly = true; o.Cookie.SameSite = SameSiteMode.Lax; o.Cookie.SecurePolicy = builder.Environment.IsDevelopment() ? CookieSecurePolicy.SameAsRequest : CookieSecurePolicy.Always; o.Events.OnValidatePrincipal = async c => { if (!await c.HttpContext.RequestServices.GetRequiredService<AuthService>().ValidAsync(c.Principal!, desktop: false)) c.RejectPrincipal(); }; }).AddJwtBearer(o => { o.MapInboundClaims = false; o.TokenValidationParameters = new() { ValidateIssuer = true, ValidateAudience = true, ValidateLifetime = true, ValidateIssuerSigningKey = true, ValidIssuer = builder.Configuration["Jwt:Issuer"] ?? "Exam.Web", ValidAudience = builder.Configuration["Jwt:Audience"] ?? "Exam.Desktop", IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)), ClockSkew = TimeSpan.FromSeconds(5) }; o.Events = new JwtBearerEvents { OnTokenValidated = async c => { if (!await c.HttpContext.RequestServices.GetRequiredService<AuthService>().ValidAsync(c.Principal!, desktop: true)) c.Fail("Session invalid"); } }; });
 builder.Services.AddAuthorization();
@@ -43,6 +46,7 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+app.MapControllerRoute("lecturer-class-alias", "ClassLecturer/{action=Index}/{id?}", new { controller = "LecturerClasses" });
 app.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
 if (args.Contains("--seed")) { if (!app.Environment.IsDevelopment()) throw new InvalidOperationException("Seed is only allowed in Development."); await DemoSeeder.SeedAsync(app.Services, builder.Configuration["Seed:Password"] ?? ""); return; }
 await app.RunAsync();

@@ -1,59 +1,23 @@
 @model Exam.Services.LecturerClassService.Page
-@{ ViewData["Title"] = "Lớp và thí sinh"; }
-<h1>Lớp và thí sinh</h1>
-@if (Model.Classes.Count == 0)
+@{ ViewData["Title"] = "Lớp học"; var subjects = Model.Subjects; }
+<h1>Lớp học</h1>
+@if (subjects.Count > 0)
 {
-    <p>Chưa có lớp thuộc các môn được phân công.</p>
+    <form asp-action="Create" method="post" class="surface p-3 mb-4">
+        <label for="subjectId" class="form-label">Môn được phân công</label>
+        <select id="subjectId" name="subjectId" class="form-select mb-3" required>
+            @foreach (var subject in subjects) { <option value="@subject.Value">@subject.Label</option> }
+        </select>
+        <label for="code" class="form-label">Mã lớp</label>
+        <input id="code" name="code" class="form-control mb-3" maxlength="50" required />
+        <button type="submit" class="btn btn-primary">Tạo lớp</button>
+    </form>
 }
-else
+else { <p>Bạn chưa được phân công môn đang hoạt động để tạo lớp.</p> }
+@if (Model.Classes.Count == 0) { <p>Chưa có lớp trong các môn được phân công.</p> }
+<ul class="list-group">
+@foreach (var item in Model.Classes)
 {
-    <ul class="list-group mb-4">
-        @foreach (var item in Model.Classes)
-        {
-            <li class="list-group-item"><a asp-action="Index" asp-route-id="@item.Id" aria-current="@(Model.Selected?.Id == item.Id ? "page" : null)">@item.Code · @item.Subject</a>@(item.Active ? "" : " (đã ngừng hoạt động)")</li>
-        }
-    </ul>
+    <li class="list-group-item p-0"><a asp-action="Details" asp-route-id="@item.Id" class="d-block p-3 text-decoration-none"><strong>@item.Code</strong> · @item.Subject · @(item.IsActive ? "Đang hoạt động" : "Đã ngừng") <span class="ms-2">Xem thí sinh trong lớp</span></a></li>
 }
-@if (Model.Selected is { } selected)
-{
-    <h2>Thành viên lớp @selected.Code</h2>
-    @if (selected.Active)
-    {
-        <form asp-action="Add" asp-route-id="@selected.Id" method="post" class="surface mb-3">
-            <label for="code" class="form-label">Mã thí sinh</label>
-            <input id="code" name="code" class="form-control mb-2" maxlength="30" required />
-            <button class="btn btn-primary" type="submit">Thêm vào lớp</button>
-        </form>
-    }
-    else
-    {
-        <p>Lớp hoặc môn đã ngừng hoạt động. Bạn vẫn có thể xem và gỡ thành viên.</p>
-    }
-    @if (Model.Members.Count == 0)
-    {
-        <p>Lớp chưa có thành viên.</p>
-    }
-    else
-    {
-        <div class="table-responsive">
-            <table class="table">
-                <thead><tr><th>Mã thí sinh</th><th>Họ tên</th><th>Tài khoản</th><th>Thao tác</th></tr></thead>
-                <tbody>
-                @foreach (var member in Model.Members)
-                {
-                    <tr>
-                        <td>@member.Code</td><td>@member.Name</td><td>@(member.Active ? "Hoạt động" : "Đã khóa")</td>
-                        <td>
-                            <form asp-action="Remove" asp-route-id="@selected.Id" method="post">
-                                <input type="hidden" name="studentId" value="@member.Id" />
-                                <button type="submit" class="btn btn-outline-danger" aria-label="Gỡ @member.Name khỏi lớp">Gỡ khỏi lớp</button>
-                            </form>
-                        </td>
-                    </tr>
-                }
-                </tbody>
-            </table>
-        </div>
-        <p class="muted">Gỡ thành viên không xóa lượt thi đã tạo.</p>
-    }
-}
+</ul>

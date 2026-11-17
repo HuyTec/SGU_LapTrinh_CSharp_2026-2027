@@ -23,16 +23,7 @@
         }
         else
         {
-            <ul>
-                @foreach (var session in item.Sessions)
-                {
-                    var state = session.Status switch { "Scheduled" => "Sắp mở", "Open" => "Đang mở", "Closed" => "Đã đóng", "Cancelled" => "Đã hủy", _ => session.Status };
-                    <li>
-                        <a asp-controller="Sessions" asp-action="Details" asp-route-id="@session.Id">@session.Title</a>
-                        · @state · @session.OpensAt.AddHours(7).ToString("dd/MM/yyyy HH:mm") – @session.ClosesAt.AddHours(7).ToString("dd/MM/yyyy HH:mm")
-                    </li>
-                }
-            </ul>
+            <li class="list-group-item p-0"><a asp-action="Details" asp-route-id="@item.Id" class="d-block p-3 text-decoration-none"><strong>@item.Code</strong> · @item.Subject · @(item.IsActive ? "Đang hoạt động" : "Đã ngừng") <span class="ms-2">Xem lớp</span></a></li>
         }
     </section>
 }

@@ -1,7 +1,7 @@
 @model SessionListVm
 @if (Model.Sessions.Count == 0)
 {
-    <div class="surface empty-state"><h2>Chưa có đợt thi phù hợp</h2><p>Thử xóa bộ lọc. Nếu chưa được phân công thi, hãy liên hệ cán bộ phụ trách.</p><a asp-controller="Sessions" asp-action="Index" class="btn btn-outline-primary">Xem tất cả đợt thi</a></div>
+    <div class="surface empty-state"><h2>Chưa có đợt thi phù hợp</h2><p>Thử xóa bộ lọc. Nếu chưa được phân công thi, hãy liên hệ giảng viên phụ trách.</p><a asp-controller="Sessions" asp-action="Index" class="btn btn-outline-primary">Xem tất cả đợt thi</a></div>
 }
 else
 {
@@ -9,7 +9,7 @@ else
         @foreach (var item in Model.Sessions)
         {
             <article class="surface session-item">
-                <div><p class="small muted mb-1">@item.Subject</p><h2><a asp-controller="Sessions" asp-action="Details" asp-route-id="@item.Id">@item.Title</a></h2><p class="mb-1"><time data-local-time="@DateTime.SpecifyKind(item.OpensAt, DateTimeKind.Utc).ToString("O")">@item.OpensAt.ToString("dd/MM/yyyy HH:mm") UTC</time> — <time data-local-time="@DateTime.SpecifyKind(item.ClosesAt, DateTimeKind.Utc).ToString("O")">@item.ClosesAt.ToString("dd/MM/yyyy HH:mm") UTC</time></p><p class="small muted mb-0">Thời lượng: @item.DurationMinutes phút</p></div>
+                <div><p class="small muted mb-1">@item.Subject</p><h2><a asp-controller="Sessions" asp-action="Details" asp-route-id="@item.Id">@item.Title</a></h2><p class="mb-1">Khung giờ vào thi: <time data-local-time="@DateTime.SpecifyKind(item.OpensAt, DateTimeKind.Utc).ToString("O")">@item.OpensAt.ToString("dd/MM/yyyy HH:mm") UTC</time> — <time data-local-time="@DateTime.SpecifyKind(item.ClosesAt, DateTimeKind.Utc).ToString("O")">@item.ClosesAt.ToString("dd/MM/yyyy HH:mm") UTC</time></p><p class="small muted mb-0">Thời lượng mỗi lượt: @item.DurationMinutes phút</p></div>
                 <div class="session-actions"><span class="status-tag" data-status="@item.Status">@item.Status</span><a class="btn btn-outline-primary" asp-controller="Sessions" asp-action="Details" asp-route-id="@item.Id">Xem chi tiết</a></div>
             </article>
         }

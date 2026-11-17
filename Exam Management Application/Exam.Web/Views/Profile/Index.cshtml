@@ -1,0 +1,40 @@
+@model Exam.Core.UpdateProfileRequest
+@{
+    var profile = (Exam.Core.ProfileDto)ViewData["Profile"]!;
+    var lecturer = User.IsInRole("Lecturer");
+    ViewData["Title"] = lecturer ? "Hồ sơ giảng viên" : "Hồ sơ thí sinh";
+}
+<section class="page-heading"><div><h1>@ViewData["Title"]</h1><p>@profile.UserName</p></div></section>
+<div class="row g-4">
+    <section class="col-lg-4">
+        <div class="surface h-100">
+            <h2>Thông tin tài khoản</h2>
+            <dl>
+                <dt>Tên đăng nhập</dt><dd>@profile.UserName</dd>
+                <dt>Vai trò</dt><dd>@(lecturer ? "Giảng viên" : "Thí sinh")</dd>
+                @if (!lecturer)
+                {
+                    <dt>Mã thí sinh</dt><dd>@profile.StudentCode</dd>
+                    <dt>Lớp tham gia</dt><dd><a asp-controller="StudentClasses" asp-action="Index">@profile.ClassCount lớp</a></dd>
+                }
+            </dl>
+            @if (lecturer)
+            {
+                <h2>Môn được phân công</h2>
+                @if (profile.Subjects.Count == 0) { <p>Chưa có môn được phân công.</p> }
+                else { <ul>@foreach (var subject in profile.Subjects) { <li>@subject</li> }</ul> }
+            }
+        </div>
+    </section>
+    <section class="col-lg-8">
+        <form asp-action="Index" method="post" class="surface">
+            <h2>Thông tin cá nhân</h2>
+            <div asp-validation-summary="All" class="text-danger" role="alert"></div>
+            <input asp-for="Version" type="hidden" />
+            <div class="mb-3"><label asp-for="FullName" class="form-label">Họ và tên</label><input asp-for="FullName" class="form-control" autocomplete="name" maxlength="120" required /><span asp-validation-for="FullName" class="text-danger"></span></div>
+            <div class="mb-3"><label asp-for="Email" class="form-label">Email</label><input asp-for="Email" type="email" class="form-control" autocomplete="email" maxlength="256" /><span asp-validation-for="Email" class="text-danger"></span></div>
+            <div class="mb-3"><label asp-for="PhoneNumber" class="form-label">Số điện thoại</label><input asp-for="PhoneNumber" type="tel" class="form-control" autocomplete="tel" maxlength="20" /><span asp-validation-for="PhoneNumber" class="text-danger"></span></div>
+            <div class="action-row"><button type="submit" class="btn btn-primary">Lưu hồ sơ</button><a asp-action="Index" class="btn btn-outline-secondary">Tải hồ sơ mới nhất</a></div>
+        </form>
+    </section>
+</div>

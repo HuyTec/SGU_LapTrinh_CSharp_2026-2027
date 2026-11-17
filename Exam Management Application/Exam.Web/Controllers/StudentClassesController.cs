@@ -9,6 +9,9 @@ namespace Exam.Web.Controllers;
 public sealed class StudentClassesController(ExamService exams) : Controller
 {
     [HttpGet]
+    public async Task<IActionResult> Details(int id) => View(await classes.DetailAsync(StudentId, id));
+
+    [HttpGet]
     public async Task<IActionResult> Index()
     {
         var studentId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);

@@ -73,19 +73,21 @@ public sealed class LecturerSessionService(ExamDbContext db, TimeProvider clock)
     {
         var session = id is int sessionId ? await LoadAsync(lecturer, sessionId) : new ExamSession { ManagedBy = lecturer };
         EnsureDraft(session);
-        var title = draft.Title.Trim();
-        if (title.Length is 0 or > 200 || draft.OpensAt >= draft.ClosesAt || draft.DurationMinutes <= 0 ||
-            draft.DurationMinutes > (draft.ClosesAt - draft.OpensAt).TotalMinutes)
-            throw new BusinessException("Nhập tên đợt tối đa 200 ký tự, giờ mở trước giờ đóng và thời lượng nằm trong cửa sổ thi.");
+        var title = draft.Title?.Trim() ?? "";
+        if (title.Length == 0)
+            throw new BusinessException("Vui lòng nhập tên đợt thi.", field: nameof(SessionDraft.Title));
+        if (title.Length > 200)
+            throw new BusinessException("Tên đợt thi tối đa 200 ký tự.", field: nameof(SessionDraft.Title));
+        ValidateSchedule(draft.OpensAt, draft.ClosesAt, draft.DurationMinutes);
         if (draft.ReviewPolicy is not ("ScoreOnly" or "Answers" or "CorrectAnswers"))
-            throw new BusinessException("Chính sách xem kết quả không hợp lệ.");
+            throw new BusinessException("Chọn lại chính sách xem kết quả.", field: nameof(SessionDraft.ReviewPolicy));
         var paper = await db.Exams.Include(p => p.Subject).SingleOrDefaultAsync(p =>
             p.Id == draft.ExamId && p.Status == "Ready" && p.Subject.IsActive && db.LecturerSubjects.Any(a =>
                 a.LecturerId == lecturer && a.SubjectId == p.SubjectId))
-            ?? throw new BusinessException("Chọn đề sẵn sàng thuộc môn đang hoạt động và được phân công.");
+            ?? throw new BusinessException("Đề đã chọn chưa sẵn sàng hoặc không thuộc môn đang hoạt động được phân công. Hãy chọn lại đề.", field: nameof(SessionDraft.ExamId));
         var classIds = draft.ClassIds.Distinct().ToArray();
         if (await db.Set<ExamClass>().CountAsync(c => classIds.Contains(c.Id) && c.IsActive && c.SubjectId == paper.SubjectId) != classIds.Length)
-            throw new BusinessException("Các lớp phải đang hoạt động và thuộc môn của đề thi.");
+            throw new BusinessException("Có lớp đã ngừng hoạt động hoặc khác môn với đề. Hãy kiểm tra lại các lớp đã chọn.", field: nameof(SessionDraft.ClassIds));
         session.Title = title;
         session.ExamId = paper.Id;
         session.OpensAt = draft.OpensAt;
@@ -95,7 +97,7 @@ public sealed class LecturerSessionService(ExamDbContext db, TimeProvider clock)
         session.ShuffleOptions = draft.ShuffleOptions;
         session.ReviewPolicy = draft.ReviewPolicy;
         foreach (var link in session.Classes.Where(c => !classIds.Contains(c.ClassId)).ToList())
-            session.Classes.Remove(link);
+            db.Set<SessionClass>().Remove(link);
         foreach (var classId in classIds.Where(c => !session.Classes.Any(link => link.ClassId == c)))
             session.Classes.Add(new SessionClass { ClassId = classId });
         if (!id.HasValue)
@@ -118,24 +120,44 @@ public sealed class LecturerSessionService(ExamDbContext db, TimeProvider clock)
         if (action != "activate")
             throw new BusinessException("Thao tác không hợp lệ.");
         EnsureDraft(session);
-        if (session.Exam.Status != "Ready" || !session.Exam.Subject.IsActive || session.ClosesAt <= Now ||
-            session.OpensAt >= session.ClosesAt || session.DurationMinutes <= 0 ||
-            session.DurationMinutes > (session.ClosesAt - session.OpensAt).TotalMinutes)
-            throw new BusinessException("Đợt cần đề sẵn sàng, môn đang hoạt động và cửa sổ thi hợp lệ.");
-        if (session.Classes.Count == 0 || session.Classes.Any(c => !c.Class.IsActive || c.Class.SubjectId != session.Exam.SubjectId))
-            throw new BusinessException("Gán ít nhất một lớp đang hoạt động thuộc môn của đề.");
+        if (session.Exam.Status != "Ready")
+            throw new BusinessException("Đề thi chưa sẵn sàng. Xác nhận đề sẵn sàng trước khi kích hoạt đợt.");
+        if (!session.Exam.Subject.IsActive)
+            throw new BusinessException("Môn học đã ngừng hoạt động. Liên hệ quản trị viên để kiểm tra môn.");
+        if (session.ClosesAt <= Now)
+            throw new BusinessException("Giờ đóng đã qua. Sửa lịch thi trước khi kích hoạt.");
+        ValidateSchedule(session.OpensAt, session.ClosesAt, session.DurationMinutes);
+        if (session.Classes.Count == 0)
+            throw new BusinessException("Chưa chọn lớp dự thi. Sửa đợt nháp và chọn ít nhất một lớp trước khi kích hoạt.");
+        if (session.Classes.Any(c => !c.Class.IsActive || c.Class.SubjectId != session.Exam.SubjectId))
+            throw new BusinessException("Có lớp đã ngừng hoạt động hoặc khác môn với đề. Sửa lại các lớp đã chọn trước khi kích hoạt.");
         var classIds = session.Classes.Select(c => c.ClassId).ToArray();
         var members = db.Set<ClassStudent>().Where(m => classIds.Contains(m.ClassId)).Select(m => m.StudentId);
         var overlap = await db.ExamSessions.AnyAsync(other => other.Id != id && other.Status == "Active" &&
-            other.OpensAt < session.ClosesAt && session.OpensAt < other.ClosesAt &&
+            other.OpensAt < session.ClosesAt.AddMinutes(session.DurationMinutes) &&
+            session.OpensAt < other.ClosesAt.AddMinutes(other.DurationMinutes) &&
             (other.Classes.Any(c => c.Class.IsActive && (classIds.Contains(c.ClassId) ||
                 c.Class.Students.Any(m => members.Contains(m.StudentId)))) ||
              db.Attempts.Any(a => a.SessionId == other.Id && a.Status == "InProgress" && members.Contains(a.StudentId))));
         if (overlap)
-            throw new BusinessException("Có lớp hoặc thành viên trùng cửa sổ với đợt thi đã kích hoạt.", 409);
+            throw new BusinessException("Lớp hoặc thí sinh có thời gian làm bài trùng với đợt khác. Lịch được kiểm tra đến giờ đóng nhận lượt cộng thời lượng làm bài.", 409);
 
         session.AccessCode ??= Convert.ToHexString(RandomNumberGenerator.GetBytes(12));
         session.Status = "Active";
         return true;
     });
+
+    private static void ValidateSchedule(DateTime opensAt, DateTime closesAt, int durationMinutes)
+    {
+        if (closesAt <= opensAt)
+            throw new BusinessException(
+                $"Giờ đóng phải sau giờ mở ({opensAt.AddHours(7):dd/MM/yyyy HH:mm}, giờ Việt Nam). Kiểm tra cả ngày và giờ đóng.",
+                field: nameof(SessionDraft.ClosesAt));
+        if (durationMinutes <= 0)
+            throw new BusinessException("Thời lượng làm bài phải ít nhất 1 phút.", field: nameof(SessionDraft.DurationMinutes));
+        if (durationMinutes > (DateTime.MaxValue - closesAt).TotalMinutes)
+            throw new BusinessException(
+                "Thời lượng vượt giới hạn thời gian được hỗ trợ. Chọn thời lượng hoặc ngày thi nhỏ hơn.",
+                field: nameof(SessionDraft.DurationMinutes));
+    }
 }

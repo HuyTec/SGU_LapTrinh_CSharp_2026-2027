@@ -31,7 +31,7 @@ else
             @foreach (var row in Model.Page.Items)
             {
                 <tr>
-                    <td>@row[questions ? "text" : "name"]</td>
+                    <td><div class="@(questions ? "question-markdown" : "")">@row[questions ? "text" : "name"]</div></td>
                     <td>@row["subject"]</td>
                     <td>@(row["isActive"] is true ? "Đang hoạt động" : "Đã ngừng")</td>
                     <td>

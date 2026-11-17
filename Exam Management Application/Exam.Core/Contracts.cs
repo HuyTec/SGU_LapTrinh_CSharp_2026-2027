@@ -1,9 +1,32 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Exam.Core;
 
 public record LoginRequest(string UserName, string Password, string? Role = null);
-public record RegisterRequest(string UserName,string FullName,string? StudentCode,string Email,string Password,string AccountType="Student");
+public record RegisterRequest(string UserName,string FullName,string? StudentCode,string Email,string Password,string AccountType="Student",string? PhoneNumber=null);
 public record RegisterStudentRequest(string UserName, string FullName, string StudentCode, string Email, string Password);
 public record LoginResponse(string Token, DateTime ExpiresAt, string DisplayName, string Role);
+public record ProfileDto(string UserName, string FullName, string? Email, string? PhoneNumber,
+    string? StudentCode, IReadOnlyList<string> Roles, string Version, IReadOnlyList<string> Subjects, int ClassCount);
+public sealed class UpdateProfileRequest
+{
+    public UpdateProfileRequest() { }
+    public UpdateProfileRequest(string fullName, string? email, string? phoneNumber, string version)
+    {
+        FullName = fullName;
+        Email = email;
+        PhoneNumber = phoneNumber;
+        Version = version;
+    }
+    [Required(ErrorMessage = "Vui lòng nhập họ tên."), StringLength(120, ErrorMessage = "Họ tên tối đa 120 ký tự.")]
+    public string FullName { get; set; } = "";
+    [EmailAddress(ErrorMessage = "Email không hợp lệ."), StringLength(256, ErrorMessage = "Email tối đa 256 ký tự.")]
+    public string? Email { get; set; }
+    [Phone(ErrorMessage = "Số điện thoại không hợp lệ."), StringLength(20, ErrorMessage = "Số điện thoại tối đa 20 ký tự.")]
+    public string? PhoneNumber { get; set; }
+    [Required(ErrorMessage = "Hãy tải lại hồ sơ trước khi lưu.")]
+    public string Version { get; set; } = "";
+}
 public record ChoiceDto(string Value, string Label);
 public record FieldDto(string Name, string Label, string Type = "text", bool Required = false, IReadOnlyList<ChoiceDto>? Choices = null);
 public record ResourceDto(string Key, string Label, IReadOnlyList<FieldDto> Fields, bool CanCreate = true, bool CanDelete = true);
@@ -22,9 +45,10 @@ public record AttemptStatusDto(long Id, DateTime ServerNow, DateTime Deadline, s
 public record ReviewQuestionDto(string Text, string? SelectedAnswer, string? CorrectAnswer, bool? IsCorrect, decimal Points);
 public record ResultVm(long AttemptId, string Title, string Status, bool Published, decimal? Score, int? CorrectCount, int QuestionCount, DateTime? SubmittedAt, string ReviewPolicy, IReadOnlyList<ReviewQuestionDto> Questions);
 public record HistoryVm(IReadOnlyList<ResultVm> Results);
-public class BusinessException(string message, int status = 400) : Exception(message)
+public class BusinessException(string message, int status = 400, string? field = null) : Exception(message)
 {
     public int Status { get; } = status;
+    public string? Field { get; } = field;
 }
 public record ImportStudentsRequest(string Csv, bool Preview = false);
 

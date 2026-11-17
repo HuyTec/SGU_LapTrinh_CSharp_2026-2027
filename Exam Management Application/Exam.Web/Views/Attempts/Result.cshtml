@@ -8,7 +8,7 @@
 else if(Model.Status=="PendingGrading")
 {<h2>Đang chờ chấm điểm</h2><p>Bài thi đã kết thúc. Hệ thống đang xử lý kết quả; bạn có thể tải lại sau.</p><a class="btn btn-outline-primary" asp-action="Result" asp-route-id="@Model.AttemptId">Tải lại kết quả</a>}
 else if(!Model.Published)
-{<h2>Đã kết thúc bài thi</h2><p class="mb-0">Kết quả chưa được công bố. Vui lòng quay lại sau khi cán bộ phụ trách công bố điểm.</p>}
+{<h2>Đã kết thúc bài thi</h2><p>Kết quả chưa được giảng viên công bố. Tải lại sau khi giảng viên bật công bố.</p><a class="btn btn-outline-primary" asp-action="Result" asp-route-id="@Model.AttemptId">Tải lại kết quả</a>}
 else if(Model.Score is null)
 {<h2>Đang xử lý kết quả</h2><p>Bài thi đã kết thúc; kết quả đang được xử lý.</p><a class="btn btn-outline-primary" asp-action="Result" asp-route-id="@Model.AttemptId">Tải lại kết quả</a>}
 else
@@ -16,4 +16,24 @@ else
 @if(Model.SubmittedAt is DateTime submitted){<p class="small muted mb-0">Kết thúc lúc <time data-local-time="@DateTime.SpecifyKind(submitted, DateTimeKind.Utc).ToString("O")">@submitted.ToString("dd/MM/yyyy HH:mm") UTC</time></p>}
 </section>
 @if(Model.Published && Model.Questions.Count>0)
-{<section aria-labelledby="review-heading"><h2 id="review-heading">Xem lại bài làm</h2><p class="small muted">Nội dung được hiển thị theo chính sách công bố của đợt thi.</p>@for(var i=0;i<Model.Questions.Count;i++){var q=Model.Questions[i];<article class="surface mb-3"><h3>Câu @(i+1)</h3><p class="pre-line">@q.Text</p><p><strong>Đáp án đã chọn:</strong> @(q.SelectedAnswer ?? "Chưa trả lời")</p>@if(q.CorrectAnswer is not null){<p><strong>Đáp án đúng:</strong> @q.CorrectAnswer</p>}@if(q.IsCorrect.HasValue){<p class="mb-0">@(q.IsCorrect.Value ? "Trả lời đúng" : "Trả lời chưa đúng hoặc bỏ trống")</p>}</article>}</section>}
+{
+    <section aria-labelledby="review-heading">
+        <h2 id="review-heading">Xem lại bài làm</h2>
+        <p class="small muted">Nội dung được hiển thị theo chính sách công bố của đợt thi.</p>
+        @for (var i = 0; i < Model.Questions.Count; i++)
+        {
+            var question = Model.Questions[i];
+            var answerClass = question.IsCorrect switch { true => "review-correct", false => "review-incorrect", _ => "" };
+            var status = question.IsCorrect == true ? "Đúng" : question.SelectedAnswer is null ? "Chưa trả lời" : "Sai";
+            <article class="surface mb-3 @answerClass">
+                <h3 class="review-status">Câu @(i + 1) @if (question.IsCorrect.HasValue) { <span>· @status</span> }</h3>
+                <div class="review-question question-markdown">@question.Text</div>
+                <div class="review-selection"><strong>Đáp án đã chọn:</strong><div class="question-markdown">@(question.SelectedAnswer ?? "Chưa trả lời")</div></div>
+                @if (question.CorrectAnswer is not null)
+                {
+                    <div class="review-correct-answer"><strong>Đáp án đúng:</strong><div class="question-markdown">@question.CorrectAnswer</div></div>
+                }
+            </article>
+        }
+    </section>
+}

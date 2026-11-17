@@ -17,15 +17,15 @@ public sealed class LecturerSessionsController(LecturerSessionService sessions) 
     public sealed class Editor
     {
         public int? Id { get; set; }
-        [Required, StringLength(200)]
+        [Required(ErrorMessage = "Vui lòng nhập tên đợt thi."), StringLength(200, ErrorMessage = "Tên đợt thi tối đa 200 ký tự.")]
         public string Title { get; set; } = "";
-        [Range(1, int.MaxValue)]
+        [Range(1, int.MaxValue, ErrorMessage = "Vui lòng chọn đề thi sẵn sàng.")]
         public int ExamId { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Vui lòng nhập ngày và giờ mở.")]
         public DateTime? OpensAt { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Vui lòng nhập ngày và giờ đóng.")]
         public DateTime? ClosesAt { get; set; }
-        [Range(1, int.MaxValue)]
+        [Range(1, int.MaxValue, ErrorMessage = "Thời lượng làm bài phải ít nhất 1 phút.")]
         public int DurationMinutes { get; set; } = 30;
         public bool ShuffleQuestions { get; set; }
         public bool ShuffleOptions { get; set; }
@@ -69,7 +69,7 @@ public sealed class LecturerSessionsController(LecturerSessionService sessions) 
             }
             catch (BusinessException ex) when (ex.Status != 404)
             {
-                ModelState.AddModelError("", ex.Message);
+                ModelState.AddModelError(ex.Field ?? "", ex.Message);
             }
         }
         model.Id = id;

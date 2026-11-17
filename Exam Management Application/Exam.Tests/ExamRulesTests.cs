@@ -9,14 +9,15 @@ public class ExamRulesTests
     private static readonly DateTime Start = new(2026, 10, 24, 7, 0, 0, DateTimeKind.Utc);
 
     [Theory]
-    [InlineData(30, 60, 30)]
-    [InlineData(60, 30, 30)]
-    [InlineData(30, 30, 30)]
-    [InlineData(1, 60, 1)]
-    public void DeadlineNeverExtendsPastTheSessionClose(int duration, int minutesUntilClose, int expectedMinutes)
+    [InlineData(30, 60)]
+    [InlineData(60, 30)]
+    [InlineData(30, 30)]
+    [InlineData(1, 60)]
+    public void DeadlineAlwaysGivesTheFullDuration(int duration, int minutesUntilClose)
     {
-        Assert.Equal(Start.AddMinutes(expectedMinutes),
-            ExamRules.Deadline(Start, duration, Start.AddMinutes(minutesUntilClose)));
+        var deadline = ExamRules.Deadline(Start, duration);
+        Assert.Equal(Start.AddMinutes(duration), deadline);
+        Assert.Equal(duration > minutesUntilClose, deadline > Start.AddMinutes(minutesUntilClose));
     }
 
     [Theory]

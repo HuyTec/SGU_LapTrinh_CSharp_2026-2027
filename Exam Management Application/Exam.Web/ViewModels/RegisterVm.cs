@@ -12,6 +12,8 @@ public class RegisterVm : IValidatableObject
     public string AccountType {get;set;}="Student";
     [Required(ErrorMessage="Vui lòng nhập email."),EmailAddress(ErrorMessage="Email không đúng định dạng."),StringLength(256)]
     public string Email {get;set;}="";
+    [Phone(ErrorMessage="Số điện thoại không hợp lệ."),StringLength(20)]
+    public string? PhoneNumber {get;set;}
     [Required(ErrorMessage="Vui lòng nhập mật khẩu."),StringLength(100,MinimumLength=8,ErrorMessage="Mật khẩu cần từ 8 đến 100 ký tự."),DataType(DataType.Password)]
     public string Password {get;set;}="";
     [Required(ErrorMessage="Vui lòng xác nhận mật khẩu."),Compare(nameof(Password),ErrorMessage="Mật khẩu xác nhận không khớp."),DataType(DataType.Password)]

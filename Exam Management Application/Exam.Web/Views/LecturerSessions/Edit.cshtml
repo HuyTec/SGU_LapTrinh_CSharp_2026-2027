@@ -1,12 +1,13 @@
 @model Exam.Web.Controllers.LecturerSessionsController.Editor
 @{ ViewData["Title"] = "Cấu hình đợt thi"; }
 <h1>Cấu hình đợt thi</h1>
-<p>Giờ mở và đóng dùng giờ Việt Nam (UTC+7).</p>
+<p>Khung giờ dưới đây dành cho việc bắt đầu lượt thi, theo giờ Việt Nam (UTC+7). Mỗi thí sinh có đủ thời lượng tính từ lúc nhấn Bắt đầu.</p>
 <form asp-action="Edit" asp-route-id="@Model.Id" method="post" class="surface">
-    <div asp-validation-summary="All" class="text-danger"></div>
+    <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
     <div class="mb-3">
         <label asp-for="Title" class="form-label">Tên đợt thi</label>
         <input asp-for="Title" class="form-control" maxlength="200" required />
+        <span asp-validation-for="Title" class="text-danger" role="alert"></span>
     </div>
     <div class="mb-3">
         <label asp-for="ExamId" class="form-label">Đề sẵn sàng</label>
@@ -14,12 +15,14 @@
             <option value="">Chọn đề</option>
             @foreach (var paper in Model.Papers) { <option value="@paper.Id">@paper.Label</option> }
         </select>
+        <span asp-validation-for="ExamId" class="text-danger" role="alert"></span>
     </div>
     <div class="row">
-        <div class="col-md mb-3"><label asp-for="OpensAt" class="form-label">Mở lúc</label><input asp-for="OpensAt" type="datetime-local" class="form-control" required /></div>
-        <div class="col-md mb-3"><label asp-for="ClosesAt" class="form-label">Đóng lúc</label><input asp-for="ClosesAt" type="datetime-local" class="form-control" required /></div>
-        <div class="col-md mb-3"><label asp-for="DurationMinutes" class="form-label">Thời lượng (phút)</label><input asp-for="DurationMinutes" type="number" min="1" class="form-control" required /></div>
+        <div class="col-md mb-3"><label asp-for="OpensAt" class="form-label">Bắt đầu nhận thí sinh</label><input asp-for="OpensAt" type="datetime-local" class="form-control" required /><span asp-validation-for="OpensAt" class="text-danger" role="alert"></span></div>
+        <div class="col-md mb-3"><label asp-for="ClosesAt" class="form-label">Kết thúc nhận thí sinh</label><input asp-for="ClosesAt" type="datetime-local" class="form-control" required /><span asp-validation-for="ClosesAt" class="text-danger" role="alert"></span></div>
+        <div class="col-md mb-3"><label asp-for="DurationMinutes" class="form-label">Thời lượng mỗi lượt (phút)</label><input asp-for="DurationMinutes" type="number" min="1" class="form-control" required /><span asp-validation-for="DurationMinutes" class="text-danger" role="alert"></span></div>
     </div>
+    <p class="form-text">Nếu đợt thi qua nửa đêm, chọn ngày đóng ở ngày kế tiếp.</p>
     <div class="mb-3"><label><input asp-for="ShuffleQuestions" /> Trộn câu hỏi</label></div>
     <div class="mb-3"><label><input asp-for="ShuffleOptions" /> Trộn đáp án</label></div>
     <div class="mb-3">
@@ -28,6 +31,7 @@
             <option value="ScoreOnly">Chỉ xem điểm</option><option value="Answers">Xem lựa chọn đã nộp</option>
             <option value="CorrectAnswers">Xem lựa chọn đã nộp và đáp án đúng</option>
         </select>
+        <span asp-validation-for="ReviewPolicy" class="text-danger" role="alert"></span>
     </div>
     <fieldset class="mb-3">
         <legend class="h5">Lớp dự thi</legend>
@@ -36,6 +40,7 @@
         {
             <div><label><input type="checkbox" name="ClassIds" value="@item.Id" checked="@Model.ClassIds.Contains(item.Id)" /> @item.Label</label></div>
         }
+        <span asp-validation-for="ClassIds" class="text-danger" role="alert"></span>
     </fieldset>
     <button type="submit" class="btn btn-primary">Lưu nháp</button>
     <a asp-action="Index" class="btn btn-outline-secondary">Quay lại</a>

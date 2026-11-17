@@ -66,25 +66,10 @@ public sealed partial class HelpForm : Form
 
                 6. “Theo dõi / kết quả” hiển thị dữ liệu trong phạm vi môn được phân công. Chọn một dòng rồi xuất CSV/Excel cho đợt tương ứng.
                 """,
-            "ExamOfficer" => """
-                TỔ CHỨC VÀ CÔNG BỐ ĐỢT THI
-
-                1. Mở “Danh mục môn học” để thêm hoặc cập nhật môn. Quản trị viên phân công giảng viên; giảng viên chuẩn bị đề sẵn sàng.
-
-                2. Mở “Tổ chức đợt thi” → Thêm. Chọn đề sẵn sàng, tên đợt, thời gian mở/đóng, thời lượng, cách trộn câu/đáp án và chính sách xem kết quả. Thời gian nhập và hiển thị là giờ Việt Nam.
-
-                3. Mở “Phân công thí sinh”, chọn đợt nháp và thí sinh. Máy chủ kiểm tra trùng lịch. Muốn đổi phân công, xóa dòng cũ rồi thêm lại trước khi danh sách bị khóa.
-
-                4. Quay lại đợt thi và chọn “Kích hoạt”. Thí sinh được phân công có thể thi trong khung giờ máy chủ cho phép. Chỉ hoãn/hủy trước lần mở đầu và khi chưa có lượt thi.
-
-                5. Chọn “Theo dõi / kết quả” và bấm Làm mới để xem tình trạng. Bạn quản lý các đợt thuộc phạm vi phụ trách.
-
-                6. Sau khi đợt đóng và tất cả lượt thi đã được chấm, chọn “Công bố kết quả”. Thí sinh xem điểm/bài/đáp án theo chính sách đã chọn. Có thể xuất CSV hoặc Excel từ đợt thi hoặc màn theo dõi.
-                """,
             _ => """
                 CHỌN ĐÚNG ỨNG DỤNG
 
-                • Mọi vai trò đều có thể đăng ký trên Web tại /Account/Register. Bấm “Đăng ký tài khoản trên Web” ở màn đăng nhập để mở trang của máy chủ đang cấu hình.
+                • Thí sinh và giảng viên có thể đăng ký trên Web tại /Account/Register. Bấm “Đăng ký tài khoản trên Web” ở màn đăng nhập để mở trang của máy chủ đang cấu hình.
 
                 • Thí sinh đăng ký xong có thể đăng nhập Web để xem và làm bài thi được phân công.
 

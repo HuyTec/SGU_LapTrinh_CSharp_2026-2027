@@ -5,6 +5,14 @@
 }
 <section class="surface">
     <h1>@ViewData["Title"]</h1>
+    @if (resource == "questions")
+    {
+        <div class="alert alert-info" id="question-format-help">
+            Nội dung và đáp án hỗ trợ Markdown: <code>**in đậm**</code>, <code>*in nghiêng*</code>.
+            Công thức trong dòng: <code>$x^2 + \frac{1}{2}$</code>.
+            Công thức riêng dòng: <code>$$\int_0^1 x\,dx$$</code>. Xem trước cập nhật khi nhập.
+        </div>
+    }
     <form asp-action="SaveMaterial" asp-route-resource="@resource" asp-route-id="@Model.Id" method="post">
         <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
         @foreach (var field in Model.Definition.Fields)
@@ -43,6 +51,13 @@
                     else
                     {
                         <input id="@field.Name" name="@field.Name" value="@value" required="@field.Required" maxlength="@(resource == "topics" ? 150 : 2000)" class="form-control" />
+                    }
+                    @if (resource == "questions" && (field.Name == "text" || field.Name.StartsWith("option")))
+                    {
+                        <div class="question-preview mt-2" data-preview-for="@field.Name" role="region" aria-label="Xem trước @field.Label">
+                            <span class="small muted">Xem trước</span>
+                            <div class="question-markdown preview-content"></div>
+                        </div>
                     }
                 </div>
             }

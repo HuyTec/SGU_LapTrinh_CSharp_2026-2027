@@ -42,7 +42,7 @@
                         <td><input asp-for="Questions[i].Id" type="hidden" />
                             <input asp-for="Questions[i].Selected" class="form-check-input" aria-label="Chọn câu @question.Id" disabled="@ready" />
                         </td>
-                        <td>@question.Text</td>
+                        <td><div class="question-markdown">@question.Text</div></td>
                         <td><input asp-for="Questions[i].Points" type="number" class="form-control" step="0.01" max="999999.99" aria-label="Trọng số câu @question.Id" readonly="@ready" /></td>
                     </tr>
                 }

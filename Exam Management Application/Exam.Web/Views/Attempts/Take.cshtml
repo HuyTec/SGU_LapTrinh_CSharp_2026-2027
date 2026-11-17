@@ -11,10 +11,10 @@
         {
             <fieldset class="surface question-card" id="question-@question.Id" data-question-id="@question.Id">
                 <legend class="fs-6 fw-bold float-none w-auto">Câu @question.Order</legend><div class="question-topline"><span class="question-save" aria-live="polite">Đã tải dữ liệu đã lưu</span></div>
-                <p class="question-title">@question.Text</p>
+                <div class="question-title question-markdown">@question.Text</div>
                 @foreach(var option in question.Options.OrderBy(o=>o.Order))
                 {
-                    <label class="answer-option" for="answer-@option.Id"><input type="radio" name="question-@question.Id" id="answer-@option.Id" value="@option.Id" checked="@(question.SelectedOptionId==option.Id)" /><span>@option.Text</span></label>
+                    <label class="answer-option" for="answer-@option.Id"><input type="radio" name="question-@question.Id" id="answer-@option.Id" value="@option.Id" checked="@(question.SelectedOptionId==option.Id)" /><span class="question-markdown">@option.Text</span></label>
                 }
                 <label class="flag-label"><input type="checkbox" class="flag-question" checked="@question.IsFlagged" />Đánh dấu để xem lại</label>
             </fieldset>

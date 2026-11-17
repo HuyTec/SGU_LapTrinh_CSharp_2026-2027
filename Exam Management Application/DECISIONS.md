@@ -4,7 +4,13 @@ Ngày xác nhận: 24/10/2026 (Asia/Saigon). Người dùng duyệt `1a, 2a 3a 4
 
 ### Thay đổi phạm vi ngày 10/11/2026
 
-Hệ thống có ba vai trò. Quản trị viên dùng Desktop WinForms để quản lý tài khoản, phân công giảng viên (UC-16), danh mục môn (UC-17) và danh mục lớp (UC-24). Thí sinh và giảng viên dùng Web. Giảng viên thực hiện nghiệp vụ học liệu và thi theo môn được phân công và phạm vi đợt phụ trách.
+Ngày 18/11/2026, giờ mở/đóng đợt được xác định là khung giờ nhận lượt thi mới [OpensAt, ClosesAt). Mỗi lượt có Deadline = StartedAt + DurationMinutes và được tiếp tục sau khi hết giờ nhận lượt. Thời lượng có thể dài hơn khung giờ vào thi. Worker chấm theo Deadline cá nhân. Theo điều chỉnh tiếp theo cùng ngày, giảng viên có thể bật công bố bất kỳ lúc nào sau khi kích hoạt; từng thí sinh được xem ngay khi bài của mình đã kết thúc và chấm xong. Bài nộp sau tự hiển thị theo chính sách, mặc định điểm và lựa chọn đã trả lời trên form công bố. Kiểm tra trùng lịch dùng khoảng từ giờ mở đến giờ đóng nhận lượt cộng thời lượng. Migration PersonalAttemptDeadlines điều chỉnh lượt InProgress chưa có kết quả bị cắt hạn bởi giờ đóng cũ.
+
+Ngày 18/11/2026, chủ dự án bổ sung hồ sơ cá nhân cho cả ba tác nhân (UC-03): Thí sinh và Giảng viên dùng Web, Quản trị viên dùng WinForms. Người dùng cập nhật họ tên, email và số điện thoại của chính mình. Trang thí sinh hiển thị mã và số lớp; trang giảng viên hiển thị môn được phân công. Tên đăng nhập, mã thí sinh và vai trò chỉ hiển thị. Các client gọi chung ProfileService, có kiểm tra phiên bản khi lưu.
+
+Ngày 17/11/2026, chủ dự án cho phép giảng viên tự tạo lớp học trên Web, giới hạn trong môn đang hoạt động được phân công. Thí sinh xem các lớp mình là thành viên qua mục “Lớp của tôi”. Đăng ký bổ sung số điện thoại tùy chọn; không tự điền số cho hồ sơ cũ. Migration RetireExamOfficer chuyển quyền cũ sang Lecturer, giữ ID/chủ sở hữu và bổ sung phân công môn cho các đợt do tài khoản cũ phụ trách.
+
+Theo chỉ đạo mới của người dùng, bỏ tác nhân/vai trò Cán bộ quản lý thi (`ExamOfficer`). Giảng viên nhận các nghiệp vụ UC-12/13/17–21 trong phạm vi môn được phân công; bổ sung UC-24 quản lý lớp học phần và đưa học viên từ lớp vào danh sách đợt thi. Giữ Thí sinh và Quản trị viên. Đây là thay đổi so với quyết định 24/10/2026.
 
 PR QT01/QT02 chuyển đăng nhập về ba vai trò, khóa API Desktop cho quản trị viên và cung cấp trang Web xem môn được phân công. Các màn học liệu thuộc HL01/HL02. Tạo/sửa đợt nháp thuộc DT01 (UC-18), gán lớp và kích hoạt thuộc DT03 (UC-18/19), theo dõi và công bố kết quả thuộc DT04 (UC-12/13/21). Thao tác hoãn/hủy (UC-20) cần được nối trên Web giảng viên cùng luồng quản lý đợt. Các luồng này cần dùng xác thực Web và kiểm tra phạm vi tại máy chủ. Dữ liệu đợt cũ còn đứng tên cán bộ cần được bàn giao cho giảng viên được nhóm xác nhận.
 

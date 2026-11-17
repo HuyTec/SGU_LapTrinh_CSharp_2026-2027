@@ -22,12 +22,12 @@ public sealed class LecturerResultsController(AdminService admin, ExportService 
     }
 
     [HttpPost, ValidateAntiForgeryToken]
-    public async Task<IActionResult> Publish(int id)
+    public async Task<IActionResult> Publish(int id, string reviewPolicy = "Answers")
     {
         try
         {
-            await admin.ActionAsync(UserId, Role, "sessions", id, "publish");
-            TempData["Success"] = "Đã công bố kết quả.";
+            await admin.ActionAsync(UserId, Role, "sessions", id, "publish", reviewPolicy);
+            TempData["Success"] = "Đã bật công bố. Mỗi thí sinh xem kết quả ngay khi bài của mình được chấm xong.";
         }
         catch (BusinessException ex) when (ex.Status == 400 || ex.Status == 409)
         {

@@ -15,6 +15,7 @@ public sealed partial class MainForm : Form
     private bool navigating;
     private bool signingOut;
     private bool canClose;
+    private Label? profileName;
     public string? LogoutNotice
     {
         get; private set;
@@ -49,7 +50,8 @@ public sealed partial class MainForm : Form
         var displayName = string.IsNullOrWhiteSpace(api.DisplayName) ? UiLabels.Of(api.Role ?? "") : api.DisplayName;
         var initials = string.Concat(displayName.Split(' ', StringSplitOptions.RemoveEmptyEntries).TakeLast(2).Select(x => x[0]));
         identity.Controls.Add(new AcademicAvatar { Initials = initials, Width = 44, Height = 44, Margin = new Padding(0, 4, 10, 0) });
-        identity.Controls.Add(new Label { AutoSize = true, Anchor = AnchorStyles.Left, Text = displayName, Font = Theme.SmallFont, ForeColor = Theme.Text, MaximumSize = new Size(200, 0) });
+        profileName = new Label { AutoSize = true, Anchor = AnchorStyles.Left, Text = displayName, Font = Theme.SmallFont, ForeColor = Theme.Text, MaximumSize = new Size(200, 0) };
+        identity.Controls.Add(profileName);
         header.Controls.Add(toggle, 0, 0); header.Controls.Add(title, 1, 0); header.Controls.Add(identity, 2, 0);
         right.Controls.Add(workspace); right.Controls.Add(toast); right.Controls.Add(header);
         frame.Controls.Add(sidebar, 0, 0); frame.Controls.Add(right, 1, 0); Controls.Add(frame);
@@ -87,6 +89,7 @@ public sealed partial class MainForm : Form
             navigation.Controls.Clear();
             menu.Clear();
             AddMenu("dashboard", "Tổng quan", "\uE80F");
+            AddMenu("profile", "Hồ sơ của tôi", "\uE77B");
             foreach (var resource in catalog.Resources)
                 AddMenu(resource.Key, ScreenTitle(resource.Key, resource.Label), Theme.IconFor(resource.Key));
             ResizeNavigation();
@@ -112,9 +115,9 @@ public sealed partial class MainForm : Form
         navigation.Enabled = false;
         try
         {
-            if (key != "dashboard" && catalog?.Resources.All(r => r.Key != key) != false)
+            if (key is not ("dashboard" or "profile") && catalog?.Resources.All(r => r.Key != key) != false)
                 throw new InvalidOperationException("Chức năng không thuộc vai trò hiện tại.");
-            heading.Text = key == "dashboard" ? "Tổng quan" : ScreenTitle(key, catalog!.Resources.First(r => r.Key == key).Label);
+            heading.Text = key switch { "dashboard" => "Tổng quan", "profile" => "Hồ sơ quản trị viên", _ => ScreenTitle(key, catalog!.Resources.First(r => r.Key == key).Label) };
             breadcrumb.Text = $"Exam / {UiLabels.Of(api.Role ?? "")} / Không gian làm việc";
             foreach (var pair in menu)
                 pair.Value.Selected = pair.Key == key;
@@ -126,6 +129,12 @@ public sealed partial class MainForm : Form
 
     private UserControl CreateView(string key)
     {
+        if (key == "profile")
+        {
+            var profile = new ProfileView(api);
+            profile.ProfileSaved += (_, value) => { if (profileName is not null) profileName.Text = value.FullName; };
+            return profile;
+        }
         if (key == "dashboard")
         {
             var dashboard = new DashboardView(api);
