@@ -35,7 +35,7 @@ public sealed partial class ResourceEditorForm : Form
         wizardProgress.Visible = IsSessionWizard;
         FormClosing += (_, e) => { if (saving) e.Cancel = true; };
         foreach (var field in resource.Fields) AddField(field);
-        status.Text = resource.Key switch { "exams" => "Nhập điểm từng câu. Tổng điểm 10 để xác nhận sẵn sàng sau khi lưu.", "sessions" => "Lưu đợt nháp trước; phân công thí sinh và kích hoạt ở màn đợt thi.", _ => "Thay đổi chỉ được ghi khi bấm Lưu." };
+        status.Text = resource.Key switch { "exams" => "Nhập trọng số dương cho từng câu. Điểm bài thi được quy đổi về thang 10.", "sessions" => "Lưu đợt nháp trước; phân công thí sinh và kích hoạt ở màn đợt thi.", _ => "Thay đổi chỉ được ghi khi bấm Lưu." };
         footer.Resize += (_, _) => status.MaximumSize = new Size(Math.Max(160, footer.ClientSize.Width - actions.Width - 72), 0);
         save.Click += async (_, _) => await SaveAsync();
         if (IsSessionWizard)

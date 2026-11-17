@@ -12,7 +12,7 @@ Ngày 17/11/2026, chủ dự án cho phép giảng viên tự tạo lớp học 
 
 Theo chỉ đạo mới của người dùng, bỏ tác nhân/vai trò Cán bộ quản lý thi (`ExamOfficer`). Giảng viên nhận các nghiệp vụ UC-12/13/17–21 trong phạm vi môn được phân công; bổ sung UC-24 quản lý lớp học phần và đưa học viên từ lớp vào danh sách đợt thi. Giữ Thí sinh và Quản trị viên. Đây là thay đổi so với quyết định 24/10/2026.
 
-Mã nguồn hiện vẫn khai báo `ExamOfficer`, gán `ManagedBy` theo cán bộ và kiểm tra role này ở `AdminService`; thay đổi trên là mục tiêu cần triển khai, chưa phải trạng thái đã đạt. D25–D27 trong workbook cập nhật theo dõi gộp quyền, lớp và kiểm thử. Phải giữ giới hạn theo môn/lớp, xác nhận lại danh sách khi sao chép vào `SessionCandidates`, và không cho Admin/Student có quyền đợt ngoài scope. Không tạo role mới.
+PR QT01/QT02 chuyển đăng nhập về ba vai trò, khóa API Desktop cho quản trị viên và cung cấp trang Web xem môn được phân công. Các màn học liệu thuộc HL01/HL02. Tạo/sửa đợt nháp thuộc DT01 (UC-18), gán lớp và kích hoạt thuộc DT03 (UC-18/19), theo dõi và công bố kết quả thuộc DT04 (UC-12/13/21). Thao tác hoãn/hủy (UC-20) cần được nối trên Web giảng viên cùng luồng quản lý đợt. Các luồng này cần dùng xác thực Web và kiểm tra phạm vi tại máy chủ. Dữ liệu đợt cũ còn đứng tên cán bộ cần được bàn giao cho giảng viên được nhóm xác nhận.
 
 | Mục | Quyết định | Lý do |
 |---|---|---|
@@ -22,7 +22,7 @@ Mã nguồn hiện vẫn khai báo `ExamOfficer`, gán `ManagedBy` theo cán b�
 | Nền tảng | .NET 10, EF Core 10; SQL Server Express đang có tại `.\SQLEXPRESS` | Môi trường đã kiểm tra |
 | Identity | Ánh xạ vào Users, Roles, UserRoles với khóa int và tên khóa UserID/RoleID | Dùng chính người dùng của mô hình 3.3, không tạo tài khoản nghiệp vụ song song |
 | Xác thực | Cookie cho Web; JWT có hạn cho Desktop; kiểm tra tài khoản và phiên ở máy chủ, có thu hồi phiên | Đăng xuất, khóa tài khoản phải có hiệu lực |
-| UC-17 | Cán bộ quản lý thi quản lý môn học | Theo bảng quyền 3.1.3 và UC chi tiết |
+| UC-17 | Quản trị viên quản lý môn học trên Desktop | Theo phạm vi hiện hành và sơ đồ UC-17 |
 | CSDL | Cho phép tạo schema/migration, các trường bổ sung trong mục 10 và bảng kỹ thuật Identity/phiên; dùng DB demo/test mới | Đã duyệt tại câu 2 và câu 5 |
 | Phạm vi | Bắt buộc + xUnit + xuất Excel/CSV cơ bản; một đáp án đúng, một lượt mỗi đợt, thang 10 | Ưu tiên chạy được trong quỹ 2–4 tuần |
 | Hoãn | Ma trận đề, Excel câu hỏi, giám sát mất kết nối, hồ sơ/đổi mật khẩu cá nhân nâng cao | Không làm chậm luồng chính |
@@ -35,6 +35,6 @@ App1 được giữ làm mã tham khảo, không phải sản phẩm WinForms m�
 
 Thêm đăng ký tài khoản với các thông tin đã có: tên đăng nhập, họ tên, mã thí sinh, email, mật khẩu và xác nhận. Đăng ký công khai tạo vai trò Thí sinh; cấp quyền nhân sự vẫn qua quản trị viên. Giữ cùng Users/Roles/UserRoles, không đổi schema. Bổ sung hướng dẫn truy cập ngay trên Web và Desktop, có quy trình theo vai trò. Đây là thay đổi phạm vi được yêu cầu trực tiếp, không xem các trường mật khẩu xác nhận là cột dữ liệu cần lưu.
 
-### Mở rộng đăng ký nhân sự theo yêu cầu tiếp theo
+### Đăng ký giảng viên
 
-Người dùng yêu cầu bổ sung đăng ký Giảng viên và Quản trị viên. Trang đăng ký nay hỗ trợ cả bốn loại tài khoản, gồm Cán bộ quản lý thi theo hệ thống vai trò hiện có. Nhân sự gửi yêu cầu, quản trị viên hiện tại duyệt trên Desktop trước khi quyền có hiệu lực. Bổ sung RequestedRole nullable trong Users và action approve; không dùng trường công khai để gán quyền ngay. Luồng này thay thế giới hạn đăng ký công khai chỉ dành cho Thí sinh ở ghi chú trước.
+Web cho thí sinh và giảng viên đăng ký. Tài khoản giảng viên chờ quản trị viên duyệt trên Desktop trước khi đăng nhập Web. Tài khoản quản trị viên do quản trị viên hiện có cấp trên Desktop.

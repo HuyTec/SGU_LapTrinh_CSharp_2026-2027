@@ -2,33 +2,27 @@
 
 Web ASP.NET Core MVC và Desktop WinForms dùng chung API, nghiệp vụ và SQL Server. [Phân công và cách làm việc nhóm](team/README.md).
 
-## Chạy trên Windows
+## Chạy nhanh trên Windows
 
-Cần .NET SDK 10, PowerShell và SQL Server Express/Developer. Chạy từ thư mục chứa solution. Thay `.\SQLEXPRESS` bằng instance của bạn nếu khác.
+Cần .NET SDK 10, PowerShell và SQL Server. Chạy lệnh từ thư mục chứa solution.
 
-```powershell
-.\scripts\Initialize-Local.ps1 -SqlInstance '.\SQLEXPRESS' -RunTests
-```
+1. **Khởi tạo lần đầu với SQL Server Express:**
 
-Script build, áp dụng migration, tạo dữ liệu demo và chạy test. Tài khoản mẫu ở `.local/demo-credentials.txt`. Giữ file này và User Secrets ngoài Git.
+   ```powershell
+   .\scripts\Initialize-Local.ps1 -SqlInstance '.\SQLEXPRESS'
+   ```
 
-Mở hai terminal, chạy Web trước rồi chạy Desktop:
+   Script áp dụng migration và tạo dữ liệu demo. Tài khoản mẫu nằm trong `.local/demo-credentials.txt`. Nếu đã cấu hình và seed SQL Docker qua User Secrets, bỏ qua bước này.
 
-```powershell
-.\scripts\Start-Web.ps1
-```
+2. **Chạy bằng Visual Studio:** mở `Exam Management Application.slnx`, đặt `Exam.Web` làm Startup Project, chọn profile `Exam.Web` rồi nhấn **F5**. Web mở tại [https://localhost:60012](https://localhost:60012). Mở Desktop từ PowerShell:
 
-```powershell
-.\scripts\Start-Desktop.ps1
-```
+   ```powershell
+   .\scripts\Start-Desktop.ps1 -ApiUrl 'https://localhost:60012'
+   ```
 
-Web ở [localhost:5180](http://localhost:5180). Muốn tạo đợt mở ngay trên DB demo, chạy:
+   Nếu chạy cả hai bằng PowerShell, mở hai terminal và chạy `.\scripts\Start-Web.ps1` trước, rồi `.\scripts\Start-Desktop.ps1`. Cả hai dùng `http://localhost:5180`.
 
-```powershell
-.\scripts\New-Demo.ps1 -Minutes 5
-```
-
-Thí sinh demo đăng nhập Web, làm và nộp bài. Hết cửa sổ thi, dùng tài khoản `officer` trên Desktop để công bố và xuất kết quả. Điểm hiển thị trên Web sau khi công bố. Đây là luồng của code hiện tại; kiến trúc đích chuyển tổ chức thi sang Web Giảng viên và bỏ `ExamOfficer`.
+3. **Đăng nhập:** quản trị viên dùng Desktop. Giảng viên và thí sinh dùng Web. Mã đợt thi demo được in khi seed cơ sở dữ liệu mới.
 
 ## Kiểm tra
 
@@ -62,3 +56,24 @@ sqlcmd -S 'tcp:127.0.0.1,14333' -U sa -d ExamAppDocker -C -b -i .\scripts\Seed-S
 
 Đăng nhập thí sinh → **Lớp của tôi** → nhập `DEMO-NV10` → vào thi bằng `THI-NV10`.
 Tự tham gia lớp thử chỉ bật trong Development. QT03 quản lý danh mục lớp trên Desktop, QT04 quản lý thành viên, UC-19 gán lớp vào đợt thi trên Web giảng viên.
+
+## Cấu trúc thư mục
+
+```text
+Exam Management Application/
+├── Exam Management Application.slnx
+├── Exam.Web/           # Web MVC cho thí sinh, giảng viên và API cho Desktop
+│   ├── Controllers/
+│   ├── Views/
+│   └── wwwroot/        # CSS, JavaScript và tài nguyên tĩnh
+├── Exam.Desktop/       # Ứng dụng quản trị WinForms
+├── Exam.Core/          # DTO và kiểu dữ liệu dùng chung
+├── Exam.Services/      # Nghiệp vụ và kiểm tra quyền
+├── Exam.Data/          # EF Core, Identity và SQL Server
+│   └── Migrations/
+├── Exam.Tests/         # xUnit và kiểm thử SQL Server cách ly
+├── scripts/            # Khởi tạo, chạy và kiểm thử cục bộ
+├── docs/               # Đặc tả, sơ đồ và tài liệu kỹ thuật
+├── team/               # Phân công và quy trình nhóm
+└── App1/               # WinUI 3 lưu để tham khảo
+```

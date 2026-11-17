@@ -19,6 +19,8 @@ builder.Services.AddIdentityCore<AppUser>(o => { o.Password.RequiredLength = 8; 
 builder.Services.AddSingleton(TimeProvider.System);
 builder.Services.AddScoped<ExamService>();
 builder.Services.AddScoped<AdminService>();
+builder.Services.AddScoped<LecturerSessionService>();
+builder.Services.AddScoped<LecturerClassService>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<ProfileService>();
 builder.Services.AddScoped<ExportService>();

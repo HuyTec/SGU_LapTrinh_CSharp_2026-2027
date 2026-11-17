@@ -1,3 +1,4 @@
+using Microsoft.Extensions.DependencyInjection;
 using System.Text.Json;
 using Exam.Core;
 using Exam.Data;
@@ -76,6 +77,87 @@ public partial class SqlExamTests : IAsyncLifetime
         sessionId = session.Id;
         studentId = student.Id;
         otherStudentId = other.Id;
+    }
+
+    [SqlFact]
+    public async Task LecturerPublishesAndExportsOnlyOwnedSession()
+    {
+        var services = new Microsoft.Extensions.DependencyInjection.ServiceCollection();
+        services.AddLogging();
+        services.AddDbContext<ExamDbContext>(o => o.UseSqlServer(
+            options.Extensions.OfType<RelationalOptionsExtension>().Single().ConnectionString!,
+            sql => sql.EnableRetryOnFailure()));
+        services.AddIdentityCore<AppUser>().AddRoles<AppRole>().AddEntityFrameworkStores<ExamDbContext>();
+        await using var provider = services.BuildServiceProvider();
+        await using var scope = provider.CreateAsyncScope();
+        var db = scope.ServiceProvider.GetRequiredService<ExamDbContext>();
+        var users = scope.ServiceProvider.GetRequiredService<Microsoft.AspNetCore.Identity.UserManager<AppUser>>();
+        var session = await db.ExamSessions.Include(x => x.Exam).SingleAsync();
+        db.LecturerSubjects.Add(new LecturerSubject { SubjectId = session.Exam.SubjectId, LecturerId = session.ManagedBy });
+        await db.SaveChangesAsync();
+        var roles = scope.ServiceProvider.GetRequiredService<Microsoft.AspNetCore.Identity.RoleManager<AppRole>>();
+        var studentRole = new AppRole { Name = "Student" };
+        Assert.True((await roles.CreateAsync(studentRole)).Succeeded);
+        db.UserRoles.Add(new Microsoft.AspNetCore.Identity.IdentityUserRole<int> { UserId = studentId, RoleId = studentRole.Id });
+        await db.SaveChangesAsync();
+        var manager = session.ManagedBy;
+        var admin = new AdminService(db, users, clock);
+        var exporter = new ExportService(admin);
+
+        Assert.Single(await admin.SessionMonitorAsync(manager, "Lecturer", sessionId));
+        Assert.Equal(403, (await Assert.ThrowsAsync<BusinessException>(
+            () => exporter.ExportAsync(otherStudentId, "Lecturer", sessionId, false))).Status);
+        await Assert.ThrowsAsync<BusinessException>(() => admin.ActionAsync(manager, "Lecturer", "sessions", sessionId, "publish"));
+        var attemptId = await Service(db).StartAsync(studentId, sessionId);
+        await Service(db).SubmitAsync(studentId, attemptId);
+        Assert.False((await Service(db).ResultAsync(studentId, attemptId)).Published);
+
+        clock.Set(clock.GetUtcNow().AddMinutes(31));
+        await admin.ActionAsync(manager, "Lecturer", "sessions", sessionId, "publish");
+        var result = await Service(db).ResultAsync(studentId, attemptId);
+        Assert.True(result.Published);
+        Assert.Equal(0m, result.Score);
+        await db.Set<ClassStudent>().Where(m => m.StudentId == studentId).ExecuteDeleteAsync();
+        var csv = System.Text.Encoding.UTF8.GetString(await exporter.ExportAsync(manager, "Lecturer", sessionId, false));
+        Assert.Contains("TEST001", csv);
+        Assert.DoesNotContain("TEST002", csv);
+        using var stream = new MemoryStream(await exporter.ExportAsync(manager, "Lecturer", sessionId, true));
+        using var zip = new System.IO.Compression.ZipArchive(stream);
+        using var reader = new StreamReader(zip.GetEntry("xl/worksheets/sheet1.xml")!.Open());
+        Assert.Contains("TEST001", await reader.ReadToEndAsync());
+    }
+
+    [SqlFact]
+    public async Task LecturerActivatesDraftForAssignedClassAndStudentCanJoin()
+    {
+        await using var db = NewContext();
+        var lecturer = await db.Users.Where(u => u.UserName == "teacher").Select(u => u.Id).SingleAsync();
+        var paper = await db.Exams.SingleAsync();
+        var classId = await db.Set<ExamClass>().Select(c => c.Id).SingleAsync();
+        db.LecturerSubjects.Add(new LecturerSubject { LecturerId = lecturer, SubjectId = paper.SubjectId });
+        await db.SaveChangesAsync();
+
+        var service = new LecturerSessionService(db, clock);
+        var now = clock.GetUtcNow().UtcDateTime;
+        var draft = new SessionDraft("Thi theo lớp", paper.Id, now.AddMinutes(1), now.AddMinutes(31), 20,
+            true, false, "ScoreOnly", [classId]);
+        var id = await service.SaveAsync(lecturer, null, draft);
+        var overlap = await Assert.ThrowsAsync<BusinessException>(() => service.ChangeStateAsync(lecturer, id, "activate"));
+        Assert.Equal(409, overlap.Status);
+        var hidden = await Assert.ThrowsAsync<BusinessException>(() => service.EditorAsync(otherStudentId, id));
+        Assert.Equal(404, hidden.Status);
+
+        await service.SaveAsync(lecturer, id, draft with { OpensAt = now.AddMinutes(30), ClosesAt = now.AddMinutes(60) });
+        await service.ChangeStateAsync(lecturer, id, "activate");
+        var activated = (await service.ListAsync(lecturer)).Single();
+        Assert.False(string.IsNullOrEmpty(activated.Code));
+        Assert.False(activated.CanEdit);
+        Assert.True(activated.CanWithdraw);
+        await Assert.ThrowsAsync<BusinessException>(() => service.SaveAsync(lecturer, id, draft));
+        Assert.False(await db.SessionCandidates.AnyAsync(c => c.SessionId == id));
+        var student = new ExamService(db, clock);
+        Assert.Equal(id, await student.FindSessionByCodeAsync(studentId, activated.Code));
+        await Assert.ThrowsAsync<BusinessException>(() => student.FindSessionByCodeAsync(otherStudentId, activated.Code));
     }
 
     public async Task DisposeAsync()
