@@ -52,4 +52,4 @@ thành ô nhập, lookup theo tên, danh sách chọn nhiều và radio đáp á
 Build thành công không thay thế kiểm tra trực quan. Cần chạy đủ luồng với dữ liệu
 SQL Server và tài khoản từng vai trò để nghiệm thu giao diện/tích hợp.
 
-Báo cáo tổng hợp buổi demo: [24/10/2026](../docs/BAO_CAO_DEMO_2026-10-24.md).
+Phạm vi hiện hành: [quyết định triển khai](../DECISIONS.md). Hướng dẫn chạy dùng SQL Docker: [README](../README.md).

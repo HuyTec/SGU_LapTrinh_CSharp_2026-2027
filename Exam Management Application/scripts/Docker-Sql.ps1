@@ -1,4 +1,4 @@
-$ErrorActionPreference = 'Stop'
+﻿$ErrorActionPreference = 'Stop'
 
 function Assert-DockerEngine {
     if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
@@ -22,7 +22,7 @@ function Get-DockerSqlPassword {
     $passwordPath = Join-Path (Split-Path $PSScriptRoot -Parent) '.local/docker-sql-password.txt'
     if ($env:EXAM_SQL_PASSWORD) { return $env:EXAM_SQL_PASSWORD }
     if (Test-Path -LiteralPath $passwordPath) {
-        return (Get-Content -LiteralPath $passwordPath -Raw).TrimEnd("`r", "`n")
+        return (Get-Content -LiteralPath $passwordPath -Raw -Encoding UTF8).TrimEnd("`r", "`n")
     }
     throw 'Chưa có mật khẩu SQL Docker. Chạy .\scripts\Start-SqlDocker.ps1 trước.'
 }
