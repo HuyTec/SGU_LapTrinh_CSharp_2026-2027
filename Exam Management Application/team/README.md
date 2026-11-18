@@ -5,7 +5,8 @@ Mở [bảng phân công](PHAN_CONG_NHOM_THEO_MANG.xlsx), chọn task và xem ng
 ```powershell
 git switch -c codex/ts01-vao-thi-bang-ma
 dotnet build '.\Exam Management Application.slnx' -m:1
-.\scripts\Test-Local.ps1 -SqlInstance '.\SQLEXPRESS'
+.\scripts\Start-SqlDocker.ps1
+.\scripts\Test-Local.ps1
 ```
 
 Đổi `ts01-vao-thi-bang-ma` theo task. Trước khi sửa DTO, service, shell hoặc migration dùng chung, thống nhất với các task liên quan. Trong PR ghi mã task, hành vi thay đổi, lệnh kiểm tra và kết quả thực tế. Giữ dữ liệu thật, mật khẩu và token ngoài Git.

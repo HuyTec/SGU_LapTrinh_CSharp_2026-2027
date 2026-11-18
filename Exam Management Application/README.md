@@ -4,32 +4,36 @@ Web ASP.NET Core MVC và Desktop WinForms dùng chung API, nghiệp vụ và SQL
 
 ## Chạy nhanh trên Windows
 
-Cần .NET SDK 10, PowerShell và SQL Server. Chạy lệnh từ thư mục chứa solution.
+Cần .NET SDK 10, PowerShell và Docker Desktop ở chế độ Linux containers. SQL Server phải chạy trong Docker tại `tcp:127.0.0.1,14333`; không dùng SQL Express/LocalDB. Web và Desktop chạy bằng .NET trên Windows. Chạy lệnh từ thư mục chứa solution.
 
-1. **Khởi tạo lần đầu với SQL Server Express:**
+1. **Mở Docker Desktop, khởi tạo lần đầu:**
 
    ```powershell
-   .\scripts\Initialize-Local.ps1 -SqlInstance '.\SQLEXPRESS'
+   .\scripts\Initialize-Local.ps1
    ```
 
-   Script áp dụng migration và tạo dữ liệu demo. Tài khoản mẫu nằm trong `.local/demo-credentials.txt`. Nếu đã cấu hình và seed SQL Docker qua User Secrets, bỏ qua bước này.
+   Script khởi động SQL container, chờ healthcheck, lưu cấu hình Docker vào User Secrets, áp dụng migration và tạo dữ liệu demo trong `ExamAppDocker`. Lần đầu nhập mật khẩu `sa`; nếu volume đã có, nhập đúng mật khẩu cũ. Mật khẩu SQL được lưu cục bộ trong `.local/docker-sql-password.txt` (đã bỏ qua trong Git). Tài khoản app mẫu nằm trong `.local/demo-credentials.txt`. Không tự chuyển dữ liệu từ SQL Express sang Docker.
 2. **Chạy bằng Visual Studio:** mở `Exam Management Application.slnx`, đặt `Exam.Web` làm Startup Project, chọn profile `Exam.Web` rồi nhấn **F5**. Web mở tại [https://localhost:60012](https://localhost:60012). Mở Desktop từ PowerShell:
 
    ```powershell
    .\scripts\Start-Desktop.ps1 -ApiUrl 'https://localhost:60012'
    ```
 
-   Nếu chạy cả hai bằng PowerShell, mở hai terminal và chạy `.\scripts\Start-Web.ps1` trước, rồi `.\scripts\Start-Desktop.ps1`. Cả hai dùng `http://localhost:5180`.
+   Những lần sau mở Docker Desktop và chạy `.\scripts\Start-SqlDocker.ps1` trước. Nếu chạy cả hai bằng PowerShell, mở hai terminal và chạy `.\scripts\Start-Web.ps1` trước, rồi `.\scripts\Start-Desktop.ps1`. Cả hai dùng `http://localhost:5180`.
+
+   Script chạy client kiểm tra SQL container đang chạy. Khi mở Web bằng F5 hoặc `dotnet run`, Web kiểm tra endpoint Docker và kết nối database trước khi nhận request; cấu hình SQLEXPRESS hoặc DB không kết nối được sẽ chặn khởi động. Nếu dừng container khi Web đang chạy, các thao tác cần DB thất bại; Web không tự chuyển sang database khác.
 3. **Đăng nhập:** quản trị viên dùng Desktop. Giảng viên và thí sinh dùng Web. Mã đợt thi demo được in khi seed cơ sở dữ liệu mới.
 
 ## Kiểm tra
 
 ```powershell
 dotnet build '.\Exam Management Application.slnx' -m:1
-.\scripts\Test-Local.ps1 -SqlInstance '.\SQLEXPRESS'
+.\scripts\Test-Local.ps1
 ```
 
-`Test-Local.ps1` chạy test SQL trên DB riêng từng ca. Chạy `dotnet test` trực tiếp mà thiếu `EXAM_TEST_CONNECTION` sẽ bỏ qua các ca SQL.
+`Test-Local.ps1` chạy test SQL trên DB Docker riêng từng ca. Chạy `dotnet test` trực tiếp mà thiếu `EXAM_TEST_CONNECTION` sẽ bỏ qua các ca SQL.
+
+Để dừng SQL mà giữ dữ liệu: `docker compose -f team/docker/compose.sql.yml stop`. Chạy lại `Start-SqlDocker.ps1` để mở. Không xóa volume khi muốn giữ dữ liệu. Nếu shell có `ConnectionStrings__ExamDb` cũ, bỏ biến đó trước khi chạy; biến môi trường có thể ghi đè User Secrets.
 
 [Tài liệu kỹ thuật và bằng chứng demo](docs/README.md) · [Hợp đồng API](CONTRACT.md) · [Quyết định kiến trúc](DECISIONS.md)
 

@@ -29,6 +29,7 @@ builder.Services.AddAuthorization();
 builder.Services.AddAntiforgery(o => o.HeaderName = "RequestVerificationToken");
 builder.Services.AddControllersWithViews().AddJsonOptions(o => o.JsonSerializerOptions.Converters.Add(new Exam.Web.UtcDateTimeConverter()));
 builder.Services.AddProblemDetails();
+builder.Services.AddHostedService<Exam.Web.DockerDatabaseStartup>();
 builder.Services.AddHostedService<ExpiryWorker>();
 var app = builder.Build();
 app.Use(async (ctx, next) => { try { await next(); } catch (BusinessException ex) { ctx.Response.StatusCode = ex.Status; await Results.Problem(statusCode: ex.Status, title: "Không thể thực hiện yêu cầu", detail: ex.Message).ExecuteAsync(ctx); } catch (DbUpdateException) { ctx.Response.StatusCode = 409; await Results.Problem(statusCode: 409, title: "Dữ liệu bị tham chiếu hoặc xung đột. Vui lòng tải lại và thử lại.").ExecuteAsync(ctx); } catch (Exception ex) { app.Logger.LogError(ex, "Request {RequestId} failed", ctx.TraceIdentifier); ctx.Response.StatusCode = 500; await Results.Problem(statusCode: 500, title: "Có lỗi xử lý. Vui lòng thử lại.", extensions: new Dictionary<string, object?> { { "requestId", ctx.TraceIdentifier } }).ExecuteAsync(ctx); } });

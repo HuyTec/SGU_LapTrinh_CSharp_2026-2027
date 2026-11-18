@@ -17,7 +17,7 @@ public class ExamService(ExamDbContext db, TimeProvider clock)
                 link.Class.SubjectId == session.Exam.SubjectId &&
                 link.Class.Students.Any(member => member.StudentId == student)));
 
-    public sealed record StudentClassRow(string Code, string Subject, bool Active,
+    public sealed record StudentClassRow(int Id, string Code, string Subject, bool Active,
         IReadOnlyList<string> Lecturers, IReadOnlyList<SessionDto> Sessions);
 
     public async Task<IReadOnlyList<StudentClassRow>> StudentClassesAsync(int studentId)
@@ -40,7 +40,7 @@ public class ExamService(ExamDbContext db, TimeProvider clock)
         var sessionsByClass = links.Where(l => visibleSessions.ContainsKey(l.SessionId))
             .ToLookup(l => l.ClassId, l => visibleSessions[l.SessionId]);
 
-        return classes.Select(c => new StudentClassRow(c.Code, c.Subject, c.Active,
+        return classes.Select(c => new StudentClassRow(c.Id, c.Code, c.Subject, c.Active,
             lecturersBySubject[c.SubjectId].ToList(),
             sessionsByClass[c.Id].OrderByDescending(s => s.OpensAt).ToList())).ToList();
     }

@@ -6,8 +6,10 @@ using Microsoft.AspNetCore.Mvc;
 namespace Exam.Web.Controllers;
 
 [Authorize(Roles = "Student")]
-public sealed class StudentClassesController(ExamService exams) : Controller
+public sealed class StudentClassesController(ExamService exams, StudentClassService classes) : Controller
 {
+    private int StudentId => int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
     [HttpGet]
     public async Task<IActionResult> Details(int id) => View(await classes.DetailAsync(StudentId, id));
 

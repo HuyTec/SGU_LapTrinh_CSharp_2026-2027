@@ -8,7 +8,7 @@
 @foreach (var item in Model)
 {
     <section class="surface mb-3">
-        <h2>@item.Code · @item.Subject</h2>
+        <h2><a asp-action="Details" asp-route-id="@item.Id">@item.Code · @item.Subject</a></h2>
         @if (!item.Active)
         {
             <p class="muted">Lớp hoặc môn đã ngừng hoạt động.</p>
@@ -23,7 +23,12 @@
         }
         else
         {
-            <li class="list-group-item p-0"><a asp-action="Details" asp-route-id="@item.Id" class="d-block p-3 text-decoration-none"><strong>@item.Code</strong> · @item.Subject · @(item.IsActive ? "Đang hoạt động" : "Đã ngừng") <span class="ms-2">Xem lớp</span></a></li>
+            <ul class="list-group">
+            @foreach (var session in item.Sessions)
+            {
+                <li class="list-group-item"><a asp-controller="Sessions" asp-action="Details" asp-route-id="@session.Id">@session.Title</a></li>
+            }
+            </ul>
         }
     </section>
 }
