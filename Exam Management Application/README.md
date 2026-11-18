@@ -13,7 +13,6 @@ Cần .NET SDK 10, PowerShell và SQL Server. Chạy lệnh từ thư mục ch�
    ```
 
    Script áp dụng migration và tạo dữ liệu demo. Tài khoản mẫu nằm trong `.local/demo-credentials.txt`. Nếu đã cấu hình và seed SQL Docker qua User Secrets, bỏ qua bước này.
-
 2. **Chạy bằng Visual Studio:** mở `Exam Management Application.slnx`, đặt `Exam.Web` làm Startup Project, chọn profile `Exam.Web` rồi nhấn **F5**. Web mở tại [https://localhost:60012](https://localhost:60012). Mở Desktop từ PowerShell:
 
    ```powershell
@@ -21,7 +20,6 @@ Cần .NET SDK 10, PowerShell và SQL Server. Chạy lệnh từ thư mục ch�
    ```
 
    Nếu chạy cả hai bằng PowerShell, mở hai terminal và chạy `.\scripts\Start-Web.ps1` trước, rồi `.\scripts\Start-Desktop.ps1`. Cả hai dùng `http://localhost:5180`.
-
 3. **Đăng nhập:** quản trị viên dùng Desktop. Giảng viên và thí sinh dùng Web. Mã đợt thi demo được in khi seed cơ sở dữ liệu mới.
 
 ## Kiểm tra
@@ -35,7 +33,7 @@ dotnet build '.\Exam Management Application.slnx' -m:1
 
 [Tài liệu kỹ thuật và bằng chứng demo](docs/README.md) · [Hợp đồng API](CONTRACT.md) · [Quyết định kiến trúc](DECISIONS.md)
 
-Link báo cáo: GG Docs: 
+Link báo cáo: GG Docs:
 
 [docs.google.com/document/d/1tU_RzXl9BvWJLrHWJVXhnDzs7SAR4NL5jfF3XFDrr_Q/edit?usp=sharing](https://docs.google.com/document/d/1tU_RzXl9BvWJLrHWJVXhnDzs7SAR4NL5jfF3XFDrr_Q/edit?usp=sharing)[
 ](https://docs.google.com/document/d/1tU_RzXl9BvWJLrHWJVXhnDzs7SAR4NL5jfF3XFDrr_Q/edit?usp=sharing)Link phân công GG Sheets:
@@ -56,6 +54,12 @@ sqlcmd -S 'tcp:127.0.0.1,14333' -U sa -d ExamAppDocker -C -b -i .\scripts\Seed-S
 
 Đăng nhập thí sinh → **Lớp của tôi** → nhập `DEMO-NV10` → vào thi bằng `THI-NV10`.
 Tự tham gia lớp thử chỉ bật trong Development. QT03 quản lý danh mục lớp trên Desktop, QT04 quản lý thành viên, UC-19 gán lớp vào đợt thi trên Web giảng viên.
+
+Link gg docs: [docs.google.com/document/d/1tU_RzXl9BvWJLrHWJVXhnDzs7SAR4NL5jfF3XFDrr_Q/edit?usp=sharing](https://docs.google.com/document/d/1tU_RzXl9BvWJLrHWJVXhnDzs7SAR4NL5jfF3XFDrr_Q/edit?usp=sharing)
+
+Link report: [docs.google.com/spreadsheets/d/10sSsgNXNt2c-S9SLn9rWQej7txwzoXuFAWfPI9gzFOc/edit?usp=sharing](https://docs.google.com/spreadsheets/d/10sSsgNXNt2c-S9SLn9rWQej7txwzoXuFAWfPI9gzFOc/edit?usp=sharing)
+
+Link draw.io sơ đồ: [drive.google.com/file/d/1SQcn9H-fTRdWMS4bJIXEEjlklIxWqY_b/view?usp=sharing](https://drive.google.com/file/d/1SQcn9H-fTRdWMS4bJIXEEjlklIxWqY_b/view?usp=sharing)
 
 ## Cấu trúc thư mục
 
