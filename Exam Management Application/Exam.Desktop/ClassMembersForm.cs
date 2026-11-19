@@ -7,7 +7,7 @@ internal sealed class ClassMembersForm : Form
     private readonly ExamApiClient api;
     private readonly int classId;
     private readonly ComboBox students = new() { Width = 320, DropDownStyle = ComboBoxStyle.DropDownList,
-        AutoCompleteMode = AutoCompleteMode.SuggestAppend, AutoCompleteSource = AutoCompleteSource.ListItems,
+        AutoCompleteSource = AutoCompleteSource.ListItems, AutoCompleteMode = AutoCompleteMode.SuggestAppend,
         DisplayMember = nameof(ChoiceDto.Label) };
     private readonly Button add = new() { Text = "Thêm thí sinh", AutoSize = true };
     private readonly Button remove = new() { Text = "Gỡ khỏi lớp", AutoSize = true };

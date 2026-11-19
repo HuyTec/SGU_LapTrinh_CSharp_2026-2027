@@ -3,7 +3,7 @@ using Exam.Core;
 
 namespace Exam.Desktop;
 
-public sealed record ResourceQuery(string Search, string? SubjectId, string? TopicId, string? Difficulty, bool? IsActive = null);
+public sealed record ResourceQuery(string Search, string? SubjectId, string? TopicId, string? Difficulty, bool? IsActive = null, string? AccountRole = null);
 
 public interface IResourceView
 {
@@ -71,16 +71,45 @@ public sealed class ResourcePresenter : IDisposable
             view.Configure(catalog, resource, preserveFilters);
         }
         var query = view.Query;
-        var result = await api.ListAsync(resourceKey, query.Search, page, query.SubjectId, query.TopicId, query.Difficulty, query.IsActive);
+        var result = await api.ListAsync(resourceKey, query.Search, page, query.SubjectId, query.TopicId, query.Difficulty, query.IsActive, query.AccountRole);
         if (Unavailable) return;
+        // Older running API hosts ignore accountRole. Filter their complete result before paging.
+        if (resourceKey == "users" && query.AccountRole is { } accountRole &&
+            result.Items.Any(row => !row.ContainsKey("lecturerCode") || !MatchesAccountRole(row, accountRole)))
+        {
+            var accounts = new List<Dictionary<string, object?>>();
+            var current = await api.ListAsync("users", query.Search, 1);
+            accounts.AddRange(current.Items);
+            for (var nextPage = 2; (nextPage - 1) * current.PageSize < current.Total; nextPage++)
+            {
+                current = await api.ListAsync("users", query.Search, nextPage);
+                if (Unavailable) return;
+                accounts.AddRange(current.Items);
+            }
+            accounts = accounts.Where(row => MatchesAccountRole(row, accountRole)).ToList();
+            foreach (var row in accounts)
+                if (accountRole == "Lecturer" && !row.ContainsKey("lecturerCode"))
+                    row["lecturerCode"] = $"GV{Convert.ToInt32(row["id"]):D6}";
+            page = Math.Clamp(page, 1, Math.Max(1, (int)Math.Ceiling(accounts.Count / 25d)));
+            view.RenderPage(new(accounts.Skip((page - 1) * 25).Take(25).ToList(), accounts.Count, page, 25));
+            return;
+        }
         var lastPage = Math.Max(1, (int)Math.Ceiling(result.Total / 25d));
         if (page > lastPage)
         {
             page = lastPage;
-            result = await api.ListAsync(resourceKey, query.Search, page, query.SubjectId, query.TopicId, query.Difficulty, query.IsActive);
+            result = await api.ListAsync(resourceKey, query.Search, page, query.SubjectId, query.TopicId, query.Difficulty, query.IsActive, query.AccountRole);
         }
         if (Unavailable) return;
         view.RenderPage(result);
+    }
+
+    private static bool MatchesAccountRole(Dictionary<string, object?> row, string accountRole)
+    {
+        var roles = row.GetValueOrDefault("role")?.ToString()?.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries) ?? [];
+        return !roles.Contains("Administrator", StringComparer.OrdinalIgnoreCase) &&
+            (roles.Contains(accountRole, StringComparer.OrdinalIgnoreCase) ||
+             string.Equals(row.GetValueOrDefault("requestedRole")?.ToString(), accountRole, StringComparison.OrdinalIgnoreCase));
     }
 
     private Task EditAsync(int? id) => RunAsync(async () =>
@@ -92,6 +121,21 @@ public sealed class ResourcePresenter : IDisposable
         if (!id.HasValue && !resource.CanCreate) { view.Notify("Chức năng này chỉ dùng để xem dữ liệu.", true); return; }
         var values = id.HasValue ? await api.DetailAsync(resourceKey, id.Value) : new Dictionary<string, JsonElement>();
         if (Unavailable) return;
+        if (resourceKey == "users")
+        {
+            var category = view.Query.AccountRole;
+            var existingRoles = values.TryGetValue("roles", out var roles) && roles.ValueKind == JsonValueKind.Array
+                ? roles.EnumerateArray().Select(x => x.GetString()).ToArray() : [];
+            resource = resource with
+            {
+                Label = category == "Lecturer" ? "Giảng viên" : "Sinh viên",
+                Fields = resource.Fields.Where(f => category != "Lecturer" || f.Name != "studentCode")
+                    .Select(f => f.Name == "roles" ? f with { Choices = f.Choices?.Where(c => c.Value != "Administrator" || existingRoles.Contains("Administrator")).ToArray() } : f)
+                    .ToArray()
+            };
+            if (!id.HasValue && category != null)
+                values["roles"] = JsonSerializer.SerializeToElement(new[] { category });
+        }
         // The editor carries original hidden row versions back to the API on save.
         using var editor = new ResourceEditorForm(api, resource, id, values);
         if (editor.ShowDialog(view.DialogOwner) == DialogResult.OK)

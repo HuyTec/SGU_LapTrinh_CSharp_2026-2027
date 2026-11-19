@@ -44,8 +44,8 @@ public sealed class ExamApiClient : IDisposable
         DisplayName = profile.FullName;
         return profile;
     }
-    public Task<AdminPageDto> ListAsync(string key, string search, int page, string? subjectId = null, string? topicId = null, string? difficulty = null, bool? isActive = null) => SendAsync<AdminPageDto>(HttpMethod.Get,
-        $"api/admin/{key}?search={Uri.EscapeDataString(search)}&page={page}&pageSize=25&subjectId={Uri.EscapeDataString(subjectId ?? "")}&topicId={Uri.EscapeDataString(topicId ?? "")}&difficulty={Uri.EscapeDataString(difficulty ?? "")}&isActive={isActive}");
+    public Task<AdminPageDto> ListAsync(string key, string search, int page, string? subjectId = null, string? topicId = null, string? difficulty = null, bool? isActive = null, string? accountRole = null) => SendAsync<AdminPageDto>(HttpMethod.Get,
+        $"api/admin/{key}?search={Uri.EscapeDataString(search)}&page={page}&pageSize=25&subjectId={Uri.EscapeDataString(subjectId ?? "")}&topicId={Uri.EscapeDataString(topicId ?? "")}&difficulty={Uri.EscapeDataString(difficulty ?? "")}&isActive={isActive}&accountRole={Uri.EscapeDataString(accountRole ?? "")}");
     /// <summary>Read all authorized pages for presentation summaries; errors never become synthetic zero totals.</summary>
     public async Task<IReadOnlyList<Dictionary<string, object?>>> ListAllAsync(string key)
     {

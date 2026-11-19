@@ -18,7 +18,7 @@ public class AuthApiController(AuthService auth,IConfiguration config):Controlle
 public class AdminController(AdminService admin,ExportService export):ControllerBase{
  int Uid=>int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);string Role=>User.FindFirstValue(ClaimTypes.Role)!;
  [HttpGet("catalog")]public Task<AdminCatalogDto> Catalog()=>admin.CatalogAsync(Uid,Role);
- [HttpGet("{resource}")]public Task<AdminPageDto> List(string resource,string? search,int page=1,int pageSize=100,int? subjectId=null,int? topicId=null,string? difficulty=null,bool? isActive=null)=>admin.ListAsync(Uid,Role,resource,search,page,pageSize,null,subjectId,topicId,difficulty,isActive);
+ [HttpGet("{resource}")]public Task<AdminPageDto> List(string resource,string? search,int page=1,int pageSize=100,int? subjectId=null,int? topicId=null,string? difficulty=null,bool? isActive=null,string? accountRole=null)=>admin.ListAsync(Uid,Role,resource,search,page,pageSize,null,subjectId,topicId,difficulty,isActive,accountRole);
  [HttpGet("{resource}/{id:int}")]public async Task<Dictionary<string,object?>> Get(string resource,int id){var row=(await admin.ListAsync(Uid,Role,resource,null,1,1,id)).Items.SingleOrDefault(x=>Convert.ToInt32(x["id"])==id);return row??throw new BusinessException("Không tìm thấy dữ liệu.",404);}
  [HttpPost("users/import")]public async Task<object> Import(ImportStudentsRequest request)=>new{imported=await admin.ImportStudentsAsync(Uid,Role,request.Csv,request.Preview)};
  [HttpGet("classes/{id:int}/members")]

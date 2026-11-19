@@ -16,6 +16,7 @@ public partial class ResourceView : UserControl, IWorkspaceView, IResourceView
     private readonly Dictionary<int, Dictionary<string, object?>> rowsById = new();
     private readonly List<UiButton> selectedActions = [];
     private ResourceDto? resource;
+    private string accountRole = "Lecturer";
     private bool busy;
     private bool binding;
     private bool loaded;
@@ -33,7 +34,7 @@ public partial class ResourceView : UserControl, IWorkspaceView, IResourceView
     [System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
     public ResourceQuery Query => new(search.Text.Trim(), resourceKey == "questions" ? Value(subjectFilter) : null,
         resourceKey == "questions" ? Value(topicFilter) : null, resourceKey == "questions" ? Value(difficultyFilter) : null,
-        resourceKey is "subjects" or "classes" && subjectStatusFilter.SelectedIndex > 0 ? subjectStatusFilter.SelectedIndex == 1 : null);
+        resourceKey is "subjects" or "classes" && subjectStatusFilter.SelectedIndex > 0 ? subjectStatusFilter.SelectedIndex == 1 : null, resourceKey == "users" ? accountRole : null);
     public int? SelectedRecordId => grid.CurrentRow is { } row && int.TryParse(row.Cells["_id"].Value?.ToString(), out var id) ? id : null;
     public int? SelectedSessionId => SelectedRecordId is int id && rowsById.TryGetValue(id, out var row) ? Integer(row.GetValueOrDefault("sessionId")) : null;
 
@@ -70,6 +71,27 @@ public partial class ResourceView : UserControl, IWorkspaceView, IResourceView
             filters.Controls.Add(statusGroup);
             subjectStatusFilter.SelectedIndexChanged += async (_, _) => await presenter.SearchAsync();
         }
+        if (resourceKey == "users")
+        {
+            foreach (var (role, label) in new[] { ("Lecturer", "Giảng viên"), ("Student", "Sinh viên") })
+            {
+                var category = Button(label, role == accountRole ? UiButtonKind.Primary : UiButtonKind.Secondary);
+                category.Tag = role;
+                category.Click += async (_, _) =>
+                {
+                    accountRole = role;
+                    foreach (var button in filters.Controls.OfType<UiButton>())
+                        button.Kind = button.Tag?.ToString() == role ? UiButtonKind.Primary : UiButtonKind.Secondary;
+                    grid.Columns["lecturerCode"]!.Visible = role == "Lecturer";
+                    grid.Columns["studentCode"]!.Visible = role == "Student";
+                    foreach (Control action in resourceActions.Controls)
+                        if (action.Tag?.ToString() == "studentImport") action.Visible = role == "Student";
+                    LayoutToolbar();
+                    await presenter.SearchAsync();
+                };
+                filters.Controls.Add(category);
+            }
+        }
         toolbar.SizeChanged += (_, _) => LayoutToolbar();
         empty.SizeChanged += (_, _) => emptyLayout.MaximumSize = new Size(Math.Max(200, empty.Width - 32), 0);
         grid.DataSource = source; ConfigureColumns();
@@ -86,7 +108,17 @@ public partial class ResourceView : UserControl, IWorkspaceView, IResourceView
             UpdateSelectionActions();
             await presenter.SelectQuestionAsync(SelectedRecordId);
         };
-        grid.CellDoubleClick += async (_, e) => { if (e.RowIndex >= 0 && edit.Visible && edit.Enabled) await presenter.EditSelectedAsync(); };
+        grid.CellDoubleClick += async (_, e) => { if (e.RowIndex >= 0 && e.ColumnIndex >= 0 && grid.Columns[e.ColumnIndex].Name != "_members" && edit.Visible && edit.Enabled) await presenter.EditSelectedAsync(); };
+        grid.CellContentClick += async (_, e) =>
+        {
+            if (busy || resourceKey != "classes" || e.RowIndex < 0 || e.ColumnIndex < 0 ||
+                grid.Columns[e.ColumnIndex].Name != "_members") return;
+            if (!int.TryParse(grid.Rows[e.RowIndex].Cells["_id"].Value?.ToString(), out var id) ||
+                !rowsById.TryGetValue(id, out var row)) return;
+            using var dialog = new ClassMembersForm(api, id, row.GetValueOrDefault("code")?.ToString() ?? "");
+            dialog.ShowDialog(DialogOwner);
+            if (dialog.MembershipChanged) await presenter.SearchAsync();
+        };
         grid.CellPainting += PaintBadge;
         grid.DataError += (_, e) => e.ThrowException = false;
         SizeChanged += (_, _) => { previewCard.Width = Math.Clamp(Width / 3, 280, 360); LayoutToolbar(); };
@@ -97,7 +129,7 @@ public partial class ResourceView : UserControl, IWorkspaceView, IResourceView
         };
         VisibleChanged += (_, _) => LayoutToolbar();
         subjectGroup.Visible = topicGroup.Visible = difficultyGroup.Visible = resourceKey == "questions";
-        filters.Visible = resourceKey is "subjects" or "questions" or "classes";
+        filters.Visible = resourceKey is "subjects" or "questions" or "classes" or "users";
         previewCard.Visible = sideGap.Visible = resourceKey == "questions";
         RenderQuestionDetail(null); countLabel.Text = title;
         LayoutToolbar();
@@ -140,20 +172,9 @@ public partial class ResourceView : UserControl, IWorkspaceView, IResourceView
             Action("Duyệt đăng ký", "approve"); Action("Khóa tài khoản", "lock"); Action("Mở khóa", "unlock");
             var password = Button("Mật khẩu / vai trò"); password.Click += async (_, _) => await presenter.EditSelectedAsync();
             resourceActions.Controls.Add(password); selectedActions.Add(password);
-            var import = Button("Nhập CSV thí sinh"); import.Click += async (_, _) => await presenter.ImportAsync(); resourceActions.Controls.Add(import);
-        }
-        if (resourceKey == "classes")
-        {
-            var members = Button("Thành viên lớp");
-            members.Click += async (_, _) =>
-            {
-                if (SelectedRecordId is not int id) return;
-                using var dialog = new ClassMembersForm(api, id, rowsById[id]["code"]?.ToString() ?? "");
-                dialog.ShowDialog(DialogOwner);
-                if (dialog.MembershipChanged) await presenter.SearchAsync();
-            };
-            resourceActions.Controls.Add(members);
-            selectedActions.Add(members);
+            var import = Button("Nhập CSV sinh viên"); import.Tag = "studentImport";
+            import.Visible = accountRole == "Student";
+            import.Click += async (_, _) => await presenter.ImportAsync(); resourceActions.Controls.Add(import);
         }
         if (resourceKey == "exams") { Action("Xác nhận sẵn sàng", "ready"); Action("Chuyển về nháp", "draft"); }
         if (resourceKey == "exams")
@@ -232,7 +253,7 @@ public partial class ResourceView : UserControl, IWorkspaceView, IResourceView
             }
             pageLabel.Text = $"Trang {page.Page} / {Math.Max(1, (int)Math.Ceiling(page.Total / (double)page.PageSize))}";
             previous.Tag = page.Page > 1; next.Tag = page.Page * page.PageSize < page.Total;
-            countLabel.Text = $"{title} · {page.Total:N0}";
+            countLabel.Text = $"{(resourceKey == "users" ? accountRole == "Lecturer" ? "Giảng viên" : "Sinh viên" : title)} · {page.Total:N0}";
             loaded = true;
             var hasRows = table.Rows.Count > 0;
             empty.Visible = !hasRows; grid.Visible = hasRows;
@@ -327,6 +348,15 @@ public partial class ResourceView : UserControl, IWorkspaceView, IResourceView
                 Name = column.Key, DataPropertyName = column.Key, HeaderText = column.Label,
                 FillWeight = column.Weight, MinimumWidth = column.MinimumWidth, SortMode = DataGridViewColumnSortMode.Automatic
             });
+        if (resourceKey == "users") grid.Columns["studentCode"]!.Visible = false;
+        if (resourceKey == "classes")
+            grid.Columns.Add(new DataGridViewLinkColumn
+            {
+                Name = "_members", HeaderText = "Thành viên lớp", Text = "Chi tiết xem thành viên",
+                UseColumnTextForLinkValue = true, FillWeight = 130, MinimumWidth = 180,
+                LinkColor = Theme.Primary, ActiveLinkColor = Theme.Primary, VisitedLinkColor = Theme.Primary,
+                TrackVisitedState = false, SortMode = DataGridViewColumnSortMode.NotSortable
+            });
     }
 
     private void UpdateSelectionActions()
@@ -401,7 +431,7 @@ public partial class ResourceView : UserControl, IWorkspaceView, IResourceView
     private sealed record Column(string Key, string Label, float Weight = 100, int MinimumWidth = 100);
     private static IReadOnlyList<Column> ColumnsFor(string key) => key switch
     {
-        "users" => [new("userName", "Tài khoản", 110, 130), new("fullName", "Họ và tên", 150, 170), new("requestedRole", "Vai trò đăng ký", 100, 140), new("isActive", "Hoạt động", 65, 100), new("role", "Vai trò hiện tại", 120, 150), new("studentCode", "Mã thí sinh", 80, 115)],
+        "users" => [new("userName", "Tài khoản", 110, 130), new("fullName", "Họ và tên", 150, 170), new("requestedRole", "Vai trò đăng ký", 100, 140), new("isActive", "Hoạt động", 65, 100), new("role", "Vai trò hiện tại", 120, 150), new("lecturerCode", "Mã giảng viên", 85, 120), new("studentCode", "Mã sinh viên", 80, 115)],
         "subjects" => [new("code", "Mã môn", 70, 110), new("name", "Tên môn học", 200, 220), new("isActive", "Hoạt động", 70, 110)],
         "classes" => [new("code", "Mã lớp"), new("name", "Tên lớp", 180, 170), new("subject", "Môn học", 130, 140),
             new("memberCount", "Thành viên", 65, 85), new("isActive", "Hoạt động", 75, 90)],

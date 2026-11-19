@@ -3,6 +3,7 @@ namespace Exam.Data;
 
 public class AppUser : IdentityUser<int>
 {
+    public string LecturerCode => $"GV{Id:D6}";
     public string? RequestedRole { get; set; }
     public string FullName { get; set; } = ""; public string? StudentCode
     {

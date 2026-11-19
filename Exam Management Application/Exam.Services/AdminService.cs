@@ -81,7 +81,7 @@ public class AdminService(ExamDbContext db, UserManager<AppUser> users, TimeProv
         await Session(uid, role, id);
     }
     static Dictionary<string, object?> D(params (string key, object? value)[] v) => v.ToDictionary(x => x.key, x => x.value);
-    public async Task<AdminPageDto> ListAsync(int uid, string role, string resource, string? search, int page, int size, int? exactId = null, int? subjectId = null, int? topicId = null, string? difficulty = null, bool? isActive = null)
+    public async Task<AdminPageDto> ListAsync(int uid, string role, string resource, string? search, int page, int size, int? exactId = null, int? subjectId = null, int? topicId = null, string? difficulty = null, bool? isActive = null, string? accountRole = null)
     {
         if (!(await CatalogAsync(uid, role)).Resources.Any(x => x.Key == resource))
             throw Denied();
@@ -90,8 +90,16 @@ public class AdminService(ExamDbContext db, UserManager<AppUser> users, TimeProv
         switch (resource)
         {
             case "users":
-                foreach (var x in await db.Users.ToListAsync())
-                    rows.Add(D(("id", x.Id), ("userName", x.UserName), ("fullName", x.FullName), ("studentCode", x.StudentCode), ("requestedRole",x.RequestedRole), ("email", x.Email), ("phoneNumber", x.PhoneNumber), ("role",string.Join(", ",await users.GetRolesAsync(x))),("roles",(await users.GetRolesAsync(x)).ToArray()), ("isActive", x.IsActive)));
+                if (accountRole != null && accountRole is not ("Student" or "Lecturer"))
+                    throw new BusinessException("Danh mục tài khoản không hợp lệ.");
+                var accountQuery = db.Users.AsQueryable();
+                accountQuery = accountQuery.Where(x => !db.UserRoles.Any(ur => ur.UserId == x.Id &&
+                    db.Roles.Any(r => r.Id == ur.RoleId && r.Name == "Administrator")));
+                if (accountRole != null)
+                    accountQuery = accountQuery.Where(x => x.RequestedRole == accountRole ||
+                        db.UserRoles.Any(ur => ur.UserId == x.Id && db.Roles.Any(r => r.Id == ur.RoleId && r.Name == accountRole)));
+                foreach (var x in await accountQuery.ToListAsync())
+                    rows.Add(D(("id", x.Id), ("userName", x.UserName), ("fullName", x.FullName), ("studentCode", x.StudentCode), ("lecturerCode", (await users.IsInRoleAsync(x, "Lecturer") || x.RequestedRole == "Lecturer") ? x.LecturerCode : null), ("requestedRole",x.RequestedRole), ("email", x.Email), ("phoneNumber", x.PhoneNumber), ("role",string.Join(", ",await users.GetRolesAsync(x))),("roles",(await users.GetRolesAsync(x)).ToArray()), ("isActive", x.IsActive)));
                 break;
             case "subjects":
                 var matchingSubjects = db.Subjects.Where(x => isActive == null || x.IsActive == isActive);
@@ -291,6 +299,8 @@ public class AdminService(ExamDbContext db, UserManager<AppUser> users, TimeProv
                 var selectedRoles=v.TryGetValue("roles",out var roleArray)&&roleArray.ValueKind==JsonValueKind.Array?roleArray.EnumerateArray().Select(e=>e.GetString()??"").Distinct().ToList():[Required(v,"role")];
                 if(selectedRoles.Count==0||selectedRoles.Any(r=>!new[]{"Student","Lecturer","Administrator"}.Contains(r)))
                     throw new BusinessException("Vai trò không hợp lệ.");
+                if (selectedRoles.Contains("Administrator") && (id == null || !await users.IsInRoleAsync(u, "Administrator")))
+                    throw new BusinessException("Không thể cấp vai trò quản trị viên từ chức năng này.");
                 u.UserName = Required(v, "userName");
                 u.FullName = Required(v, "fullName");
                 u.Email = S(v, "email") is { Length: > 0 } email ? email : null;if(u.Email!=null&&!System.Net.Mail.MailAddress.TryCreate(u.Email,out _))throw new BusinessException("Email không hợp lệ.");
