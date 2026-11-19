@@ -1,4 +1,4 @@
-$ErrorActionPreference = 'Stop'
+﻿$ErrorActionPreference = 'Stop'
 Set-Location -LiteralPath (Split-Path $PSScriptRoot -Parent)
 . (Join-Path $PSScriptRoot 'Docker-Sql.ps1')
 Assert-DockerSql

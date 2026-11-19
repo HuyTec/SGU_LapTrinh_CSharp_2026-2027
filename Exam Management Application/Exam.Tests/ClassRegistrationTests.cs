@@ -26,7 +26,7 @@ public partial class ClassRegistrationTests : IAsyncLifetime
         services.AddDbContext<ExamDbContext>(o => o.UseSqlServer(connection.ConnectionString));
         services.AddIdentityCore<AppUser>().AddRoles<AppRole>().AddEntityFrameworkStores<ExamDbContext>();
         provider = services.BuildServiceProvider();
-        await Db.GetService<IMigrator>().MigrateAsync("20261113090207_StudentClassAdmission");
+        await Db.Database.MigrateAsync();
         foreach (var role in new[] { "Lecturer", "Student" })
             Assert.True((await provider.GetRequiredService<RoleManager<AppRole>>().CreateAsync(new() { Name = role })).Succeeded);
     }
@@ -62,15 +62,18 @@ public partial class ClassRegistrationTests : IAsyncLifetime
     }
 
     [SqlFact]
-    public async Task RegistrationPersistsPhoneAndKeepsLecturerPendingApproval()
+    public async Task RegistrationPersistsPhoneAndActivatesLecturer()
     {
-        var auth = new AuthService(Db, provider.GetRequiredService<UserManager<AppUser>>(), TimeProvider.System);
+        var users = provider.GetRequiredService<UserManager<AppUser>>();
+        var auth = new AuthService(Db, users, TimeProvider.System);
         await auth.RegisterAsync(new("lecturer", "Lecturer", null, "lecturer@example.com", "Example1!", "Lecturer", "0901234567"));
         var user = await Db.Users.SingleAsync();
         Assert.Equal("0901234567", user.PhoneNumber);
-        Assert.Equal("Lecturer", user.RequestedRole);
-        Assert.False(user.IsActive);
-        Assert.Empty(await Db.UserRoles.ToListAsync());
+        Assert.Null(user.RequestedRole);
+        Assert.True(user.IsActive);
+        Assert.Equal(new[] { "Lecturer" }, await users.GetRolesAsync(user));
+        var login = await auth.LoginAsync(new("lecturer", "Example1!"), desktop: false);
+        Assert.Equal("Lecturer", login.Role);
         await Assert.ThrowsAsync<BusinessException>(() => auth.RegisterAsync(new("bad", "Bad", "X", "bad@example.com", "Example1!", "Student", "invalid")));
     }
 
@@ -78,6 +81,7 @@ public partial class ClassRegistrationTests : IAsyncLifetime
     public async Task LegacyRoleMigrationPreservesUserAndReassignsMembership()
     {
         var migrator = Db.GetService<IMigrator>();
+        await migrator.MigrateAsync("20261113090207_StudentClassAdmission");
 
         var role = new AppRole { Name = "ExamOfficer", NormalizedName = "EXAMOFFICER" };
         var user = new AppUser { UserName = "legacy", FullName = "Legacy" };

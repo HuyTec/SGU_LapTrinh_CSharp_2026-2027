@@ -28,6 +28,7 @@ public sealed class UpdateProfileRequest
     public string Version { get; set; } = "";
 }
 public record ChoiceDto(string Value, string Label);
+public record ClassMemberDto(int StudentId, string? StudentCode, string FullName, bool IsActive);
 public record FieldDto(string Name, string Label, string Type = "text", bool Required = false, IReadOnlyList<ChoiceDto>? Choices = null);
 public record ResourceDto(string Key, string Label, IReadOnlyList<FieldDto> Fields, bool CanCreate = true, bool CanDelete = true);
 public record AdminCatalogDto(string DisplayName, string Role, IReadOnlyList<ResourceDto> Resources);

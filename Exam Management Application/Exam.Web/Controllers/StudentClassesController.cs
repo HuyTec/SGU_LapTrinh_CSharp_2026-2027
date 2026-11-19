@@ -14,9 +14,5 @@ public sealed class StudentClassesController(ExamService exams, StudentClassServ
     public async Task<IActionResult> Details(int id) => View(await classes.DetailAsync(StudentId, id));
 
     [HttpGet]
-    public async Task<IActionResult> Index()
-    {
-        var studentId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-        return View(await exams.StudentClassesAsync(studentId));
-    }
+    public async Task<IActionResult> Index() => View(await exams.StudentClassesAsync(StudentId));
 }

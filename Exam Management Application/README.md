@@ -35,7 +35,7 @@ dotnet build '.\Exam Management Application.slnx' -m:1
 
 Để dừng SQL mà giữ dữ liệu: `docker compose -f team/docker/compose.sql.yml stop`. Chạy lại `Start-SqlDocker.ps1` để mở. Không xóa volume khi muốn giữ dữ liệu. Nếu shell có `ConnectionStrings__ExamDb` cũ, bỏ biến đó trước khi chạy; biến môi trường có thể ghi đè User Secrets.
 
-[Tài liệu kỹ thuật và bằng chứng demo](docs/README.md) · [Hợp đồng API](CONTRACT.md) · [Quyết định kiến trúc](DECISIONS.md)
+[Tài liệu kỹ thuật](docs/README.md) · [Hợp đồng API](CONTRACT.md) · [Quyết định kiến trúc](DECISIONS.md)
 
 Link báo cáo: GG Docs:
 
@@ -56,12 +56,7 @@ Chỉ chạy trên SQL Docker local, database **ExamAppDocker**, sau migration v
 sqlcmd -S 'tcp:127.0.0.1,14333' -U sa -d ExamAppDocker -C -b -i .\scripts\Seed-StudentClassDemo.sql
 ```
 
-Đăng nhập thí sinh → **Lớp của tôi** → nhập `DEMO-NV10` → vào thi bằng `THI-NV10`.
-Tự tham gia lớp thử chỉ bật trong Development. QT03 quản lý danh mục lớp trên Desktop, QT04 quản lý thành viên, UC-19 gán lớp vào đợt thi trên Web giảng viên.
-
-Link gg docs: [docs.google.com/document/d/1tU_RzXl9BvWJLrHWJVXhnDzs7SAR4NL5jfF3XFDrr_Q/edit?usp=sharing](https://docs.google.com/document/d/1tU_RzXl9BvWJLrHWJVXhnDzs7SAR4NL5jfF3XFDrr_Q/edit?usp=sharing)
-
-Link report: [docs.google.com/spreadsheets/d/10sSsgNXNt2c-S9SLn9rWQej7txwzoXuFAWfPI9gzFOc/edit?usp=sharing](https://docs.google.com/spreadsheets/d/10sSsgNXNt2c-S9SLn9rWQej7txwzoXuFAWfPI9gzFOc/edit?usp=sharing)
+Sau khi dữ liệu demo và thành viên lớp đã được tạo, thí sinh đăng nhập → **Lớp của tôi** để xem lớp được gán; vào thi bằng mã `THI-NV10` nếu đủ điều kiện. Không tự tham gia lớp bằng mã. QT03/QT04 là các task quản trị lớp/thành viên; trạng thái hoàn thành cần đối chiếu mã nguồn và kiểm thử thực tế.
 
 Link draw.io sơ đồ: [drive.google.com/file/d/1SQcn9H-fTRdWMS4bJIXEEjlklIxWqY_b/view?usp=sharing](https://drive.google.com/file/d/1SQcn9H-fTRdWMS4bJIXEEjlklIxWqY_b/view?usp=sharing)
 

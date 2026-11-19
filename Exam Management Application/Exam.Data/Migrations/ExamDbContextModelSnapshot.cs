@@ -350,6 +350,13 @@ namespace Exam.Data.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)")
+                        .HasDefaultValue("");
+
                     b.Property<int>("SubjectId")
                         .HasColumnType("int");
 

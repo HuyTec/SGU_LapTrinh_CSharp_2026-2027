@@ -39,7 +39,7 @@ public sealed partial class HelpForm : Form
             "Administrator" => """
                 QUẢN TRỊ TÀI KHOẢN
 
-                1. Mở “Tài khoản / thí sinh”. Với yêu cầu nhân sự đăng ký trên Web, kiểm tra thông tin và cột “Vai trò đăng ký”, chọn đúng dòng rồi bấm “Duyệt đăng ký”. Chỉ sau khi được duyệt, nhân sự mới đăng nhập Desktop bằng vai trò đã được cấp.
+                1. Mở “Tài khoản / thí sinh”. Với tài khoản đã chờ duyệt từ trước, kiểm tra thông tin và cột “Vai trò đăng ký”, chọn đúng dòng rồi bấm “Duyệt đăng ký”.
 
                 Bạn cũng có thể chọn Thêm để tạo trực tiếp tài khoản: điền tài khoản, họ tên, mật khẩu và chọn vai trò. Tài khoản thí sinh cần mã thí sinh.
 
@@ -73,7 +73,7 @@ public sealed partial class HelpForm : Form
 
                 • Thí sinh đăng ký xong có thể đăng nhập Web để xem và làm bài thi được phân công.
 
-                • Giảng viên, cán bộ quản lý thi và quản trị viên đăng ký sẽ ở trạng thái chờ duyệt. Quản trị viên hiện có mở “Tài khoản / thí sinh”, kiểm tra “Vai trò đăng ký”, chọn dòng rồi bấm “Duyệt đăng ký”. Sau khi được duyệt, nhân sự mới đăng nhập Desktop. Chọn vai trò khi đăng ký không tự cấp quyền truy cập.
+                • Giảng viên đăng ký và đăng nhập trên Web. Quản trị viên cấp tài khoản quản trị trên Desktop và phân công môn cho giảng viên.
 
                 ĐĂNG NHẬP DESKTOP
 

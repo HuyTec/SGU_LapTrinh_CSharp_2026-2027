@@ -18,7 +18,6 @@ public partial class ClassRegistrationTests
     [SqlFact]
     public async Task WebLecturerWorkflowAndStudentClassNavigation()
     {
-        await Db.Database.MigrateAsync();
         var users = provider.GetRequiredService<UserManager<AppUser>>();
         var teacher = new AppUser { UserName = "http-teacher", FullName = "HTTP teacher", IsActive = true };
         var student = new AppUser { UserName = "http-student", FullName = "HTTP student", StudentCode = "HTTP001", IsActive = true };
@@ -37,8 +36,6 @@ public partial class ClassRegistrationTests
         Db.Add(subject);
         await Db.SaveChangesAsync();
         Db.Add(new LecturerSubject { SubjectId = subject.Id, LecturerId = teacher.Id });
-        var examClass = new ExamClass { Code = "HTTP-CLASS", SubjectId = subject.Id, Students = [new() { StudentId = student.Id }] };
-        Db.Add(examClass);
         await Db.SaveChangesAsync();
 
         var root = new DirectoryInfo(AppContext.BaseDirectory);
@@ -89,6 +86,17 @@ public partial class ClassRegistrationTests
             Assert.True(loginResponse.IsSuccessStatusCode);
             var login = await loginResponse.Content.ReadFromJsonAsync<Exam.Core.LoginResponse>();
             desktop.DefaultRequestHeaders.Authorization = new("Bearer", login!.Token);
+            var classValues = new { values = new { code = "HTTP-CLASS", name = "HTTP class", subjectId = subject.Id, isActive = true } };
+            using var createdClass = await desktop.PostAsJsonAsync("/api/admin/classes", classValues);
+            Assert.True(createdClass.IsSuccessStatusCode, await createdClass.Content.ReadAsStringAsync());
+            var examClass = await Db.Set<ExamClass>().AsNoTracking().SingleAsync();
+            Assert.Equal("HTTP class", examClass.Name);
+            Assert.Equal(HttpStatusCode.Conflict, (await desktop.PostAsJsonAsync("/api/admin/classes", classValues)).StatusCode);
+            var memberRoute = $"/api/admin/classes/{examClass.Id}/members";
+            Assert.Equal(HttpStatusCode.BadRequest, (await desktop.PostAsJsonAsync(memberRoute, new { studentId = teacher.Id })).StatusCode);
+            Assert.Equal(HttpStatusCode.NoContent, (await desktop.PostAsJsonAsync(memberRoute, new { studentId = student.Id })).StatusCode);
+            Assert.Equal(HttpStatusCode.Conflict, (await desktop.PostAsJsonAsync(memberRoute, new { studentId = student.Id })).StatusCode);
+            Assert.Equal(student.Id, Assert.Single((await desktop.GetFromJsonAsync<Exam.Core.ClassMemberDto[]>(memberRoute))!).StudentId);
             var adminProfile = await desktop.GetFromJsonAsync<Exam.Core.ProfileDto>("/api/profile");
             Assert.Equal("http-admin", adminProfile!.UserName);
             using var savedAdmin = await desktop.PutAsJsonAsync("/api/profile",
@@ -96,6 +104,10 @@ public partial class ClassRegistrationTests
             Assert.True(savedAdmin.IsSuccessStatusCode, await savedAdmin.Content.ReadAsStringAsync());
             Assert.Equal("HTTP admin updated", (await savedAdmin.Content.ReadFromJsonAsync<Exam.Core.ProfileDto>())!.FullName);
             await Login(staff, teacher.UserName!, password);
+            Assert.Equal(HttpStatusCode.Unauthorized, (await staff.PostAsJsonAsync("/api/admin/classes", classValues)).StatusCode);
+            using var home = await staff.GetAsync("/");
+            Assert.Equal(HttpStatusCode.Redirect, home.StatusCode);
+            Assert.Equal("/Lecturer", home.Headers.Location?.ToString());
             var profileHtml = WebUtility.HtmlDecode(await staff.GetStringAsync("/Profile"));
             Assert.Contains("Hồ sơ giảng viên", profileHtml);
             var version = WebUtility.HtmlDecode(Regex.Match(profileHtml, "name=\"Version\"[^>]*value=\"([^\"]+)\"").Groups[1].Value);
@@ -225,6 +237,13 @@ public partial class ClassRegistrationTests
             Assert.Equal(HttpStatusCode.NotFound, (await pupil.GetAsync("/StudentClasses/Details/2147483647")).StatusCode);
             Assert.NotEqual(HttpStatusCode.OK, (await pupil.GetAsync("/LecturerClasses")).StatusCode);
             Assert.Equal(HttpStatusCode.OK, (await staff.GetAsync($"/LecturerResults?id={session.Id}")).StatusCode);
+            Assert.Equal(HttpStatusCode.Conflict, (await desktop.DeleteAsync($"/api/admin/classes/{examClass.Id}")).StatusCode);
+            using var stoppedClass = await desktop.PutAsJsonAsync($"/api/admin/classes/{examClass.Id}",
+                new { values = new { code = examClass.Code, name = "Updated class", subjectId = subject.Id, isActive = false } });
+            Assert.Equal(HttpStatusCode.OK, stoppedClass.StatusCode);
+            Assert.Equal(HttpStatusCode.NoContent, (await desktop.DeleteAsync($"{memberRoute}/{student.Id}")).StatusCode);
+            Assert.Equal(HttpStatusCode.Conflict, (await desktop.PostAsJsonAsync(memberRoute, new { studentId = student.Id })).StatusCode);
+            Assert.Equal(HttpStatusCode.OK, (await pupil.GetAsync($"/Attempts/Result/{ownAttempt.Id}")).StatusCode);
         }
         finally
         {

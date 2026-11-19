@@ -21,7 +21,7 @@ PR QT01/QT02 chuyển đăng nhập về ba vai trò, khóa API Desktop cho qu�
 | Nguồn yêu cầu | `docs/YEU_CAU_DU_AN_DE_TAI_18.md` là tiêu chí nghiệm thu chính; đặc tả 3.2 chi tiết nghiệp vụ, ưu tiên hơn 3.3 | Theo chỉ định trực tiếp của người dùng |
 | Desktop | Tạo Exam.Desktop WinForms; giữ nguyên App1 WinUI cũ | Đúng lựa chọn nhóm, dễ dựng và giải thích |
 | Web/backend | Một host Exam.Web chứa MVC/Razor/Bootstrap và Web API; Exam.Core, Exam.Data, Exam.Services dùng chung | Không nhân đôi nghiệp vụ; Desktop chỉ gọi API |
-| Nền tảng | .NET 10, EF Core 10; SQL Server Express đang có tại `.\SQLEXPRESS` | Môi trường đã kiểm tra |
+| Nền tảng | .NET 10, EF Core 10; SQL Server 2022 trong Docker tại `tcp:127.0.0.1,14333` | Theo điều chỉnh ngày 18/11/2026 |
 | Identity | Ánh xạ vào Users, Roles, UserRoles với khóa int và tên khóa UserID/RoleID | Dùng chính người dùng của mô hình 3.3, không tạo tài khoản nghiệp vụ song song |
 | Xác thực | Cookie cho Web; JWT có hạn cho Desktop; kiểm tra tài khoản và phiên ở máy chủ, có thu hồi phiên | Đăng xuất, khóa tài khoản phải có hiệu lực |
 | UC-17 | Quản trị viên quản lý môn học trên Desktop | Theo phạm vi hiện hành và sơ đồ UC-17 |

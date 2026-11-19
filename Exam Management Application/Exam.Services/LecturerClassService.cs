@@ -48,22 +48,31 @@ public sealed class LecturerClassService(ExamDbContext db)
         if (student is null || !await db.UserRoles.AnyAsync(link => link.UserId == student.Id &&
             db.Roles.Any(role => role.Id == link.RoleId && role.NormalizedName == "STUDENT")))
             throw new BusinessException("Không tìm thấy thí sinh đang hoạt động theo mã này.");
-        if (await db.Set<ClassStudent>().AnyAsync(m => m.ClassId == id && m.StudentId == student.Id))
+        await AddMemberAsync(db, id, student.Id, DateTime.UtcNow);
+    });
+
+    internal static async Task AddMemberAsync(ExamDbContext db, int id, int studentId, DateTime now)
+    {
+        if (await db.Set<ClassStudent>().AnyAsync(m => m.ClassId == id && m.StudentId == studentId))
             throw new BusinessException("Thí sinh đã thuộc lớp này.", 409);
 
-        var now = DateTime.UtcNow;
+        await EnsureMemberScheduleAsync(db, id, studentId, now);
+        db.Add(new ClassStudent { ClassId = id, StudentId = studentId });
+        await db.SaveChangesAsync();
+    }
+
+    internal static async Task EnsureMemberScheduleAsync(ExamDbContext db, int id, int studentId, DateTime now)
+    {
         var activeSessions = db.ExamSessions.Where(s => s.Status == "Active" && s.ClosesAt.AddMinutes(s.DurationMinutes) > now);
         var targetSessions = activeSessions.Where(s => s.Classes.Any(c => c.ClassId == id && c.Class.SubjectId == s.Exam.SubjectId));
         if (await targetSessions.AnyAsync(target => activeSessions.Any(other =>
             other.Id != target.Id && other.OpensAt < target.ClosesAt.AddMinutes(target.DurationMinutes) &&
             target.OpensAt < other.ClosesAt.AddMinutes(other.DurationMinutes) &&
             (other.Classes.Any(c => c.Class.IsActive && c.Class.SubjectId == other.Exam.SubjectId &&
-                c.Class.Students.Any(m => m.StudentId == student.Id)) ||
-             db.Attempts.Any(a => a.SessionId == other.Id && a.StudentId == student.Id && a.Status == "InProgress")))))
+                c.Class.Students.Any(m => m.StudentId == studentId)) ||
+             db.Attempts.Any(a => a.SessionId == other.Id && a.StudentId == studentId && a.Status == "InProgress")))))
             throw new BusinessException("Thí sinh bị trùng lịch với đợt đã kích hoạt. Hãy kiểm tra lịch trước khi thêm vào lớp.", 409);
-        db.Add(new ClassStudent { ClassId = id, StudentId = student.Id });
-        await db.SaveChangesAsync();
-    });
+    }
 
     public Task RemoveAsync(int lecturer, int id, int studentId) => ChangeMembershipAsync(lecturer, id, async _ =>
     {
@@ -90,7 +99,7 @@ public sealed class LecturerClassService(ExamDbContext db)
             throw new BusinessException("Chọn môn đang hoạt động và được phân công.", 403);
         if (await db.Set<ExamClass>().AnyAsync(c => c.SubjectId == subjectId && c.Code == code))
             throw new BusinessException("Mã lớp đã tồn tại trong môn học.", 409);
-        db.Add(new ExamClass { SubjectId = subjectId, Code = code, IsActive = true });
+        db.Add(new ExamClass { SubjectId = subjectId, Code = code, Name = code, IsActive = true });
         try { await db.SaveChangesAsync(); }
         catch (DbUpdateException) { throw new BusinessException("Không thể tạo lớp. Mã lớp có thể vừa được sử dụng hoặc môn học đã thay đổi.", 409); }
     }

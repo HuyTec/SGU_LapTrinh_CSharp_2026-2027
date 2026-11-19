@@ -17,10 +17,10 @@
 </section>
 <section id="desktop-guide" class="surface" aria-labelledby="desktop-guide-heading">
     <h2 id="desktop-guide-heading">Tài khoản giảng viên và quản trị viên</h2>
-    <p>Giảng viên mới dùng <a asp-controller="Account" asp-action="Register">mẫu đăng ký</a>, chọn tab “Giảng viên”. Yêu cầu sẽ chờ quản trị viên duyệt; việc chọn loại tài khoản không tự cấp quyền sử dụng.</p>
-    <p>Quản trị viên hiện có đăng nhập Desktop, mở “Tài khoản / thí sinh”, chọn yêu cầu và dùng “Duyệt đăng ký”. Sau khi được duyệt, giảng viên đăng nhập trên Web và quản trị viên đăng nhập trên Desktop. Quyền thao tác còn phụ thuộc môn được phân công và đợt thi phụ trách.</p>
+    <p>Giảng viên mới dùng <a asp-controller="Account" asp-action="Register">mẫu đăng ký</a>, chọn tab “Giảng viên” và đăng nhập trên Web ngay sau khi đăng ký.</p>
+    <p>Quyền thao tác của giảng viên phụ thuộc vào môn được phân công và đợt thi phụ trách. Quản trị viên có thể xử lý tài khoản đã chờ duyệt từ trước bằng nút “Duyệt đăng ký” trên Desktop.</p>
     <ol class="instruction-list">
-        <li><strong>Quản trị viên:</strong> tài khoản do quản trị viên hiện có cấp trong Desktop; tài khoản quản trị demo đầu tiên do script khởi tạo tạo sẵn. Có thể  duyệt yêu cầu đăng ký giảng viên; quản lý tài khoản và thí sinh, nhập danh sách thí sinh, phân công giảng viên theo môn. Kiểm tra đúng người và loại tài khoản trước khi duyệt.</li>
+        <li><strong>Quản trị viên:</strong> tài khoản do quản trị viên hiện có cấp trên Desktop. Script khởi tạo tạo sẵn tài khoản quản trị demo đầu tiên. Quản trị viên quản lý tài khoản, nhập danh sách thí sinh và phân công giảng viên theo môn.</li>
         <li><strong>Giảng viên:</strong> quản lý chủ đề, câu hỏi và đáp án trong môn được phân công; tạo đề, thêm câu hỏi và xác nhận sẵn sàng. Kiểm tra mỗi câu có đúng một đáp án đúng trước khi dùng đề.</li>
     </ol>
     <p class="mb-0">Dữ liệu Desktop và Web dùng chung. Sau khi giảng viên công bố kết quả, thí sinh tải lại trang Web để xem điểm. Dữ liệu đã được dùng trong bài thi sẽ bị giới hạn sửa hoặc xóa để bảo toàn kết quả.</p>

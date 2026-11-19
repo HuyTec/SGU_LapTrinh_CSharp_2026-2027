@@ -1,4 +1,4 @@
-param([string]$ApiUrl = 'http://localhost:5180')
+﻿param([string]$ApiUrl = 'http://localhost:5180')
 $ErrorActionPreference = 'Stop'
 $projectRoot = Split-Path $PSScriptRoot -Parent
 Set-Location -LiteralPath $projectRoot

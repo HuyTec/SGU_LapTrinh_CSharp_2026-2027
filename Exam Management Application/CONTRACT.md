@@ -2,7 +2,7 @@
 
 Quy tắc thời gian cập nhật 18/11/2026: chỉ nhận lượt mới khi OpensAt ≤ giờ máy chủ < ClosesAt. Mỗi lượt được làm đủ DurationMinutes kể từ StartedAt. API lưu, nộp và worker dùng Attempts.Deadline. Giảng viên bật công bố ngay sau kích hoạt, tùy chọn ScoreOnly/Answers/CorrectAnswers. Mỗi lượt Submitted có kết quả được xem ngay theo chính sách; các bài nộp sau tự hiển thị khi chấm xong.
 
-Trạng thái: đã triển khai và kiểm tra tích hợp ngày 24/10/2026. Nguồn quyết định: DECISIONS.md; phạm vi bằng chứng: REPORT.md.
+Tài liệu mô tả hợp đồng tích hợp; nguồn quyết định là DECISIONS.md. Trạng thái triển khai và kiểm chứng cần được xác nhận trên phiên bản đang chạy, kèm bằng chứng tương ứng.
 
 ## Kiến trúc và quyền sở hữu
 

@@ -1,4 +1,4 @@
-param(
+﻿param(
     [ValidatePattern('^ExamApp[A-Za-z0-9_]*$')][string]$Database = 'ExamAppDocker',
     [switch]$RunTests
 )
