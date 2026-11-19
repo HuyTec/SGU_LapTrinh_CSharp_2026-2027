@@ -1,4 +1,4 @@
-$ErrorActionPreference = 'Stop'
+﻿$ErrorActionPreference = 'Stop'
 
 function Assert-DockerEngine {
     if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
