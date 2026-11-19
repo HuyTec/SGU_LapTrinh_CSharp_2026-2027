@@ -7,7 +7,7 @@
         <a class="nav-link @(lecturer ? "active" : "")" aria-current="@(lecturer ? "page" : null)" asp-action="Register" asp-route-accountType="Lecturer">Giảng viên</a>
     </nav>
     <h2>@(lecturer ? "Đăng ký giảng viên" : "Đăng ký thí sinh")</h2>
-    <p class="muted">@(lecturer ? "Tài khoản cần được quản trị viên duyệt trước khi sử dụng." : "Dùng mã thí sinh do nhà trường cấp. Bạn có thể đăng nhập ngay sau khi đăng ký.")</p>
+    <p class="muted">@(lecturer ? "Bạn có thể đăng nhập ngay sau khi đăng ký." : "Dùng mã thí sinh do nhà trường cấp. Bạn có thể đăng nhập ngay sau khi đăng ký.")</p>
     <form asp-controller="Account" asp-action="Register" method="post">
         <input type="hidden" name="AccountType" value="@(lecturer ? "Lecturer" : "Student")" />
         <div asp-validation-summary="ModelOnly" class="validation-summary text-danger" role="alert"></div>

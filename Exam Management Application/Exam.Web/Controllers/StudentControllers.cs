@@ -19,7 +19,7 @@ public class AccountController(AuthService auth):Controller{
          try
          {
              await auth.RegisterAsync(new(vm.UserName, vm.FullName, vm.AccountType == "Student" ? vm.StudentCode : null, vm.Email, vm.Password, vm.AccountType, vm.PhoneNumber));
-             TempData["Success"] = vm.AccountType=="Student" ? "Đăng ký thành công. Bạn có thể đăng nhập ngay." : "Đã gửi yêu cầu đăng ký tài khoản giảng viên. Tài khoản đang chờ quản trị viên duyệt; sau khi được duyệt, hãy đăng nhập trên Web.";
+             TempData["Success"] = "Đăng ký thành công. Bạn có thể đăng nhập ngay.";
              return RedirectToAction(nameof(Login));
          }
          catch (BusinessException ex) { ModelState.AddModelError("", ex.Message); }
@@ -40,8 +40,18 @@ public class HelpController : Controller
 {
  public IActionResult Index() => View();
 }
-[Authorize(Roles="Student")]
-public class HomeController(ExamService exams):Controller{public async Task<IActionResult> Index()=>View(await exams.SessionsAsync(int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!)));}
+[Authorize(Roles = "Student,Lecturer")]
+public class HomeController(ExamService exams) : Controller
+{
+    public async Task<IActionResult> Index()
+    {
+        if (User.IsInRole("Lecturer"))
+            return RedirectToAction("Index", "Lecturer");
+
+        var studentId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        return View(await exams.SessionsAsync(studentId));
+    }
+}
 [Authorize(Roles="Student")]
 public class SessionsController(ExamService exams):Controller{
  int Uid=>int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);

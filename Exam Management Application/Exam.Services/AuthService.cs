@@ -7,7 +7,7 @@ namespace Exam.Services;
 
 public class AuthService(ExamDbContext db, UserManager<AppUser> users, TimeProvider clock)
 {
-    /// <summary>Students activate immediately; staff registrations remain inactive without roles until administrator approval.</summary>
+    /// <summary>Registers an active student account.</summary>
     public Task RegisterStudentAsync(RegisterStudentRequest request) => RegisterAsync(new(request.UserName,request.FullName,request.StudentCode,request.Email,request.Password,"Student"));
     public async Task RegisterAsync(RegisterRequest request)
     {
@@ -36,7 +36,7 @@ public class AuthService(ExamDbContext db, UserManager<AppUser> users, TimeProvi
             if (isStudent && await db.Users.AnyAsync(u => u.StudentCode == studentCode))
                 throw new BusinessException("Mã thí sinh đã được sử dụng. Nếu đã được cấp tài khoản, hãy liên hệ quản trị viên để lấy lại thông tin đăng nhập.", 409);
 
-            var user = new AppUser { UserName = userName, FullName = fullName, StudentCode = studentCode, Email = email, PhoneNumber = phone, IsActive = isStudent, RequestedRole = isStudent ? null : request.AccountType };
+            var user = new AppUser { UserName = userName, FullName = fullName, StudentCode = studentCode, Email = email, PhoneNumber = phone, IsActive = true, RequestedRole = null };
             var created = await users.CreateAsync(user, request.Password);
             if (!created.Succeeded)
             {
@@ -52,12 +52,9 @@ public class AuthService(ExamDbContext db, UserManager<AppUser> users, TimeProvi
                 });
                 throw new BusinessException(string.Join(" ", errors.Distinct()));
             }
-            if(isStudent)
-            {
-                var assigned = await users.AddToRoleAsync(user,"Student");
-                if(!assigned.Succeeded)
-                    throw new BusinessException("Chưa thể cấp tài khoản thí sinh. Vui lòng liên hệ quản trị viên.");
-            }
+            var assigned = await users.AddToRoleAsync(user, request.AccountType);
+            if (!assigned.Succeeded)
+                throw new BusinessException("Không thể cấp vai trò cho tài khoản. Vui lòng liên hệ quản trị viên.");
             await transaction.CommitAsync();
         });
     }

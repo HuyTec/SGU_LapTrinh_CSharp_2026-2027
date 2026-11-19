@@ -3,6 +3,7 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
 using Exam.Core;
+using Exam.Core.Contracts.Classes;
 
 namespace Exam.Desktop;
 
@@ -62,6 +63,14 @@ public sealed class ExamApiClient : IDisposable
     public Task SaveAsync(string key, int? id, Dictionary<string, JsonElement> values) => SendAsync<JsonElement>(id.HasValue ? HttpMethod.Put : HttpMethod.Post,
         $"api/admin/{key}" + (id.HasValue ? $"/{id}" : ""), new AdminSaveRequest(values));
     public Task DeleteAsync(string key, int id) => SendAsync<JsonElement>(HttpMethod.Delete, $"api/admin/{key}/{id}");
+    public Task<List<ClassMemberDto>> ClassMembersAsync(int classId) =>
+        SendAsync<List<ClassMemberDto>>(HttpMethod.Get, $"api/admin/classes/{classId}/members");
+    public Task<List<ClassMemberDto>> EligibleClassStudentsAsync(int classId) =>
+        SendAsync<List<ClassMemberDto>>(HttpMethod.Get, $"api/admin/classes/{classId}/eligible-students");
+    public Task AddClassMemberAsync(int classId, int studentId) =>
+        SendAsync<JsonElement>(HttpMethod.Post, $"api/admin/classes/{classId}/members", new AddStudentToClassDto(studentId));
+    public Task RemoveClassMemberAsync(int classId, int studentId) =>
+        SendAsync<JsonElement>(HttpMethod.Delete, $"api/admin/classes/{classId}/members/{studentId}");
     public Task ActionAsync(string key, int id, string action) => SendAsync<JsonElement>(HttpMethod.Post, $"api/admin/{key}/{id}/action", new ActionRequest(action));
     public async Task<int> ImportStudentsAsync(string csv, bool preview = false)
     {

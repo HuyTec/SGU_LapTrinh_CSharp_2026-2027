@@ -10,6 +10,7 @@ public partial class ResourceView : UserControl, IWorkspaceView, IResourceView
 {
     private readonly string resourceKey;
     private readonly ResourcePresenter presenter = null!;
+    private readonly ExamApiClient api = null!;
     private readonly BindingSource source = new();
     private readonly ComboBox subjectStatusFilter = new() { DropDownStyle = ComboBoxStyle.DropDownList, DisplayMember = nameof(ChoiceDto.Label), Width = 180 };
     private readonly Dictionary<int, Dictionary<string, object?>> rowsById = new();
@@ -32,7 +33,7 @@ public partial class ResourceView : UserControl, IWorkspaceView, IResourceView
     [System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
     public ResourceQuery Query => new(search.Text.Trim(), resourceKey == "questions" ? Value(subjectFilter) : null,
         resourceKey == "questions" ? Value(topicFilter) : null, resourceKey == "questions" ? Value(difficultyFilter) : null,
-        resourceKey == "subjects" && subjectStatusFilter.SelectedIndex > 0 ? subjectStatusFilter.SelectedIndex == 1 : null);
+        resourceKey is "subjects" or "classes" && subjectStatusFilter.SelectedIndex > 0 ? subjectStatusFilter.SelectedIndex == 1 : null);
     public int? SelectedRecordId => grid.CurrentRow is { } row && int.TryParse(row.Cells["_id"].Value?.ToString(), out var id) ? id : null;
     public int? SelectedSessionId => SelectedRecordId is int id && rowsById.TryGetValue(id, out var row) ? Integer(row.GetValueOrDefault("sessionId")) : null;
 
@@ -49,12 +50,13 @@ public partial class ResourceView : UserControl, IWorkspaceView, IResourceView
 
     public ResourceView(ExamApiClient api, string resourceKey) : this(resourceKey)
     {
+        this.api = api;
         presenter = new ResourcePresenter(api, this, resourceKey);
         Theme.StyleInput(search); Theme.StyleInput(subjectFilter); Theme.StyleInput(topicFilter); Theme.StyleInput(difficultyFilter);
-        if (resourceKey == "subjects")
+        if (resourceKey is "subjects" or "classes")
         {
-            search.PlaceholderText = "Tìm theo mã hoặc tên môn…";
-            add.Text = "Thêm môn học";
+            search.PlaceholderText = resourceKey == "classes" ? "Tìm theo mã hoặc tên lớp…" : "Tìm theo mã hoặc tên môn…";
+            add.Text = resourceKey == "classes" ? "Thêm lớp" : "Thêm môn học";
             Theme.StyleInput(subjectStatusFilter);
             subjectStatusFilter.Items.AddRange([
                 new ChoiceDto("", "Tất cả"),
@@ -95,7 +97,7 @@ public partial class ResourceView : UserControl, IWorkspaceView, IResourceView
         };
         VisibleChanged += (_, _) => LayoutToolbar();
         subjectGroup.Visible = topicGroup.Visible = difficultyGroup.Visible = resourceKey == "questions";
-        filters.Visible = resourceKey is "subjects" or "questions";
+        filters.Visible = resourceKey is "subjects" or "questions" or "classes";
         previewCard.Visible = sideGap.Visible = resourceKey == "questions";
         RenderQuestionDetail(null); countLabel.Text = title;
         LayoutToolbar();
@@ -139,6 +141,19 @@ public partial class ResourceView : UserControl, IWorkspaceView, IResourceView
             var password = Button("Mật khẩu / vai trò"); password.Click += async (_, _) => await presenter.EditSelectedAsync();
             resourceActions.Controls.Add(password); selectedActions.Add(password);
             var import = Button("Nhập CSV thí sinh"); import.Click += async (_, _) => await presenter.ImportAsync(); resourceActions.Controls.Add(import);
+        }
+        if (resourceKey == "classes")
+        {
+            var members = Button("Thành viên lớp");
+            members.Click += async (_, _) =>
+            {
+                if (SelectedRecordId is not int id) return;
+                using var dialog = new ClassMembersForm(api, id, rowsById[id]["code"]?.ToString() ?? "");
+                dialog.ShowDialog(DialogOwner);
+                if (dialog.MembershipChanged) await presenter.SearchAsync();
+            };
+            resourceActions.Controls.Add(members);
+            selectedActions.Add(members);
         }
         if (resourceKey == "exams") { Action("Xác nhận sẵn sàng", "ready"); Action("Chuyển về nháp", "draft"); }
         if (resourceKey == "exams")
@@ -388,6 +403,8 @@ public partial class ResourceView : UserControl, IWorkspaceView, IResourceView
     {
         "users" => [new("userName", "Tài khoản", 110, 130), new("fullName", "Họ và tên", 150, 170), new("requestedRole", "Vai trò đăng ký", 100, 140), new("isActive", "Hoạt động", 65, 100), new("role", "Vai trò hiện tại", 120, 150), new("studentCode", "Mã thí sinh", 80, 115)],
         "subjects" => [new("code", "Mã môn", 70, 110), new("name", "Tên môn học", 200, 220), new("isActive", "Hoạt động", 70, 110)],
+        "classes" => [new("code", "Mã lớp"), new("name", "Tên lớp", 180, 170), new("subject", "Môn học", 130, 140),
+            new("memberCount", "Thành viên", 65, 85), new("isActive", "Hoạt động", 75, 90)],
         "topics" => [new("subject", "Môn học", 140, 180), new("name", "Tên chủ đề", 200, 220), new("isActive", "Hoạt động", 70, 110)],
         "assignments" => [new("lecturer", "Giảng viên", 150, 200), new("subject", "Môn học được phân công", 200, 250)],
         "candidates" => [new("session", "Đợt thi", 180, 230), new("student", "Thí sinh", 150, 200)],
@@ -400,7 +417,7 @@ public partial class ResourceView : UserControl, IWorkspaceView, IResourceView
 
     private static readonly Dictionary<string, string> Titles = new()
     {
-        ["users"] = "Tài khoản & đăng ký", ["subjects"] = "Môn học", ["topics"] = "Chủ đề", ["questions"] = "Ngân hàng câu hỏi", ["exams"] = "Đề thi", ["sessions"] = "Đợt thi", ["assignments"] = "Phân công giảng viên", ["candidates"] = "Phân công thí sinh", ["monitor"] = "Theo dõi & kết quả"
+        ["users"] = "Tài khoản & đăng ký", ["subjects"] = "Môn học", ["classes"] = "Quản lý lớp", ["topics"] = "Chủ đề", ["questions"] = "Ngân hàng câu hỏi", ["exams"] = "Đề thi", ["sessions"] = "Đợt thi", ["assignments"] = "Phân công giảng viên", ["candidates"] = "Phân công thí sinh", ["monitor"] = "Theo dõi & kết quả"
     };
     private static readonly Dictionary<string, string> EmptyDescriptions = new()
     {

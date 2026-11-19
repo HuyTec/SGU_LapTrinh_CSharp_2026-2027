@@ -1,5 +1,7 @@
 using Exam.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Xunit;
 
 namespace Exam.Tests;
@@ -9,6 +11,7 @@ public partial class ClassRegistrationTests
     [SqlFact]
     public async Task DeadlineMigrationExtendsOnlyUnfinishedAttemptsClippedByAdmissionClose()
     {
+        await Db.GetService<IMigrator>().MigrateAsync("20261117160000_RetireExamOfficer");
         var now = new DateTime(2026, 11, 18, 7, 0, 0, DateTimeKind.Utc);
         var teacher = new AppUser { UserName = "deadline-teacher", FullName = "Teacher" };
         var first = new AppUser { UserName = "deadline-first", FullName = "First" };
