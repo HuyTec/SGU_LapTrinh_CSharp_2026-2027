@@ -34,22 +34,6 @@ else
                                 <a asp-action="Edit" asp-route-id="@row.Id" class="btn btn-outline-secondary">Sửa</a>
                                 <form asp-action="ChangeState" asp-route-id="@row.Id" method="post">
                                     <button type="submit" class="btn btn-primary" name="command" value="activate">Kích hoạt</button>
-                                    @if (row.CanCancelDraft)
-                                    {
-                                        <button type="submit" class="btn btn-outline-danger" name="command" value="cancelDraft" onclick="return confirm('Hủy đợt nháp này? Bản ghi sẽ được giữ trong lịch sử.')">Hủy nháp</button>
-                                    }
-                                </form>
-                            }
-                            @if (row.CanCloseAdmissions)
-                            {
-                                <form asp-action="ChangeState" asp-route-id="@row.Id" method="post">
-                                    <button type="submit" class="btn btn-outline-danger" name="command" value="closeAdmissions" onclick="return confirm('Đóng nhận thí sinh mới? Các lượt đang làm vẫn tiếp tục đến hết thời lượng.')">Đóng nhận thí sinh</button>
-                                </form>
-                            }
-                            @if (row.CanCancelActive)
-                            {
-                                <form asp-action="ChangeState" asp-route-id="@row.Id" method="post">
-                                    <button type="submit" class="btn btn-outline-danger" name="command" value="cancel" onclick="return confirm('Hủy đợt thi này? Chỉ thực hiện được khi chưa có thí sinh bắt đầu. Bản ghi được giữ trong lịch sử.')">Hủy đợt</button>
                                 </form>
                             }
                             @if (row.CanWithdraw)

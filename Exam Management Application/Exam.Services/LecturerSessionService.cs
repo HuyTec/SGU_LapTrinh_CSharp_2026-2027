@@ -8,8 +8,7 @@ namespace Exam.Services;
 
 public sealed record SessionDraft(string Title, int ExamId, DateTime OpensAt, DateTime ClosesAt, int DurationMinutes,
     bool ShuffleQuestions, bool ShuffleOptions, string ReviewPolicy, int[] ClassIds);
-public sealed record LecturerSessionRow(int Id, string Title, string Paper, string State, string? Code, bool CanEdit, bool CanWithdraw,
-    bool CanCancelDraft, bool CanCancelActive, bool CanCloseAdmissions);
+public sealed record LecturerSessionRow(int Id, string Title, string Paper, string State, string? Code, bool CanEdit, bool CanWithdraw);
 public sealed record SessionPaperChoice(int Id, int SubjectId, string Label);
 public sealed record SessionClassChoice(int Id, int SubjectId, string Label);
 public sealed record SessionEditorData(SessionDraft? Draft, IReadOnlyList<SessionPaperChoice> Papers, IReadOnlyList<SessionClassChoice> Classes);
@@ -28,10 +27,7 @@ public sealed class LecturerSessionService(ExamDbContext db, TimeProvider clock)
             .OrderByDescending(s => s.OpensAt).ThenByDescending(s => s.Id).ToListAsync();
         return rows.Select(s => new LecturerSessionRow(s.Id, s.Title, s.Exam.Title, ExamService.SessionState(s, now),
             s.Status == "Active" ? s.AccessCode : null, s.Status == "Draft" && !s.HasOpened,
-            s.Status == "Active" && !s.HasOpened && s.OpensAt > now,
-            s.Status == "Draft" && !s.HasOpened,
-            s.Status == "Active" && !s.HasOpened,
-            s.Status == "Active" && s.AdmissionsClosedAt == null && s.ClosesAt > now)).ToList();
+            s.Status == "Active" && !s.HasOpened && s.OpensAt > now)).ToList();
     }
 
     private async Task<ExamSession> LoadAsync(int lecturer, int id) => await Owned(lecturer)
@@ -140,26 +136,10 @@ public sealed class LecturerSessionService(ExamDbContext db, TimeProvider clock)
         {
             if (session.Status != "Active" || session.HasOpened || Now >= session.OpensAt ||
                 await db.Attempts.AnyAsync(a => a.SessionId == id))
-<<<<<<< HEAD
                 throw new BusinessException("Chỉ hoãn đợt đã kích hoạt trước giờ mở lần đầu.", 409);
+            await db.SessionCandidates.Where(c => c.SessionId == id).ExecuteDeleteAsync();
+            session.ActivatedAt = null;
             session.Status = "Draft";
-=======
-                throw new BusinessException("Chỉ hoãn hoặc hủy đợt đã kích hoạt trước giờ mở lần đầu.", 409);
-            if (action == "postpone")
-            {
-                await db.SessionCandidates.Where(c => c.SessionId == id).ExecuteDeleteAsync();
-                session.ActivatedAt = null;
-                session.Status = "Draft";
-            }
-            else
-                session.Status = "Cancelled";
-<<<<<<< HEAD
-<<<<<<< HEAD
->>>>>>> 78a47af701ad19b4ed1748b980e33142f3bad6cd
-=======
->>>>>>> 78a47af701ad19b4ed1748b980e33142f3bad6cd
-=======
->>>>>>> 78a47af701ad19b4ed1748b980e33142f3bad6cd
             return true;
         }
         if (action != "activate")
