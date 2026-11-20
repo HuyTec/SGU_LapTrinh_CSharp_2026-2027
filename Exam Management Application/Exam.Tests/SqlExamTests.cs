@@ -3,6 +3,7 @@ using System.Text.Json;
 using Exam.Core;
 using Exam.Data;
 using Exam.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -57,7 +58,7 @@ public partial class SqlExamTests : IAsyncLifetime
         };
         var session = new ExamSession
         {
-            Exam = exam, Manager = officer, Title = "Đợt kiểm thử", Status = "Active",
+            Exam = exam, Manager = officer, Title = "Đợt kiểm thử",
             OpensAt = clock.GetUtcNow().UtcDateTime.AddMinutes(-10),
             ClosesAt = clock.GetUtcNow().UtcDateTime.AddMinutes(30), DurationMinutes = 20,
             ShuffleQuestions = true, ShuffleOptions = true
@@ -74,6 +75,18 @@ public partial class SqlExamTests : IAsyncLifetime
             }
         });
         await db.SaveChangesAsync();
+        var studentRole = new AppRole { Name = "Student", NormalizedName = "STUDENT" };
+        var lecturerRole = new AppRole { Name = "Lecturer", NormalizedName = "LECTURER" };
+        db.Roles.AddRange(studentRole, lecturerRole);
+        db.LecturerSubjects.Add(new LecturerSubject { LecturerId = officer.Id, SubjectId = subject.Id });
+        await db.SaveChangesAsync();
+        db.UserRoles.AddRange(
+            new IdentityUserRole<int> { RoleId = studentRole.Id, UserId = student.Id },
+            new IdentityUserRole<int> { RoleId = studentRole.Id, UserId = other.Id },
+            new IdentityUserRole<int> { RoleId = lecturerRole.Id, UserId = officer.Id },
+            new IdentityUserRole<int> { RoleId = lecturerRole.Id, UserId = teacher.Id });
+        await db.SaveChangesAsync();
+        await new LecturerSessionService(db, clock).ChangeStateAsync(officer.Id, session.Id, "activate");
         sessionId = session.Id;
         studentId = student.Id;
         otherStudentId = other.Id;
@@ -93,13 +106,6 @@ public partial class SqlExamTests : IAsyncLifetime
         var db = scope.ServiceProvider.GetRequiredService<ExamDbContext>();
         var users = scope.ServiceProvider.GetRequiredService<Microsoft.AspNetCore.Identity.UserManager<AppUser>>();
         var session = await db.ExamSessions.Include(x => x.Exam).SingleAsync();
-        db.LecturerSubjects.Add(new LecturerSubject { SubjectId = session.Exam.SubjectId, LecturerId = session.ManagedBy });
-        await db.SaveChangesAsync();
-        var roles = scope.ServiceProvider.GetRequiredService<Microsoft.AspNetCore.Identity.RoleManager<AppRole>>();
-        var studentRole = new AppRole { Name = "Student" };
-        Assert.True((await roles.CreateAsync(studentRole)).Succeeded);
-        db.UserRoles.Add(new Microsoft.AspNetCore.Identity.IdentityUserRole<int> { UserId = studentId, RoleId = studentRole.Id });
-        await db.SaveChangesAsync();
         var manager = session.ManagedBy;
         var admin = new AdminService(db, users, clock);
         var exporter = new ExportService(admin);
@@ -135,11 +141,6 @@ public partial class SqlExamTests : IAsyncLifetime
         var paper = await db.Exams.SingleAsync();
         var classId = await db.Set<ExamClass>().Select(c => c.Id).SingleAsync();
         db.LecturerSubjects.Add(new LecturerSubject { LecturerId = lecturer, SubjectId = paper.SubjectId });
-        var studentRole = new AppRole { Name = "Student", NormalizedName = "STUDENT" };
-        db.Roles.Add(studentRole);
-        await db.SaveChangesAsync();
-        db.UserRoles.AddRange(new() { RoleId = studentRole.Id, UserId = studentId },
-            new() { RoleId = studentRole.Id, UserId = otherStudentId });
         await db.SaveChangesAsync();
 
         var service = new LecturerSessionService(db, clock);
@@ -154,7 +155,7 @@ public partial class SqlExamTests : IAsyncLifetime
         db.SessionCandidates.Add(new SessionCandidate { SessionId = id, StudentId = otherStudentId });
         await db.SaveChangesAsync();
         await service.ChangeStateAsync(lecturer, id, "activate");
-        var activated = (await service.ListAsync(lecturer)).Single();
+        var activated = (await service.ListAsync(lecturer)).Single(s => s.Id == id);
         Assert.False(string.IsNullOrEmpty(activated.Code));
         Assert.False(activated.CanEdit);
         Assert.True(activated.CanWithdraw);
@@ -305,6 +306,7 @@ public partial class SqlExamTests : IAsyncLifetime
         await using (var legacy = NewContext())
         {
             await legacy.GetService<IMigrator>().MigrateAsync(previousMigration);
+            await legacy.SessionCandidates.ExecuteDeleteAsync();
             var rosterOnly = new AppUser { UserName = "roster-only", FullName = "Thí sinh chưa bắt đầu" };
             legacy.Users.Add(rosterOnly);
             await legacy.SaveChangesAsync();
@@ -598,7 +600,15 @@ public partial class SqlExamTests : IAsyncLifetime
                 .Select(x => x.ClassId).SingleAsync();
             setup.Set<ClassStudent>().Add(new ClassStudent { ClassId = classId, StudentId = otherStudentId });
             await setup.SaveChangesAsync();
-            healthyId = await service.StartAsync(otherStudentId, sessionId);
+            // The active roster is immutable. Admit the second candidate through
+            // a new session activated after their class membership was added.
+            var original = await setup.ExamSessions.SingleAsync(s => s.Id == sessionId);
+            var sessions = new LecturerSessionService(setup, clock);
+            var healthySession = await sessions.SaveAsync(original.ManagedBy, null,
+                new SessionDraft("Healthy grading batch", original.ExamId, original.OpensAt,
+                    original.ClosesAt, original.DurationMinutes, false, false, "ScoreOnly", [classId]));
+            await sessions.ChangeStateAsync(original.ManagedBy, healthySession, "activate");
+            healthyId = await service.StartAsync(otherStudentId, healthySession);
             var answers = await setup.AttemptOptions.Where(x => x.Question.AttemptId == failingId && x.IsCorrect)
                 .Select(x => new { QuestionId = x.AttemptQuestionId, OptionId = x.Id }).ToListAsync();
             Assert.NotEmpty(answers);

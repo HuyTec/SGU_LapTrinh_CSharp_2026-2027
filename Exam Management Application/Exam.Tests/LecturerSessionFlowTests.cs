@@ -105,7 +105,10 @@ public partial class ClassRegistrationTests
         var teacher = new AppUser { UserName = "withdraw-teacher", FullName = "Teacher" };
         var student = new AppUser { UserName = "withdraw-student", FullName = "Student" };
         var subject = new Subject { Code = "WITHDRAW", Name = "Subject" };
-        var paper = new ExamPaper { Creator = teacher, Subject = subject, Title = "Paper", Status = "Ready" };
+        var question = new Question { Creator = teacher, Topic = new Topic { Subject = subject, Name = "Topic" },
+            Text = "Question", Options = [new() { Text = "Right", Order = 1, IsCorrect = true }, new() { Text = "Wrong", Order = 2 }] };
+        var paper = new ExamPaper { Creator = teacher, Subject = subject, Title = "Paper", Status = "Ready",
+            Questions = [new() { Question = question, Order = 1, Points = 10m }] };
         Db.AddRange(paper, student);
         await Db.SaveChangesAsync();
         var role = await Db.Roles.SingleAsync(r => r.NormalizedName == "STUDENT");
@@ -122,18 +125,25 @@ public partial class ClassRegistrationTests
 
         await service.ChangeStateAsync(teacher.Id, id, "activate");
         Assert.True(await Db.SessionCandidates.AnyAsync(c => c.SessionId == id));
+        var firstSnapshot = await Db.SessionQuestions.Where(q => q.SessionId == id).Select(q => q.Id).SingleAsync();
+        Assert.Equal(2, await Db.SessionOptions.CountAsync(o => o.Question.SessionId == id));
         await service.ChangeStateAsync(teacher.Id, id, "postpone");
         var draft = await Db.ExamSessions.SingleAsync(s => s.Id == id);
         Assert.Equal("Draft", draft.Status);
         Assert.Null(draft.ActivatedAt);
         Assert.False(await Db.SessionCandidates.AnyAsync(c => c.SessionId == id));
+        Assert.False(await Db.SessionQuestions.AnyAsync(q => q.SessionId == id));
+        Assert.False(await Db.SessionOptions.AnyAsync(o => o.Question.SessionId == id));
 
         await service.ChangeStateAsync(teacher.Id, id, "activate");
+        var nextSnapshot = await Db.SessionQuestions.Where(q => q.SessionId == id).Select(q => q.Id).SingleAsync();
+        Assert.NotEqual(firstSnapshot, nextSnapshot);
         await service.ChangeStateAsync(teacher.Id, id, "cancel");
         var cancelled = await Db.ExamSessions.SingleAsync(s => s.Id == id);
         Assert.Equal("Cancelled", cancelled.Status);
         Assert.Equal(now, cancelled.ActivatedAt);
         Assert.Equal(student.Id, (await Db.SessionCandidates.SingleAsync(c => c.SessionId == id)).StudentId);
+        Assert.Equal(nextSnapshot, (await Db.SessionQuestions.SingleAsync(q => q.SessionId == id)).Id);
     }
 
     private sealed class SessionTestClock(DateTimeOffset now) : TimeProvider
