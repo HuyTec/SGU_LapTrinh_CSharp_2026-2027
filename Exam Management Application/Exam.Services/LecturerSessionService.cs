@@ -114,7 +114,14 @@ public sealed class LecturerSessionService(ExamDbContext db, TimeProvider clock)
             if (session.Status != "Active" || session.HasOpened || Now >= session.OpensAt ||
                 await db.Attempts.AnyAsync(a => a.SessionId == id))
                 throw new BusinessException("Chỉ hoãn hoặc hủy đợt đã kích hoạt trước giờ mở lần đầu.", 409);
-            session.Status = action == "postpone" ? "Draft" : "Cancelled";
+            if (action == "postpone")
+            {
+                await db.SessionCandidates.Where(c => c.SessionId == id).ExecuteDeleteAsync();
+                session.ActivatedAt = null;
+                session.Status = "Draft";
+            }
+            else
+                session.Status = "Cancelled";
             return true;
         }
         if (action != "activate")
@@ -142,6 +149,15 @@ public sealed class LecturerSessionService(ExamDbContext db, TimeProvider clock)
         if (overlap)
             throw new BusinessException("Lớp hoặc thí sinh có thời gian làm bài trùng với đợt khác. Lịch được kiểm tra đến giờ đóng nhận lượt cộng thời lượng làm bài.", 409);
 
+        var studentIds = await (from studentId in members
+                                join user in db.Users on studentId equals user.Id
+                                join userRole in db.UserRoles on user.Id equals userRole.UserId
+                                join role in db.Roles on userRole.RoleId equals role.Id
+                                where user.IsActive && role.NormalizedName == "STUDENT"
+                                select studentId).Distinct().ToListAsync();
+        await db.SessionCandidates.Where(c => c.SessionId == id).ExecuteDeleteAsync();
+        db.SessionCandidates.AddRange(studentIds.Select(studentId => new SessionCandidate { SessionId = id, StudentId = studentId }));
+        session.ActivatedAt = Now;
         session.AccessCode ??= Convert.ToHexString(RandomNumberGenerator.GetBytes(12));
         session.Status = "Active";
         return true;

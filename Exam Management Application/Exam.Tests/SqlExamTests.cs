@@ -107,12 +107,12 @@ public partial class SqlExamTests : IAsyncLifetime
         Assert.Single(await admin.SessionMonitorAsync(manager, "Lecturer", sessionId));
         Assert.Equal(403, (await Assert.ThrowsAsync<BusinessException>(
             () => exporter.ExportAsync(otherStudentId, "Lecturer", sessionId, false))).Status);
-        await Assert.ThrowsAsync<BusinessException>(() => admin.ActionAsync(manager, "Lecturer", "sessions", sessionId, "publish"));
+        Assert.Equal(403, (await Assert.ThrowsAsync<BusinessException>(
+            () => admin.ActionAsync(otherStudentId, "Lecturer", "sessions", sessionId, "publish"))).Status);
         var attemptId = await Service(db).StartAsync(studentId, sessionId);
         await Service(db).SubmitAsync(studentId, attemptId);
         Assert.False((await Service(db).ResultAsync(studentId, attemptId)).Published);
 
-        clock.Set(clock.GetUtcNow().AddMinutes(31));
         await admin.ActionAsync(manager, "Lecturer", "sessions", sessionId, "publish");
         var result = await Service(db).ResultAsync(studentId, attemptId);
         Assert.True(result.Published);
@@ -135,6 +135,11 @@ public partial class SqlExamTests : IAsyncLifetime
         var paper = await db.Exams.SingleAsync();
         var classId = await db.Set<ExamClass>().Select(c => c.Id).SingleAsync();
         db.LecturerSubjects.Add(new LecturerSubject { LecturerId = lecturer, SubjectId = paper.SubjectId });
+        var studentRole = new AppRole { Name = "Student", NormalizedName = "STUDENT" };
+        db.Roles.Add(studentRole);
+        await db.SaveChangesAsync();
+        db.UserRoles.AddRange(new() { RoleId = studentRole.Id, UserId = studentId },
+            new() { RoleId = studentRole.Id, UserId = otherStudentId });
         await db.SaveChangesAsync();
 
         var service = new LecturerSessionService(db, clock);
@@ -147,17 +152,26 @@ public partial class SqlExamTests : IAsyncLifetime
         var hidden = await Assert.ThrowsAsync<BusinessException>(() => service.EditorAsync(otherStudentId, id));
         Assert.Equal(404, hidden.Status);
 
-        await service.SaveAsync(lecturer, id, draft with { OpensAt = now.AddMinutes(30), ClosesAt = now.AddMinutes(60) });
+        await service.SaveAsync(lecturer, id, draft with { OpensAt = now.AddMinutes(50), ClosesAt = now.AddMinutes(80) });
+        db.SessionCandidates.Add(new SessionCandidate { SessionId = id, StudentId = otherStudentId });
+        await db.SaveChangesAsync();
         await service.ChangeStateAsync(lecturer, id, "activate");
         var activated = (await service.ListAsync(lecturer)).Single();
         Assert.False(string.IsNullOrEmpty(activated.Code));
         Assert.False(activated.CanEdit);
         Assert.True(activated.CanWithdraw);
         await Assert.ThrowsAsync<BusinessException>(() => service.SaveAsync(lecturer, id, draft));
-        Assert.False(await db.SessionCandidates.AnyAsync(c => c.SessionId == id));
+        Assert.Equal(studentId, (await db.SessionCandidates.SingleAsync(c => c.SessionId == id)).StudentId);
+        await db.Set<ClassStudent>().Where(m => m.ClassId == classId && m.StudentId == studentId).ExecuteDeleteAsync();
+        db.Set<ClassStudent>().Add(new() { ClassId = classId, StudentId = otherStudentId });
+        await db.SaveChangesAsync();
+
         var student = new ExamService(db, clock);
         Assert.Equal(id, await student.FindSessionByCodeAsync(studentId, activated.Code));
         await Assert.ThrowsAsync<BusinessException>(() => student.FindSessionByCodeAsync(otherStudentId, activated.Code));
+        clock.Set(clock.GetUtcNow().AddMinutes(50));
+        Assert.Equal(403, (await Assert.ThrowsAsync<BusinessException>(() => student.StartAsync(otherStudentId, id))).Status);
+        Assert.True(await student.StartAsync(studentId, id) > 0);
     }
 
     public async Task DisposeAsync()
@@ -295,6 +309,7 @@ public partial class SqlExamTests : IAsyncLifetime
         var service = Service(upgraded);
         var session = await upgraded.ExamSessions.Include(s => s.Classes).SingleAsync();
         Assert.Null(session.AccessCode);
+        Assert.Null(session.ActivatedAt);
         Assert.Empty(session.Classes);
         Assert.Empty(await upgraded.Set<ClassStudent>().ToListAsync());
         Assert.Equal(3, await upgraded.SessionCandidates.CountAsync());

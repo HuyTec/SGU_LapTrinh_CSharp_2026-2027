@@ -76,7 +76,7 @@ Nguồn chữ ký: `Exam.Core/Contracts.cs`. ID người dùng/môn/chủ đề/
 
 Cookie POST phải gửi form token hoặc header `RequestVerificationToken`. `Status` đợt được tính máy chủ: Draft/Scheduled/Open/Closed/Cancelled. Lượt: InProgress/Submitted. `ReviewPolicy`: ScoreOnly/Answers/CorrectAnswers. Chưa công bố: Score/CorrectCount null, Questions rỗng.
 
-Quyền tạo lượt mới dựa trên thành viên của lớp đang hoạt động, cùng môn và đã gán cho đợt. Đợt chưa có lớp hợp lệ từ chối tạo lượt mới dù có danh sách phân công cũ. Mã vào thi dùng để tra đợt và người dùng vẫn phải đăng nhập. Lượt đã phát sinh được truy cập theo chủ sở hữu, thời hạn và chính sách công bố, kể cả sau khi thay đổi thành viên lớp. [UC19](https://docs.google.com/spreadsheets/d/10sSsgNXNt2c-S9SLn9rWQej7txwzoXuFAWfPI9gzFOc/edit#gid=899770140&range=A392%3AB401) · [FR-F03 và FR-F04](https://docs.google.com/spreadsheets/d/10sSsgNXNt2c-S9SLn9rWQej7txwzoXuFAWfPI9gzFOc/edit#gid=482467226&range=A70%3AF71)
+Đợt đã chốt khi kích hoạt dùng `SessionCandidates` để xét quyền tạo lượt mới (BR12, BR13). Thay đổi thành viên lớp sau khi chốt không đổi danh sách đủ điều kiện. Đợt chưa chốt tiếp tục xét thành viên của lớp đang hoạt động, cùng môn và đã gán cho đợt. Đợt không có liên kết lớp từ chối tạo lượt mới dù có danh sách phân công cũ. Mã vào thi dùng để tra đợt và người dùng vẫn phải đăng nhập. Lượt đã phát sinh được truy cập theo chủ sở hữu, thời hạn và chính sách công bố. [Quy tắc chốt danh sách và nâng cấp](docs/SCHEMA.md) · [FR-F03 và FR-F04](https://docs.google.com/spreadsheets/d/10sSsgNXNt2c-S9SLn9rWQej7txwzoXuFAWfPI9gzFOc/edit#gid=482467226&range=A70%3AF71)
 
 ### Desktop API
 
