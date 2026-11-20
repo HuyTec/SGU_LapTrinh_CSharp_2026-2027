@@ -152,6 +152,8 @@ public sealed class LecturerSessionService(ExamDbContext db, TimeProvider clock)
         EnsureDraft(session);
         if (session.Exam.Status != "Ready")
             throw new BusinessException("Đề thi chưa sẵn sàng. Xác nhận đề sẵn sàng trước khi kích hoạt đợt.");
+        if (session.Exam.Questions.Sum(q => q.Points) > 10m)
+            throw new BusinessException("Đề thi vượt quá 10 điểm. Chỉnh lại điểm của đề trước khi kích hoạt đợt thi.");
         if (!session.Exam.Subject.IsActive)
             throw new BusinessException("Môn học đã ngừng hoạt động. Liên hệ quản trị viên để kiểm tra môn.");
         if (session.ClosesAt <= Now)
@@ -163,17 +165,6 @@ public sealed class LecturerSessionService(ExamDbContext db, TimeProvider clock)
             throw new BusinessException("Có lớp đã ngừng hoạt động hoặc khác môn với đề. Sửa lại các lớp đã chọn trước khi kích hoạt.");
         var classIds = session.Classes.Select(c => c.ClassId).ToArray();
         var members = db.Set<ClassStudent>().Where(m => classIds.Contains(m.ClassId)).Select(m => m.StudentId);
-        var plannedEnd = session.ClosesAt.AddMinutes(session.DurationMinutes);
-        var overlap = await db.ExamSessions.AnyAsync(other => other.Id != id && other.Status == "Active" &&
-            ((other.AdmissionsClosedAt == null && other.OpensAt < plannedEnd &&
-                session.OpensAt < other.ClosesAt.AddMinutes(other.DurationMinutes) &&
-                other.Classes.Any(c => c.Class.IsActive && (classIds.Contains(c.ClassId) ||
-                    c.Class.Students.Any(m => members.Contains(m.StudentId))))) ||
-             db.Attempts.Any(a => a.SessionId == other.Id && a.Status == "InProgress" &&
-                a.StartedAt < plannedEnd && session.OpensAt < a.Deadline && members.Contains(a.StudentId))));
-        if (overlap)
-            throw new BusinessException("Lớp hoặc thí sinh có thời gian làm bài trùng với đợt khác. Lịch được kiểm tra đến giờ đóng nhận lượt cộng thời lượng làm bài.", 409);
-
         var studentIds = await (from studentId in members
                                 join user in db.Users on studentId equals user.Id
                                 join userRole in db.UserRoles on user.Id equals userRole.UserId

@@ -266,13 +266,6 @@ public class AdminService(ExamDbContext db, UserManager<AppUser> users, TimeProv
                     throw new BusinessException("Không thể đổi môn của lớp đã có thành viên hoặc đã gán vào đợt thi.", 409);
                 if (await db.Set<ExamClass>().AnyAsync(x => x.Id != item.Id && x.SubjectId == subjectId && x.Code == classCode))
                     throw new BusinessException("Mã lớp đã tồn tại trong môn học.", 409);
-                if (id.HasValue && active && !item.IsActive)
-                {
-                    var memberIds = await db.Set<ClassStudent>().Where(x => x.ClassId == item.Id)
-                        .Select(x => x.StudentId).ToListAsync();
-                    foreach (var studentId in memberIds)
-                        await LecturerClassService.EnsureMemberScheduleAsync(db, item.Id, studentId, Now);
-                }
                 item.Code = classCode;
                 item.Name = name;
                 item.SubjectId = subjectId;
@@ -444,6 +437,8 @@ public class AdminService(ExamDbContext db, UserManager<AppUser> users, TimeProv
                         throw new BusinessException("Trọng số câu hỏi phải từ 0,01 đến 999999,99 và có tối đa hai chữ số thập phân.");
                     pointMap[qid] = point;
                 }
+                if (qids.Sum(qid => pointMap.GetValueOrDefault(qid, pts)) > 10m)
+                    throw new BusinessException("Tổng điểm của đề thi không được vượt quá 10 điểm.");
                 db.ExamQuestions.RemoveRange(ex.Questions);
                 ex.Questions = qids.Select((qid, n) => new ExamQuestion { QuestionId = qid, Points = pointMap.GetValueOrDefault(qid, pts), Order = n + 1 }).ToList();
                 if (id == null)
@@ -535,7 +530,7 @@ public class AdminService(ExamDbContext db, UserManager<AppUser> users, TimeProv
                 var student = await users.FindByIdAsync(studentId.ToString());
                 if (student is null || !student.IsActive || !await users.IsInRoleAsync(student, "Student"))
                     throw new BusinessException("Chọn tài khoản thí sinh đang hoạt động.");
-                await LecturerClassService.AddMemberAsync(db, classId, studentId, Now);
+                await LecturerClassService.AddMemberAsync(db, classId, studentId);
             }
             else
             {
@@ -549,8 +544,7 @@ public class AdminService(ExamDbContext db, UserManager<AppUser> users, TimeProv
         var u = await users.FindByIdAsync(student.ToString());
         if (u == null || !u.IsActive || !await users.IsInRoleAsync(u, "Student"))
             throw new BusinessException("Thí sinh không hợp lệ.");
-        if (await db.SessionCandidates.AnyAsync(c => c.StudentId == student && c.SessionId != s.Id && c.Session.Status != "Cancelled" && c.Session.OpensAt < s.ClosesAt.AddMinutes(s.DurationMinutes) && s.OpensAt < c.Session.ClosesAt.AddMinutes(c.Session.DurationMinutes)))
-            throw new BusinessException("Thí sinh bị trùng lịch.");
+
     }
     async Task<int> Candidate(int uid, int sid, int student)
     {
@@ -604,6 +598,8 @@ public class AdminService(ExamDbContext db, UserManager<AppUser> users, TimeProv
                         throw new BusinessException("Môn học đã ngừng dùng.");
                     if (e.Questions.Count == 0 || e.Questions.Any(q => !q.Question.IsActive || q.Question.Topic.SubjectId != e.SubjectId || !q.Question.Topic.IsActive || q.Question.Options.Count < 2 || q.Question.Options.Count(o => o.IsCorrect) != 1) || e.Questions.Any(q => q.Points <= 0))
                         throw new BusinessException("Đề phải có câu hỏi hợp lệ, trọng số dương và đúng một đáp án đúng cho mỗi câu.");
+                    if (e.Questions.Sum(q => q.Points) > 10m)
+                        throw new BusinessException("Tổng điểm của đề thi không được vượt quá 10 điểm. Chỉnh lại điểm trước khi xác nhận sẵn sàng.");
                     e.Status = "Ready";
                 }
                 else if (action == "draft")

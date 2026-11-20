@@ -48,3 +48,7 @@ Khi kích hoạt đợt thi, hệ thống chụp danh sách thí sinh đang ho�
 ### Chốt nội dung đề khi kích hoạt (20/11/2026)
 
 Khi kích hoạt, cùng transaction với danh sách thí sinh, ghi nội dung câu hỏi, phương án, đáp án đúng, điểm và thứ tự vào `SessionQuestions`/`SessionOptions`. Khi thí sinh bắt đầu, tạo snapshot riêng của lượt từ snapshot cấp đợt rồi áp dụng cấu hình trộn. Hoãn về Nháp xóa snapshot cấp đợt để lần kích hoạt sau chụp lại nội dung mới; không cho kích hoạt nếu snapshot cũ còn sót.
+
+Ngày 20/11/2026, chủ dự án cho phép kích hoạt nhiều đợt thi trùng thời gian, kể cả cùng lớp và cùng thí sinh. Bỏ kiểm tra trùng lịch khi kích hoạt đợt, thêm thí sinh và bật lại lớp. Quyết định này thay quy tắc kiểm tra trùng lịch ngày 18/11/2026. Mỗi đợt vẫn có lịch nhận lượt và danh sách thí sinh riêng; một thí sinh chỉ được làm một bài tại một thời điểm.
+
+Ngày 20/11/2026, tổng điểm các câu được chọn trong một đề thi không được vượt quá 10. Kiểm tra khi lưu đề, xác nhận sẵn sàng và kích hoạt đợt thi để áp dụng cả đề cũ. Đề tạo theo ma trận được phân bổ tổng 10 điểm, chính xác đến 0,01; kết quả vẫn quy đổi về thang 10 theo quy tắc chấm hiện hành.

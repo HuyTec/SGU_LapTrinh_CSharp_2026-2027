@@ -147,12 +147,10 @@ public partial class SqlExamTests : IAsyncLifetime
         var draft = new SessionDraft("Thi theo lớp", paper.Id, now.AddMinutes(1), now.AddMinutes(31), 20,
             true, false, "ScoreOnly", [classId]);
         var id = await service.SaveAsync(lecturer, null, draft);
-        var overlap = await Assert.ThrowsAsync<BusinessException>(() => service.ChangeStateAsync(lecturer, id, "activate"));
-        Assert.Equal(409, overlap.Status);
         var hidden = await Assert.ThrowsAsync<BusinessException>(() => service.EditorAsync(otherStudentId, id));
         Assert.Equal(404, hidden.Status);
 
-        await service.SaveAsync(lecturer, id, draft with { OpensAt = now.AddMinutes(50), ClosesAt = now.AddMinutes(80) });
+        await service.SaveAsync(lecturer, id, draft with { OpensAt = now.AddMinutes(2), ClosesAt = now.AddMinutes(32) });
         db.SessionCandidates.Add(new SessionCandidate { SessionId = id, StudentId = otherStudentId });
         await db.SaveChangesAsync();
         await service.ChangeStateAsync(lecturer, id, "activate");
@@ -169,9 +167,45 @@ public partial class SqlExamTests : IAsyncLifetime
         var student = new ExamService(db, clock);
         Assert.Equal(id, await student.FindSessionByCodeAsync(studentId, activated.Code));
         await Assert.ThrowsAsync<BusinessException>(() => student.FindSessionByCodeAsync(otherStudentId, activated.Code));
-        clock.Set(clock.GetUtcNow().AddMinutes(50));
+        clock.Set(clock.GetUtcNow().AddMinutes(2));
         Assert.Equal(403, (await Assert.ThrowsAsync<BusinessException>(() => student.StartAsync(otherStudentId, id))).Status);
         Assert.True(await student.StartAsync(studentId, id) > 0);
+    }
+
+    [SqlFact]
+    public async Task PaperTotalCannotExceedTenWhenSavedOrMarkedReady()
+    {
+        await using var db = NewContext();
+        var teacher = await db.Users.SingleAsync(u => u.UserName == "teacher");
+        var paper = await db.Exams.Include(e => e.Questions).SingleAsync();
+        db.LecturerSubjects.Add(new() { LecturerId = teacher.Id, SubjectId = paper.SubjectId });
+        await db.SaveChangesAsync();
+        var questionIds = paper.Questions.Select(q => q.QuestionId).ToArray();
+        var services = new ServiceCollection();
+        services.AddLogging();
+        services.AddSingleton(db);
+        services.AddIdentityCore<AppUser>().AddRoles<AppRole>().AddEntityFrameworkStores<ExamDbContext>();
+        await using var provider = services.BuildServiceProvider();
+        var users = provider.GetRequiredService<Microsoft.AspNetCore.Identity.UserManager<AppUser>>();
+        var admin = new AdminService(db, users, clock);
+        AdminSaveRequest Request(decimal points) => new(new()
+        {
+            ["subjectId"] = JsonSerializer.SerializeToElement(paper.SubjectId),
+            ["title"] = JsonSerializer.SerializeToElement("Score limit"),
+            ["questionIds"] = JsonSerializer.SerializeToElement(questionIds),
+            ["questionPoints"] = JsonSerializer.SerializeToElement(questionIds.ToDictionary(id => id, _ => points))
+        });
+        var error = await Assert.ThrowsAsync<BusinessException>(() =>
+            admin.SaveAsync(teacher.Id, "Lecturer", "exams", null, Request(5.01m)));
+        Assert.Contains("10", error.Message);
+        var id = await admin.SaveAsync(teacher.Id, "Lecturer", "exams", null, Request(5m));
+        await admin.ActionAsync(teacher.Id, "Lecturer", "exams", id, "ready");
+        Assert.Equal("Ready", (await db.Exams.SingleAsync(e => e.Id == id)).Status);
+        await admin.ActionAsync(teacher.Id, "Lecturer", "exams", id, "draft");
+        await db.ExamQuestions.Where(q => q.ExamId == id).ExecuteUpdateAsync(q => q.SetProperty(x => x.Points, 6m));
+        var readyError = await Assert.ThrowsAsync<BusinessException>(() =>
+            admin.ActionAsync(teacher.Id, "Lecturer", "exams", id, "ready"));
+        Assert.Contains("10", readyError.Message);
     }
 
     public async Task DisposeAsync()

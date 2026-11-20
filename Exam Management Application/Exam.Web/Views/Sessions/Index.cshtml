@@ -1,6 +1,6 @@
 @model SessionListVm
 @{ ViewData["Title"] = "Đợt thi"; }
-<div class="page-heading"><div><p class="uc-label">UC-05</p><h1>Đợt thi</h1><p class="muted">Các đợt thi được phân công cho tài khoản của bạn.</p></div></div>
+<div class="page-heading"><div><h1>Đợt thi</h1><p class="muted">Các đợt thi được phân công cho tài khoản của bạn.</p></div></div>
 <a class="btn btn-primary mb-3" asp-action="Join">Vào thi bằng mã</a><form class="surface filter-bar mb-4" asp-controller="Sessions" asp-action="Index" method="get" role="search">
     <div class="filter-search"><label for="search" class="form-label">Tên đợt thi hoặc môn học</label><input id="search" name="search" value="@Model.Search" class="form-control" type="search" placeholder="Nhập tên để tìm kiếm" /></div>
     <div><label for="status" class="form-label">Trạng thái</label><select id="status" name="status" class="form-select"><option value="">Tất cả</option>@foreach(var status in new[]{"Scheduled","Open"}){<option value="@status" selected="@(Model.Status == status)" data-status="@status">@status</option>}</select></div>

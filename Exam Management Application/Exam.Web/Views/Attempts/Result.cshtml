@@ -1,7 +1,7 @@
 @model ResultVm
 @{ ViewData["Title"] = "Kết quả bài thi"; }
 <a class="back-link" asp-action="History">Về lịch sử thi</a>
-<div class="page-heading"><div><p class="uc-label">UC-08</p><h1>@Model.Title</h1><p class="muted">Kết quả bài thi</p></div></div>
+<div class="page-heading"><div><h1>@Model.Title</h1><p class="muted">Kết quả bài thi</p></div></div>
 <section class="surface mb-4">
 @if(Model.Status=="InProgress")
 {<h2>Bài thi đang làm</h2><p>Bạn chưa kết thúc lượt thi này.</p><a class="btn btn-primary" asp-action="Take" asp-route-id="@Model.AttemptId">Tiếp tục làm bài</a>}

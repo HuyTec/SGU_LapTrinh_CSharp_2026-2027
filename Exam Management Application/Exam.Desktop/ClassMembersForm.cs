@@ -6,9 +6,6 @@ internal sealed class ClassMembersForm : Form
 {
     private readonly ExamApiClient api;
     private readonly int classId;
-    private readonly ComboBox students = new() { Width = 320, DropDownStyle = ComboBoxStyle.DropDownList,
-        AutoCompleteSource = AutoCompleteSource.ListItems, AutoCompleteMode = AutoCompleteMode.SuggestAppend,
-        DisplayMember = nameof(ChoiceDto.Label) };
     private readonly Button add = new() { Text = "Thêm thí sinh", AutoSize = true };
     private readonly Button remove = new() { Text = "Gỡ khỏi lớp", AutoSize = true };
     private readonly Button refresh = new() { Text = "Làm mới", AutoSize = true };
@@ -38,7 +35,7 @@ internal sealed class ClassMembersForm : Form
         grid.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Họ và tên", DataPropertyName = nameof(ClassMemberDto.FullName), FillWeight = 180 });
         grid.Columns.Add(new DataGridViewCheckBoxColumn { HeaderText = "Tài khoản hoạt động", DataPropertyName = nameof(ClassMemberDto.IsActive) });
         var toolbar = new FlowLayoutPanel { Dock = DockStyle.Fill, AutoSize = true };
-        toolbar.Controls.AddRange([students, add, remove, refresh]);
+        toolbar.Controls.AddRange([add, remove, refresh]);
         var layout = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 1, RowCount = 3, Padding = new Padding(12) };
         layout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
         layout.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
@@ -51,12 +48,11 @@ internal sealed class ClassMembersForm : Form
         Shown += async (_, _) => await RunAsync(LoadAsync);
         refresh.Click += async (_, _) => await RunAsync(LoadAsync);
         grid.SelectionChanged += (_, _) => UpdateButtons();
-        students.SelectedIndexChanged += (_, _) => UpdateButtons();
         FormClosing += (_, e) => e.Cancel = busy;
         add.Click += async (_, _) =>
         {
-            if (students.SelectedItem is ChoiceDto choice && int.TryParse(choice.Value, out var id))
-                await ChangeAsync(() => api.AddClassMemberAsync(classId, id));
+            if (ShowAddStudentDialog() == DialogResult.OK)
+                await RunAsync(LoadAsync);
         };
         remove.Click += async (_, _) =>
         {
@@ -66,6 +62,79 @@ internal sealed class ClassMembersForm : Form
                 await ChangeAsync(() => api.RemoveClassMemberAsync(classId, member.StudentId));
         };
         UpdateButtons();
+    }
+
+    private DialogResult ShowAddStudentDialog()
+    {
+        using var dialog = new Form
+        {
+            Text = "Thêm thí sinh vào lớp", StartPosition = FormStartPosition.CenterParent,
+            ClientSize = new Size(460, 190), FormBorderStyle = FormBorderStyle.FixedDialog,
+            MaximizeBox = false, MinimizeBox = false, AutoScaleMode = AutoScaleMode.Font
+        };
+        var code = new TextBox { Dock = DockStyle.Fill, AccessibleName = "Mã sinh viên" };
+        var error = new Label { AutoSize = true, MaximumSize = new Size(420, 0), ForeColor = Color.Firebrick };
+        var submit = new Button { Text = "Thêm", AutoSize = true };
+        var cancel = new Button { Text = "Hủy", AutoSize = true, DialogResult = DialogResult.Cancel };
+        var buttons = new FlowLayoutPanel { AutoSize = true, Dock = DockStyle.Fill };
+        buttons.Controls.AddRange([submit, cancel]);
+        var layout = new TableLayoutPanel
+        {
+            Dock = DockStyle.Fill, Padding = new Padding(16), ColumnCount = 1, RowCount = 4
+        };
+        layout.Controls.Add(new Label { Text = "Mã sinh viên", AutoSize = true }, 0, 0);
+        layout.Controls.Add(code, 0, 1);
+        layout.Controls.Add(error, 0, 2);
+        layout.Controls.Add(buttons, 0, 3);
+        dialog.Controls.Add(layout);
+        dialog.AcceptButton = submit;
+        dialog.CancelButton = cancel;
+        var saving = false;
+        dialog.FormClosing += (_, e) => e.Cancel = saving;
+        dialog.Shown += (_, _) => code.Focus();
+        submit.Click += async (_, _) =>
+        {
+            if (saving) return;
+            var studentCode = code.Text.Trim();
+            if (studentCode.Length == 0)
+            {
+                error.Text = "Vui lòng nhập mã sinh viên.";
+                code.Focus();
+                return;
+            }
+            saving = true;
+            submit.Enabled = cancel.Enabled = code.Enabled = false;
+            submit.Text = "Đang thêm…";
+            error.Text = "";
+            try
+            {
+                var members = await api.ClassMembersAsync(classId);
+                if (members.Any(member => string.Equals(member.StudentCode, studentCode, StringComparison.OrdinalIgnoreCase)))
+                    throw new InvalidOperationException("Thí sinh đã thuộc lớp này.");
+                var eligible = await api.EligibleClassStudentsAsync(classId);
+                var student = eligible.SingleOrDefault(member =>
+                    string.Equals(member.StudentCode, studentCode, StringComparison.OrdinalIgnoreCase));
+                if (student is null)
+                    throw new InvalidOperationException("Không tìm thấy thí sinh đang hoạt động có mã này.");
+                await api.AddClassMemberAsync(classId, student.StudentId);
+                MembershipChanged = true;
+                saving = false;
+                dialog.DialogResult = DialogResult.OK;
+            }
+            catch (Exception ex)
+            {
+                error.Text = ex is HttpRequestException or TaskCanceledException
+                    ? "Không kết nối được máy chủ. Hãy thử lại." : ex.Message;
+            }
+            finally
+            {
+                saving = false;
+                submit.Enabled = cancel.Enabled = code.Enabled = true;
+                submit.Text = "Thêm";
+                code.Focus();
+            }
+        };
+        return dialog.ShowDialog(this);
     }
 
     private Task ChangeAsync(Func<Task> change) => RunAsync(async () =>
@@ -79,15 +148,9 @@ internal sealed class ClassMembersForm : Form
     {
         loaded = false;
         var members = await api.ClassMembersAsync(classId);
-        var eligible = await api.EligibleClassStudentsAsync(classId);
         grid.DataSource = members;
-        students.DataSource = eligible.Select(x => new ChoiceDto(x.StudentId.ToString(),
-            x.StudentCode is { Length: > 0 } ? $"{x.StudentCode} · {x.FullName}" : x.FullName)).ToList();
-        students.SelectedIndex = -1;
         loaded = true;
-        status.Text = eligible.Count == 0
-            ? $"{members.Count} thành viên. Không có thí sinh đủ điều kiện để thêm."
-            : $"{members.Count} thành viên. Chọn thí sinh để thêm vào lớp.";
+        status.Text = $"{members.Count} thành viên. Bấm Thêm thí sinh để nhập mã sinh viên.";
     }
 
     private async Task RunAsync(Func<Task> operation)
@@ -113,8 +176,7 @@ internal sealed class ClassMembersForm : Form
     private void UpdateButtons()
     {
         refresh.Enabled = !busy;
-        students.Enabled = loaded && !busy;
-        add.Enabled = students.Enabled && students.SelectedItem is ChoiceDto;
+        add.Enabled = loaded && !busy;
         remove.Enabled = loaded && !busy && grid.CurrentRow?.DataBoundItem is ClassMemberDto;
     }
 }

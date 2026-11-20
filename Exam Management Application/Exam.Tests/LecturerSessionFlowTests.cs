@@ -85,8 +85,9 @@ public partial class ClassRegistrationTests
             Title = "Following", OpensAt = clock.GetUtcNow().UtcDateTime.AddMinutes(10),
             ClosesAt = clock.GetUtcNow().UtcDateTime.AddMinutes(15), ClassIds = [second.Id]
         });
-        Assert.Equal(409, (await Assert.ThrowsAsync<BusinessException>(
-            () => service.ChangeStateAsync(teacher.Id, following, "activate"))).Status);
+        await service.ChangeStateAsync(teacher.Id, following, "activate");
+        Assert.Equal(2, await Db.ExamSessions.CountAsync(s => s.Status == "Active"));
+        Assert.Equal(2, await Db.SessionCandidates.CountAsync(c => c.StudentId == eligible.Id));
 
         await Db.Set<ClassStudent>().Where(m => m.ClassId == second.Id && m.StudentId == eligible.Id).ExecuteDeleteAsync();
         Db.Set<ClassStudent>().Add(new() { ClassId = second.Id, StudentId = firstOnly.Id });

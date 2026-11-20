@@ -105,12 +105,20 @@ public sealed class LecturerPapersController(AdminService admin) : Controller
         if (!ModelState.IsValid)
             return View("Matrix", model);
 
+        var basePoints = (1000 / selectedIds.Count) / 100m;
+        var extraPointCount = 1000 % selectedIds.Count;
+        var questionPoints = selectedIds.Select((id, index) => new
+        {
+            id,
+            points = basePoints + (index < extraPointCount ? 0.01m : 0m)
+        }).ToDictionary(item => item.id, item => item.points);
+
         var request = new AdminSaveRequest(new()
         {
             ["subjectId"] = JsonSerializer.SerializeToElement(model.SubjectId),
             ["title"] = JsonSerializer.SerializeToElement(model.Title.Trim()),
             ["questionIds"] = JsonSerializer.SerializeToElement(selectedIds),
-            ["questionPoints"] = JsonSerializer.SerializeToElement(selectedIds.ToDictionary(id => id, _ => 1m))
+            ["questionPoints"] = JsonSerializer.SerializeToElement(questionPoints)
         });
         try
         {
