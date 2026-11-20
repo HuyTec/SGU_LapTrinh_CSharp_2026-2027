@@ -192,6 +192,16 @@ public partial class ClassRegistrationTests
             Assert.Equal("Active", (await Db.ExamSessions.SingleAsync(e => e.Id == session.Id)).Status);
             var publicationPage = WebUtility.HtmlDecode(await staff.GetStringAsync($"/LecturerResults?id={session.Id}"));
             Assert.Contains("Công bố ngay", publicationPage);
+            var matched = await staff.GetStringAsync($"/LecturerResults?id={session.Id}&search=http001&status=NotStarted");
+            Assert.Contains("HTTP001", matched);
+            var notMatched = WebUtility.HtmlDecode(await staff.GetStringAsync($"/LecturerResults?id={session.Id}&status=InProgress"));
+            Assert.Contains("Không có thí sinh phù hợp với bộ lọc.", notMatched);
+            Assert.DoesNotContain("HTTP001", notMatched);
+            var matchingCsv = await staff.GetStringAsync($"/LecturerResults/Export/{session.Id}?search=http001&status=NotStarted");
+            Assert.Contains("\"HTTP001\"", matchingCsv);
+            Assert.Contains("\"NotStarted\",\"\",\"\"", matchingCsv);
+            var filteredCsv = await staff.GetStringAsync($"/LecturerResults/Export/{session.Id}?status=InProgress");
+            Assert.DoesNotContain("HTTP001", filteredCsv);
             await PostForm(staff, $"/LecturerResults/Publish/{session.Id}", $"/LecturerResults?id={session.Id}",
                 new() { ["reviewPolicy"] = "Answers" });
             Db.ChangeTracker.Clear();

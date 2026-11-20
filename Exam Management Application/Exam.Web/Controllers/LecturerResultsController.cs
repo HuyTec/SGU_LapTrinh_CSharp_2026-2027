@@ -14,15 +14,16 @@ public sealed class LecturerResultsController(AdminService admin, ExportService 
     private const string Role = "Lecturer";
 
     [HttpGet]
-    public async Task<IActionResult> Index(int? id)
+    public async Task<IActionResult> Index(int? id, string? search = null, string? status = null)
     {
         var rows = id is int sessionId ? await admin.SessionMonitorAsync(UserId, Role, sessionId) : [];
         var sessions = await ReadAllAsync("sessions");
-        return View(new ResultsPage(id, sessions, rows));
+        var filtered = ResultStatistics.Filter(rows, search, status);
+        return View(new ResultsPage(id, sessions, filtered, ResultStatistics.Summarize(rows), search?.Trim(), status?.Trim()));
     }
 
     [HttpPost, ValidateAntiForgeryToken]
-    public async Task<IActionResult> Publish(int id, string reviewPolicy = "Answers")
+    public async Task<IActionResult> Publish(int id, string reviewPolicy = "Answers", string? search = null, string? status = null)
     {
         try
         {
@@ -33,13 +34,13 @@ public sealed class LecturerResultsController(AdminService admin, ExportService 
         {
             TempData["Error"] = ex.Message;
         }
-        return RedirectToAction(nameof(Index), new { id });
+        return RedirectToAction(nameof(Index), new { id, search, status });
     }
 
     [HttpGet]
-    public async Task<IActionResult> Export(int id, bool xlsx = false)
+    public async Task<IActionResult> Export(int id, bool xlsx = false, string? search = null, string? status = null)
     {
-        var bytes = await export.ExportAsync(UserId, Role, id, xlsx);
+        var bytes = await export.ExportAsync(UserId, Role, id, xlsx, search, status);
         return File(bytes, xlsx ? "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" : "text/csv; charset=utf-8",
             $"ket-qua-{id}." + (xlsx ? "xlsx" : "csv"));
     }
@@ -57,5 +58,8 @@ public sealed class LecturerResultsController(AdminService admin, ExportService 
     }
 
     public sealed record ResultsPage(int? SessionId, IReadOnlyList<Dictionary<string, object?>> Sessions,
-        IReadOnlyList<Dictionary<string, object?>> Rows);
+        IReadOnlyList<Dictionary<string, object?>> Rows, ResultStatistics Statistics, string? Search, string? Status)
+    {
+        public bool HasFilters => !string.IsNullOrWhiteSpace(Search) || !string.IsNullOrWhiteSpace(Status);
+    }
 }
