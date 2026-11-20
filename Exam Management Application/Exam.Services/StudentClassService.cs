@@ -30,9 +30,8 @@ public sealed class StudentClassService(ExamDbContext db)
             .SingleOrDefaultAsync() ?? throw new BusinessException("Không tìm thấy lớp của bạn.", 404);
         var lecturers = await db.LecturerSubjects.Where(a => a.SubjectId == item.SubjectId && a.Lecturer.IsActive)
             .OrderBy(a => a.Lecturer.FullName).Select(a => a.Lecturer.FullName).ToListAsync();
-        var sessions = await db.ExamSessions.AsNoTracking()
-            .Where(s => s.Status != "Draft" && s.Exam.SubjectId == item.SubjectId && s.Classes.Any(c => c.ClassId == id) &&
-                (item.Active || db.Attempts.Any(a => a.SessionId == s.Id && a.StudentId == studentId)))
+        var sessions = await StudentSessionAccess.Assigned(db, studentId).AsNoTracking()
+            .Where(s => s.Status == "Active" && s.Exam.SubjectId == item.SubjectId && s.Classes.Any(c => c.ClassId == id))
             .OrderByDescending(s => s.OpensAt)
             .Select(s => new ClassSession(s.Id, s.Title, s.OpensAt, s.ClosesAt)).ToListAsync();
         return new(new(item.Id, item.Code, item.Subject, item.Active), lecturers, sessions);

@@ -13,14 +13,7 @@ public class ExamService(ExamDbContext db, TimeProvider clock)
         : s.Status;
     SessionDto Dto(ExamSession s, long? attempt) => new(s.Id, s.Title, s.Exam.Subject.Name, s.OpensAt, s.ClosesAt, s.DurationMinutes, SessionState(s, Now), attempt, s.Published, s.ReviewPolicy);
     // Keep list, detail and new attempts on the same admission rule.
-    IQueryable<ExamSession> AssignedSessions(int student) =>
-        db.ExamSessions.Where(session =>
-            db.Attempts.Any(a => a.SessionId == session.Id && a.StudentId == student) ||
-            (session.ActivatedAt != null && session.Classes.Any() &&
-                session.Candidates.Any(candidate => candidate.StudentId == student)) ||
-            (session.ActivatedAt == null && session.Classes.Any(link => link.Class.IsActive &&
-                link.Class.SubjectId == session.Exam.SubjectId &&
-                link.Class.Students.Any(member => member.StudentId == student))));
+    IQueryable<ExamSession> AssignedSessions(int student) => StudentSessionAccess.Assigned(db, student);
 
     public sealed record StudentClassRow(int Id, string Code, string Subject, bool Active,
         IReadOnlyList<string> Lecturers, IReadOnlyList<SessionDto> Sessions);
@@ -80,7 +73,7 @@ public class ExamService(ExamDbContext db, TimeProvider clock)
     }
     public async Task<SessionDetailVm> DetailAsync(int student, int id)
     {
-        var s = await AssignedSessions(student).Include(x => x.Exam).ThenInclude(x => x.Subject).SingleOrDefaultAsync(x => x.Id == id && x.Status != "Draft") ?? throw new BusinessException("Không tìm thấy đợt thi.", 404);
+        var s = await AssignedSessions(student).Include(x => x.Exam).ThenInclude(x => x.Subject).SingleOrDefaultAsync(x => x.Id == id && x.Status == "Active") ?? throw new BusinessException("Không tìm thấy đợt thi.", 404);
         var a = await db.Attempts.Where(x => x.SessionId == id && x.StudentId == student).Select(x => (long?)x.Id).SingleOrDefaultAsync();
         return new(Dto(s, a), "Một lượt thi mỗi đợt. Đáp án chỉ được chấm khi đã được máy chủ xác nhận lưu. Hết giờ hệ thống tự kết thúc; tải lại trang không làm tăng thời gian.");
     }

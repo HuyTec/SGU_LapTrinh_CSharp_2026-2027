@@ -270,10 +270,18 @@ public sealed class LecturerPapersController(AdminService admin) : Controller
             model.Quotas = [];
             return;
         }
-        var topics = await admin.ListAsync(UserId, Role, "topics", null, 1, 200, subjectId: model.SubjectId);
-        model.Topics = topics.Items.Where(row => row["isActive"] is true && (int)row["subjectId"]! == model.SubjectId)
-            .Select(row => new MatrixTopic((int)row["id"]!, row["name"]?.ToString() ?? ""))
-            .ToList();
+        var topics = new List<MatrixTopic>();
+        for (var page = 1; ; page++)
+        {
+            var result = await admin.ListAsync(UserId, Role, "topics", null, page, 200,
+                subjectId: model.SubjectId, isActive: true);
+            topics.AddRange(result.Items
+                .Where(row => row["isActive"] is true && (int)row["subjectId"]! == model.SubjectId)
+                .Select(row => new MatrixTopic((int)row["id"]!, row["name"]?.ToString() ?? "")));
+            if ((long)page * result.PageSize >= result.Total || result.Items.Count == 0)
+                break;
+        }
+        model.Topics = topics;
         var existing = (model.Quotas ?? []).GroupBy(x => x.TopicId).ToDictionary(group => group.Key, group => group.First());
         model.Quotas = model.Topics.Select(topic => existing.GetValueOrDefault(topic.Id) ?? new TopicQuota { TopicId = topic.Id }).ToList();
     }

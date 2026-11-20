@@ -132,7 +132,11 @@ public class AdminService(ExamDbContext db, UserManager<AppUser> users, TimeProv
                     ("subject", x.Subject), ("isActive", x.IsActive), ("memberCount", x.Members))).ToList();
                 break;
             case "topics":
-                rows = (await db.Topics.Include(x => x.Subject).Where(x => ids.Contains(x.SubjectId)).ToListAsync()).Select(x => D(("id", x.Id), ("subjectId", x.SubjectId), ("subject", x.Subject.Name), ("name", x.Name), ("isActive", x.IsActive))).ToList();
+                rows = (await db.Topics.Include(x => x.Subject)
+                    .Where(x => ids.Contains(x.SubjectId) && (!subjectId.HasValue || x.SubjectId == subjectId)
+                        && (!isActive.HasValue || x.IsActive == isActive))
+                    .OrderBy(x => x.Id).ToListAsync())
+                    .Select(x => D(("id", x.Id), ("subjectId", x.SubjectId), ("subject", x.Subject.Name), ("name", x.Name), ("isActive", x.IsActive))).ToList();
                 break;
             case "questions":
                 var questionQuery = db.Questions.Include(x => x.Topic).ThenInclude(x => x.Subject).Include(x => x.Options).Where(x => ids.Contains(x.Topic.SubjectId));
