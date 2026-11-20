@@ -26,8 +26,10 @@ public sealed class LecturerSessionService(ExamDbContext db, TimeProvider clock)
         var rows = await Owned(lecturer).AsNoTracking().Include(s => s.Exam)
             .OrderByDescending(s => s.OpensAt).ThenByDescending(s => s.Id).ToListAsync();
         return rows.Select(s => new LecturerSessionRow(s.Id, s.Title, s.Exam.Title, ExamService.SessionState(s, now),
-            s.Status == "Active" ? s.AccessCode : null, s.Status == "Draft" && !s.HasOpened,
-            s.Status == "Active" && !s.HasOpened && s.OpensAt > now)).ToList();
+                s.Status == "Active" ? s.AccessCode : null, s.Status == "Draft" && !s.HasOpened,
+                s.Status == "Active" && !s.HasOpened && s.OpensAt > now))
+            .Where(s => s.State is not ("Cancelled" or "Closed"))
+            .ToList();
     }
 
     private async Task<ExamSession> LoadAsync(int lecturer, int id) => await Owned(lecturer)
@@ -126,9 +128,9 @@ public sealed class LecturerSessionService(ExamDbContext db, TimeProvider clock)
         }
         if (action == "cancel")
         {
-            if (session.Status != "Active" || session.HasOpened ||
+            if (session.Status != "Active" || session.HasOpened || Now >= session.OpensAt ||
                 await db.Attempts.AnyAsync(a => a.SessionId == id))
-                throw new BusinessException("Không thể hủy đợt vì đã có thí sinh bắt đầu làm bài.", 409);
+                throw new BusinessException("Chỉ hủy đợt trước giờ mở và khi chưa có thí sinh bắt đầu làm bài.", 409);
             session.Status = "Cancelled";
             return true;
         }
@@ -158,12 +160,14 @@ public sealed class LecturerSessionService(ExamDbContext db, TimeProvider clock)
             throw new BusinessException("Có lớp đã ngừng hoạt động hoặc khác môn với đề. Sửa lại các lớp đã chọn trước khi kích hoạt.");
         var classIds = session.Classes.Select(c => c.ClassId).ToArray();
         var members = db.Set<ClassStudent>().Where(m => classIds.Contains(m.ClassId)).Select(m => m.StudentId);
+        var plannedEnd = session.ClosesAt.AddMinutes(session.DurationMinutes);
         var overlap = await db.ExamSessions.AnyAsync(other => other.Id != id && other.Status == "Active" &&
-            other.OpensAt < session.ClosesAt.AddMinutes(session.DurationMinutes) &&
-            session.OpensAt < other.ClosesAt.AddMinutes(other.DurationMinutes) &&
-            (other.Classes.Any(c => c.Class.IsActive && (classIds.Contains(c.ClassId) ||
-                c.Class.Students.Any(m => members.Contains(m.StudentId)))) ||
-             db.Attempts.Any(a => a.SessionId == other.Id && a.Status == "InProgress" && members.Contains(a.StudentId))));
+            ((other.AdmissionsClosedAt == null && other.OpensAt < plannedEnd &&
+                session.OpensAt < other.ClosesAt.AddMinutes(other.DurationMinutes) &&
+                other.Classes.Any(c => c.Class.IsActive && (classIds.Contains(c.ClassId) ||
+                    c.Class.Students.Any(m => members.Contains(m.StudentId))))) ||
+             db.Attempts.Any(a => a.SessionId == other.Id && a.Status == "InProgress" &&
+                a.StartedAt < plannedEnd && session.OpensAt < a.Deadline && members.Contains(a.StudentId))));
         if (overlap)
             throw new BusinessException("Lớp hoặc thí sinh có thời gian làm bài trùng với đợt khác. Lịch được kiểm tra đến giờ đóng nhận lượt cộng thời lượng làm bài.", 409);
 

@@ -68,9 +68,14 @@ public class ExamService(ExamDbContext db, TimeProvider clock)
 
     public async Task<SessionListVm> SessionsAsync(int student, string? search = null, string? status = null)
     {
-        var list = await AssignedSessions(student).Include(x => x.Exam).ThenInclude(x => x.Subject).Where(x => x.Status != "Draft").OrderByDescending(x => x.OpensAt).ToListAsync();
+        var list = await AssignedSessions(student).Include(x => x.Exam).ThenInclude(x => x.Subject)
+            .Where(x => x.Status != "Draft" && x.Status != "Cancelled")
+            .OrderByDescending(x => x.OpensAt).ToListAsync();
         var attempts = await db.Attempts.Where(x => x.StudentId == student).ToDictionaryAsync(x => x.SessionId, x => x.Id);
-        var rows = list.Select(s => Dto(s, attempts.TryGetValue(s.Id, out var a) ? a : null)).Where(s => (string.IsNullOrWhiteSpace(search) || (s.Title + " " + s.Subject).Contains(search, StringComparison.OrdinalIgnoreCase)) && (string.IsNullOrWhiteSpace(status) || s.Status == status)).ToList();
+        var rows = list.Select(s => Dto(s, attempts.TryGetValue(s.Id, out var a) ? a : null))
+            .Where(s => s.Status != "Closed")
+            .Where(s => (string.IsNullOrWhiteSpace(search) || (s.Title + " " + s.Subject).Contains(search, StringComparison.OrdinalIgnoreCase)) && (string.IsNullOrWhiteSpace(status) || s.Status == status))
+            .ToList();
         return new(rows, search, status);
     }
     public async Task<SessionDetailVm> DetailAsync(int student, int id)
