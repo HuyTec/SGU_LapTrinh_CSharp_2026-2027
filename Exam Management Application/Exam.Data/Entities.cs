@@ -188,6 +188,20 @@ public class ExamSession
     {
         get; set;
     }
+<<<<<<< HEAD
+<<<<<<< HEAD
+    public DateTime? AdmissionsClosedAt { get; set; }
+=======
+=======
+>>>>>>> 78a47af701ad19b4ed1748b980e33142f3bad6cd
+    public DateTime? ActivatedAt
+    {
+        get; set;
+    }
+<<<<<<< HEAD
+>>>>>>> 78a47af701ad19b4ed1748b980e33142f3bad6cd
+=======
+>>>>>>> 78a47af701ad19b4ed1748b980e33142f3bad6cd
     public int DurationMinutes { get; set; } = 30; public string Status { get; set; } = "Draft"; public bool ShuffleQuestions
     {
         get; set;

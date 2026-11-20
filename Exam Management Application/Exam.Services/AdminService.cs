@@ -190,13 +190,16 @@ public class AdminService(ExamDbContext db, UserManager<AppUser> users, TimeProv
                              join role in db.Roles on userRole.RoleId equals role.Id
                              where user.IsActive && role.NormalizedName == "STUDENT"
                              select user.Id;
-        var members = await db.Set<SessionClass>()
+        var members = db.Set<SessionClass>()
             .Where(x => sessionIds.Contains(x.SessionId) && x.Class.IsActive &&
-                db.ExamSessions.Any(s => s.Id == x.SessionId && s.Exam.SubjectId == x.Class.SubjectId))
+                db.ExamSessions.Any(s => s.Id == x.SessionId && s.ActivatedAt == null && s.Exam.SubjectId == x.Class.SubjectId))
             .SelectMany(x => x.Class.Students.Where(m => activeStudents.Contains(m.StudentId))
-                .Select(m => new { x.SessionId, m.StudentId })).ToListAsync();
+                .Select(m => new { x.SessionId, m.StudentId }));
+        var snapshot = db.SessionCandidates.Where(x => sessionIds.Contains(x.SessionId) && x.Session.ActivatedAt != null)
+            .Select(x => new { x.SessionId, x.StudentId });
+        var participants = await snapshot.Concat(members).ToListAsync();
         var attempts = await db.Attempts.Include(x => x.Result).Where(x => sessionIds.Contains(x.SessionId)).ToListAsync();
-        var entries = members.Concat(attempts.Select(x => new { x.SessionId, x.StudentId })).Distinct().ToList();
+        var entries = participants.Concat(attempts.Select(x => new { x.SessionId, x.StudentId })).Distinct().ToList();
         var studentIds = entries.Select(x => x.StudentId).Distinct().ToList();
         var people = await db.Users.Where(x => studentIds.Contains(x.Id)).ToDictionaryAsync(x => x.Id);
         var sessionMap = monitored.ToDictionary(x => x.Id);

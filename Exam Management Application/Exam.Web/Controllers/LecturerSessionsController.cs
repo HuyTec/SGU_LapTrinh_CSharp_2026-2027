@@ -87,6 +87,8 @@ public sealed class LecturerSessionsController(LecturerSessionService sessions) 
             {
                 "activate" => "Đã kích hoạt đợt thi. Mã và link đã sẵn sàng.",
                 "postpone" => "Đã hoãn và chuyển đợt về nháp.",
+                "cancelDraft" => "Đã hủy đợt nháp. Bản ghi được giữ lại trong lịch sử.",
+                "closeAdmissions" => "Đã đóng nhận thí sinh mới. Các lượt đang làm vẫn được tiếp tục đến hết thời lượng.",
                 _ => "Đã hủy đợt thi."
             };
         }

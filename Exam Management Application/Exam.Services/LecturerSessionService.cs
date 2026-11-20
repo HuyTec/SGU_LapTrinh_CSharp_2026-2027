@@ -8,7 +8,8 @@ namespace Exam.Services;
 
 public sealed record SessionDraft(string Title, int ExamId, DateTime OpensAt, DateTime ClosesAt, int DurationMinutes,
     bool ShuffleQuestions, bool ShuffleOptions, string ReviewPolicy, int[] ClassIds);
-public sealed record LecturerSessionRow(int Id, string Title, string Paper, string State, string? Code, bool CanEdit, bool CanWithdraw);
+public sealed record LecturerSessionRow(int Id, string Title, string Paper, string State, string? Code, bool CanEdit, bool CanWithdraw,
+    bool CanCancelDraft, bool CanCancelActive, bool CanCloseAdmissions);
 public sealed record SessionPaperChoice(int Id, int SubjectId, string Label);
 public sealed record SessionClassChoice(int Id, int SubjectId, string Label);
 public sealed record SessionEditorData(SessionDraft? Draft, IReadOnlyList<SessionPaperChoice> Papers, IReadOnlyList<SessionClassChoice> Classes);
@@ -27,7 +28,10 @@ public sealed class LecturerSessionService(ExamDbContext db, TimeProvider clock)
             .OrderByDescending(s => s.OpensAt).ThenByDescending(s => s.Id).ToListAsync();
         return rows.Select(s => new LecturerSessionRow(s.Id, s.Title, s.Exam.Title, ExamService.SessionState(s, now),
             s.Status == "Active" ? s.AccessCode : null, s.Status == "Draft" && !s.HasOpened,
-            s.Status == "Active" && !s.HasOpened && s.OpensAt > now)).ToList();
+            s.Status == "Active" && !s.HasOpened && s.OpensAt > now,
+            s.Status == "Draft" && !s.HasOpened,
+            s.Status == "Active" && !s.HasOpened,
+            s.Status == "Active" && s.AdmissionsClosedAt == null && s.ClosesAt > now)).ToList();
     }
 
     private async Task<ExamSession> LoadAsync(int lecturer, int id) => await Owned(lecturer)
@@ -109,12 +113,50 @@ public sealed class LecturerSessionService(ExamDbContext db, TimeProvider clock)
     public Task ChangeStateAsync(int lecturer, int id, string action) => WriteAsync(async () =>
     {
         var session = await LoadAsync(lecturer, id);
-        if (action is "postpone" or "cancel")
+        if (action == "cancelDraft")
+        {
+            if (session.Status != "Draft" || session.HasOpened ||
+                await db.Attempts.AnyAsync(a => a.SessionId == id))
+                throw new BusinessException("Chỉ hủy được đợt nháp chưa có lượt thi.", 409);
+            session.Status = "Cancelled";
+            return true;
+        }
+        if (action == "closeAdmissions")
+        {
+            if (session.Status != "Active" || session.AdmissionsClosedAt != null || session.ClosesAt <= Now)
+                throw new BusinessException("Đợt thi không còn nhận thí sinh mới hoặc đã đóng nhận thí sinh.", 409);
+            session.AdmissionsClosedAt = Now;
+            return true;
+        }
+        if (action == "cancel")
+        {
+            if (session.Status != "Active" || session.HasOpened ||
+                await db.Attempts.AnyAsync(a => a.SessionId == id))
+                throw new BusinessException("Không thể hủy đợt vì đã có thí sinh bắt đầu làm bài.", 409);
+            session.Status = "Cancelled";
+            return true;
+        }
+        if (action == "postpone")
         {
             if (session.Status != "Active" || session.HasOpened || Now >= session.OpensAt ||
                 await db.Attempts.AnyAsync(a => a.SessionId == id))
+<<<<<<< HEAD
+                throw new BusinessException("Chỉ hoãn đợt đã kích hoạt trước giờ mở lần đầu.", 409);
+            session.Status = "Draft";
+=======
                 throw new BusinessException("Chỉ hoãn hoặc hủy đợt đã kích hoạt trước giờ mở lần đầu.", 409);
-            session.Status = action == "postpone" ? "Draft" : "Cancelled";
+            if (action == "postpone")
+            {
+                await db.SessionCandidates.Where(c => c.SessionId == id).ExecuteDeleteAsync();
+                session.ActivatedAt = null;
+                session.Status = "Draft";
+            }
+            else
+                session.Status = "Cancelled";
+<<<<<<< HEAD
+>>>>>>> 78a47af701ad19b4ed1748b980e33142f3bad6cd
+=======
+>>>>>>> 78a47af701ad19b4ed1748b980e33142f3bad6cd
             return true;
         }
         if (action != "activate")
@@ -142,6 +184,15 @@ public sealed class LecturerSessionService(ExamDbContext db, TimeProvider clock)
         if (overlap)
             throw new BusinessException("Lớp hoặc thí sinh có thời gian làm bài trùng với đợt khác. Lịch được kiểm tra đến giờ đóng nhận lượt cộng thời lượng làm bài.", 409);
 
+        var studentIds = await (from studentId in members
+                                join user in db.Users on studentId equals user.Id
+                                join userRole in db.UserRoles on user.Id equals userRole.UserId
+                                join role in db.Roles on userRole.RoleId equals role.Id
+                                where user.IsActive && role.NormalizedName == "STUDENT"
+                                select studentId).Distinct().ToListAsync();
+        await db.SessionCandidates.Where(c => c.SessionId == id).ExecuteDeleteAsync();
+        db.SessionCandidates.AddRange(studentIds.Select(studentId => new SessionCandidate { SessionId = id, StudentId = studentId }));
+        session.ActivatedAt = Now;
         session.AccessCode ??= Convert.ToHexString(RandomNumberGenerator.GetBytes(12));
         session.Status = "Active";
         return true;
