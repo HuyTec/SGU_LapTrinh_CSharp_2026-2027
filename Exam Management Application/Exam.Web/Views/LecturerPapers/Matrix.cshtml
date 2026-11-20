@@ -1,0 +1,57 @@
+@model Exam.Web.Controllers.LecturerPapersController.MatrixEditor
+@{
+    ViewData["Title"] = "Tạo đề theo ma trận";
+}
+<h1>Tạo đề theo ma trận</h1>
+<p class="muted">Chọn số câu cần lấy theo từng chủ đề và độ khó. Hệ thống chỉ chọn câu đang hoạt động, có đủ 4 đáp án và một đáp án đúng.</p>
+<form method="get" asp-action="Matrix" class="surface mb-3">
+    <label for="subject-choice" class="form-label">Môn học</label>
+    <select id="subject-choice" name="subjectId" class="form-select mb-3" required>
+        <option value="">Chọn môn học</option>
+        @foreach (var subject in Model.Subjects)
+        {
+            <option value="@subject.Value" selected="@(subject.Value == Model.SubjectId.ToString(System.Globalization.CultureInfo.InvariantCulture))">@subject.Label</option>
+        }
+    </select>
+    <button type="submit" class="btn btn-outline-primary">Tải chủ đề</button>
+</form>
+@if (Model.SubjectId > 0)
+{
+    if (Model.Topics.Count == 0)
+    {
+        <p>Môn học chưa có chủ đề đang hoạt động.</p>
+    }
+    else
+    {
+        <form asp-action="CreateFromMatrix" method="post" class="surface">
+            <div asp-validation-summary="All" class="text-danger" role="alert"></div>
+            <input asp-for="SubjectId" type="hidden" />
+            <label asp-for="Title" class="form-label">Tên đề</label>
+            <input asp-for="Title" class="form-control mb-3" maxlength="2000" required />
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead><tr><th scope="col">Chủ đề</th><th scope="col">Dễ</th><th scope="col">Trung bình</th><th scope="col">Khó</th></tr></thead>
+                    <tbody>
+                    @for (var i = 0; i < Model.Quotas.Count; i++)
+                    {
+                        var quota = Model.Quotas[i];
+                        var topic = Model.Topics.Single(t => t.Id == quota.TopicId);
+                        <tr>
+                            <th scope="row">
+                                @topic.Name
+                                <input asp-for="Quotas[i].TopicId" type="hidden" />
+                            </th>
+                            <td><input asp-for="Quotas[i].EasyCount" type="number" min="0" max="100" class="form-control" aria-label="Số câu dễ - @topic.Name" /></td>
+                            <td><input asp-for="Quotas[i].MediumCount" type="number" min="0" max="100" class="form-control" aria-label="Số câu trung bình - @topic.Name" /></td>
+                            <td><input asp-for="Quotas[i].HardCount" type="number" min="0" max="100" class="form-control" aria-label="Số câu khó - @topic.Name" /></td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+            <p class="muted">Tổng ma trận từ 1 đến 500 câu. Đề được tạo ở trạng thái nháp với trọng số mặc định 1 điểm mỗi câu; bạn có thể chỉnh lại trong màn hình đề.</p>
+            <button type="submit" class="btn btn-primary">Tạo đề nháp theo ma trận</button>
+            <a asp-action="Index" class="btn btn-outline-secondary">Quay lại danh sách đề</a>
+        </form>
+    }
+}

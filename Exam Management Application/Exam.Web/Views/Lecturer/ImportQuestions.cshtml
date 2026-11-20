@@ -1,0 +1,27 @@
+@model Exam.Web.Controllers.LecturerController.QuestionImportEditor
+@{
+    ViewData["Title"] = "Nhập câu hỏi từ Excel";
+}
+<h1>Nhập câu hỏi từ Excel</h1>
+<p class="muted">Tải mẫu .xlsx, điền dữ liệu rồi nhập. Hệ thống kiểm tra toàn bộ file trước khi lưu; nếu có lỗi sẽ không nhập câu nào.</p>
+<div class="surface mb-3">
+    <h2 class="h5">Cột trong file</h2>
+    <p class="mb-2">Chủ đề · Nội dung · Độ khó · Đáp án A · Đáp án B · Đáp án C · Đáp án D · Đáp án đúng</p>
+    <p class="muted mb-0">Độ khó: Dễ / Trung bình / Khó. Đáp án đúng: A / B / C / D. Chủ đề phải có sẵn trong môn được chọn.</p>
+</div>
+<p><a asp-action="DownloadQuestionTemplate" class="btn btn-outline-primary">Tải mẫu Excel</a></p>
+<form asp-action="ImportQuestions" method="post" enctype="multipart/form-data" class="surface">
+    <div asp-validation-summary="All" class="text-danger" role="alert"></div>
+    <label asp-for="SubjectId" class="form-label">Môn học</label>
+    <select asp-for="SubjectId" class="form-select mb-3" required>
+        <option value="">Chọn môn học</option>
+        @foreach (var subject in Model.Subjects)
+        {
+            <option value="@subject.Value">@subject.Label</option>
+        }
+    </select>
+    <label for="file" class="form-label">File Excel (.xlsx, tối đa 4 MB và 500 câu hỏi)</label>
+    <input id="file" name="file" type="file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" class="form-control mb-3" required />
+    <button type="submit" class="btn btn-primary">Kiểm tra và nhập</button>
+    <a asp-action="Materials" asp-route-resource="questions" class="btn btn-outline-secondary">Quay lại ngân hàng câu hỏi</a>
+</form>
