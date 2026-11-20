@@ -10,6 +10,18 @@ public class AdminService(ExamDbContext db, UserManager<AppUser> users, TimeProv
 {
     DateTime Now => clock.GetUtcNow().UtcDateTime;
     static BusinessException Denied() => new("Bạn không có quyền với dữ liệu này.", 403);
+    static bool CanAccessResource(string role, string resource, bool write = false) => role switch
+    {
+        "Administrator" => resource is "users" or "assignments" or "subjects" or "classes",
+        "Lecturer" => resource is "topics" or "questions" or "exams" or "sessions" or "candidates"
+            || (!write && resource == "monitor"),
+        _ => false
+    };
+
+    static void RequireResource(string role, string resource, bool write = false)
+    {
+        if (!CanAccessResource(role, resource, write)) throw Denied();
+    }
     async Task<List<int>> SubjectIds(int uid) => await db.LecturerSubjects.Where(x => x.LecturerId == uid).Select(x => x.SubjectId).ToListAsync();
     async Task RequireSubject(int uid, string role, int subject)
     {
@@ -31,26 +43,32 @@ public class AdminService(ExamDbContext db, UserManager<AppUser> users, TimeProv
     /// <summary>Build an editor catalog whose resources and lookup choices follow the active role and subject scope.</summary>
     public async Task<AdminCatalogDto> CatalogAsync(int uid, string role)
     {
+        if (role is not ("Administrator" or "Lecturer")) throw Denied();
         var rs = new List<ResourceDto>();
         List<ChoiceDto> C(IEnumerable<(int id, string label)> pairs) => pairs.Select(x => new ChoiceDto(x.id.ToString(), x.label)).ToList();
-        var subids = await SubjectIds(uid);
-        var subjects = await db.Subjects.Where(s => role != "Lecturer" || subids.Contains(s.Id)).ToListAsync();
+        var subids = role == "Lecturer" ? await SubjectIds(uid) : [];
+        var subjects = await db.Subjects.AsNoTracking().Where(s => role != "Lecturer" || subids.Contains(s.Id)).ToListAsync();
         var subs = C(subjects.Select(s => (s.Id, s.Code + " — " + s.Name)));
-        var topics = await db.Topics.Include(x => x.Subject).Where(x => role != "Lecturer" || subids.Contains(x.SubjectId)).ToListAsync();
+        List<Topic> topics = role == "Lecturer"
+            ? await db.Topics.AsNoTracking().Include(x => x.Subject).Where(x => subids.Contains(x.SubjectId)).ToListAsync() : [];
         var tops = C(topics.Select(x => (x.Id, x.Subject.Name + " — " + x.Name)));
-        var people = await db.Users.Where(x => x.IsActive).ToListAsync();
-        var lecturers = new List<ChoiceDto>();
-        var students = new List<ChoiceDto>();
-        foreach (var u in people)
-        {
-            if (await users.IsInRoleAsync(u, "Lecturer"))
-                lecturers.Add(new(u.Id.ToString(), u.FullName + " (" + u.UserName + ")"));
-            if (await users.IsInRoleAsync(u, "Student"))
-                students.Add(new(u.Id.ToString(), u.StudentCode + " — " + u.FullName));
-        }
-        var questions = await db.Questions.Include(x => x.Topic).Where(x => subids.Contains(x.Topic.SubjectId) && x.IsActive).ToListAsync();
-        var papers = await db.Exams.Include(x => x.Subject).Where(x => x.Status == "Ready" && x.Subject.IsActive && subids.Contains(x.SubjectId)).ToListAsync();
-        var sessions = await db.ExamSessions.Where(x => x.ManagedBy == uid && subids.Contains(x.Exam.SubjectId)).ToListAsync();
+        var lookupRole = role == "Administrator" ? "LECTURER" : "STUDENT";
+        var people = await (from user in db.Users.AsNoTracking()
+                            join link in db.UserRoles on user.Id equals link.UserId
+                            join userRole in db.Roles on link.RoleId equals userRole.Id
+                            where user.IsActive && userRole.NormalizedName == lookupRole
+                            orderby user.FullName, user.Id
+                            select new { user.Id, user.FullName, user.UserName, user.StudentCode }).ToListAsync();
+        var lecturers = role == "Administrator"
+            ? C(people.Select(u => (u.Id, u.FullName + " (" + u.UserName + ")"))) : [];
+        var students = role == "Lecturer"
+            ? C(people.Select(u => (u.Id, u.StudentCode + " — " + u.FullName))) : [];
+        List<Question> questions = role == "Lecturer"
+            ? await db.Questions.AsNoTracking().Include(x => x.Topic).Where(x => subids.Contains(x.Topic.SubjectId) && x.IsActive).ToListAsync() : [];
+        List<ExamPaper> papers = role == "Lecturer"
+            ? await db.Exams.AsNoTracking().Include(x => x.Subject).Where(x => x.Status == "Ready" && x.Subject.IsActive && subids.Contains(x.SubjectId)).ToListAsync() : [];
+        List<ExamSession> sessions = role == "Lecturer"
+            ? await db.ExamSessions.AsNoTracking().Where(x => x.ManagedBy == uid && subids.Contains(x.Exam.SubjectId)).ToListAsync() : [];
         List<ChoiceDto> Choices(params string[] v) => v.Select(x => new ChoiceDto(x, x)).ToList();
         if (role == "Administrator")
         {
@@ -74,7 +92,9 @@ public class AdminService(ExamDbContext db, UserManager<AppUser> users, TimeProv
         }
         if (role == "Lecturer")
             rs.Add(new("monitor", "Theo dõi / kết quả", [], false, false));
-        return new((await users.FindByIdAsync(uid.ToString()))?.FullName ?? "", role, rs);
+        var displayName = await db.Users.AsNoTracking().Where(u => u.Id == uid)
+            .Select(u => u.FullName).SingleOrDefaultAsync() ?? "";
+        return new(displayName, role, rs);
     }
     public async Task EnsureSessionReadAsync(int uid, string role, int id)
     {
@@ -83,9 +103,8 @@ public class AdminService(ExamDbContext db, UserManager<AppUser> users, TimeProv
     static Dictionary<string, object?> D(params (string key, object? value)[] v) => v.ToDictionary(x => x.key, x => x.value);
     public async Task<AdminPageDto> ListAsync(int uid, string role, string resource, string? search, int page, int size, int? exactId = null, int? subjectId = null, int? topicId = null, string? difficulty = null, bool? isActive = null, string? accountRole = null)
     {
-        if (!(await CatalogAsync(uid, role)).Resources.Any(x => x.Key == resource))
-            throw Denied();
-        var ids = await SubjectIds(uid);
+        RequireResource(role, resource);
+        var ids = role == "Lecturer" ? await SubjectIds(uid) : [];
         List<Dictionary<string, object?>> rows = [];
         switch (resource)
         {
@@ -98,8 +117,19 @@ public class AdminService(ExamDbContext db, UserManager<AppUser> users, TimeProv
                 if (accountRole != null)
                     accountQuery = accountQuery.Where(x => x.RequestedRole == accountRole ||
                         db.UserRoles.Any(ur => ur.UserId == x.Id && db.Roles.Any(r => r.Id == ur.RoleId && r.Name == accountRole)));
-                foreach (var x in await accountQuery.ToListAsync())
-                    rows.Add(D(("id", x.Id), ("userName", x.UserName), ("fullName", x.FullName), ("studentCode", x.StudentCode), ("lecturerCode", (await users.IsInRoleAsync(x, "Lecturer") || x.RequestedRole == "Lecturer") ? x.LecturerCode : null), ("requestedRole",x.RequestedRole), ("email", x.Email), ("phoneNumber", x.PhoneNumber), ("role",string.Join(", ",await users.GetRolesAsync(x))),("roles",(await users.GetRolesAsync(x)).ToArray()), ("isActive", x.IsActive)));
+                var accounts = await accountQuery.AsNoTracking().ToListAsync();
+                var accountIds = accounts.Select(x => x.Id).ToArray();
+                var accountRoles = await (from link in db.UserRoles
+                                          join userRole in db.Roles on link.RoleId equals userRole.Id
+                                          where accountIds.Contains(link.UserId)
+                                          orderby userRole.Name
+                                          select new { link.UserId, userRole.Name }).ToListAsync();
+                var rolesByUser = accountRoles.ToLookup(x => x.UserId, x => x.Name!);
+                foreach (var x in accounts)
+                {
+                    var assignedRoles = rolesByUser[x.Id].ToArray();
+                    rows.Add(D(("id", x.Id), ("userName", x.UserName), ("fullName", x.FullName), ("studentCode", x.StudentCode), ("lecturerCode", (assignedRoles.Contains("Lecturer") || x.RequestedRole == "Lecturer") ? x.LecturerCode : null), ("requestedRole",x.RequestedRole), ("email", x.Email), ("phoneNumber", x.PhoneNumber), ("role",string.Join(", ", assignedRoles)),("roles", assignedRoles), ("isActive", x.IsActive)));
+                }
                 break;
             case "subjects":
                 var matchingSubjects = db.Subjects.Where(x => isActive == null || x.IsActive == isActive);
@@ -250,8 +280,7 @@ public class AdminService(ExamDbContext db, UserManager<AppUser> users, TimeProv
     private async Task<int> SaveInternalAsync(int uid, string role, string resource, int? id, AdminSaveRequest request)
     {
         var v = request.Values;
-        if (!(await CatalogAsync(uid, role)).Resources.Any(x => x.Key == resource && x.CanCreate))
-            throw Denied();
+        RequireResource(role, resource, write: true);
         switch (resource)
         {
             case "classes":
@@ -671,8 +700,7 @@ public class AdminService(ExamDbContext db, UserManager<AppUser> users, TimeProv
     }
     public async Task DeleteAsync(int uid,string role,string resource,int id){await db.Database.CreateExecutionStrategy().ExecuteAsync(async()=>{db.ChangeTracker.Clear();await using var tx=await db.Database.BeginTransactionAsync(IsolationLevel.Serializable);await DeleteInternalAsync(uid,role,resource,id);await tx.CommitAsync();});} private async Task DeleteInternalAsync(int uid, string role, string resource, int id)
     {
-        if (!(await CatalogAsync(uid, role)).Resources.Any(x => x.Key == resource && x.CanDelete))
-            throw Denied();
+        RequireResource(role, resource, write: true);
         switch (resource)
         {
             case "classes":
