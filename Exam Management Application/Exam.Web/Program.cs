@@ -12,7 +12,6 @@ var connection = builder.Configuration.GetConnectionString("ExamDb") ?? throw ne
 var key = builder.Configuration["Jwt:Key"] ?? throw new InvalidOperationException("Set Jwt:Key using user-secrets or environment variables.");
 if (Encoding.UTF8.GetByteCount(key) < 32) throw new InvalidOperationException("Jwt:Key must contain at least 32 bytes.");
 builder.Services.AddScoped<StudentClassService>();
-builder.Services.AddScoped<LecturerClassService>();
 builder.Services.AddScoped<LecturerSessionService>();
 builder.Services.AddScoped<QuestionExcelImportService>();
 builder.Services.AddDbContext<ExamDbContext>(o => o.UseSqlServer(connection, s => s.EnableRetryOnFailure()));
@@ -21,7 +20,6 @@ builder.Services.AddSingleton(TimeProvider.System);
 builder.Services.AddScoped<ExamService>();
 builder.Services.AddScoped<AdminService>();
 builder.Services.AddScoped<LecturerSessionService>();
-builder.Services.AddScoped<LecturerClassService>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<ProfileService>();
 builder.Services.AddScoped<ExportService>();
@@ -48,7 +46,6 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
-app.MapControllerRoute("lecturer-class-alias", "ClassLecturer/{action=Index}/{id?}", new { controller = "LecturerClasses" });
 app.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
 if (args.Contains("--seed")) { if (!app.Environment.IsDevelopment()) throw new InvalidOperationException("Seed is only allowed in Development."); await DemoSeeder.SeedAsync(app.Services, builder.Configuration["Seed:Password"] ?? ""); return; }
 await app.RunAsync();

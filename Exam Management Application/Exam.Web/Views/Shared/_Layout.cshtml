@@ -25,7 +25,6 @@
                     @if (User.IsInRole("Lecturer"))
                     {
                         <a asp-controller="Lecturer" asp-action="Index">Môn được phân công</a>
-                        <a asp-controller="LecturerClasses" asp-action="Index">Lớp học</a>
                         <a asp-controller="Lecturer" asp-action="Materials" asp-route-resource="topics">Chủ đề</a>
                         <a asp-controller="Lecturer" asp-action="Materials" asp-route-resource="questions">Ngân hàng câu hỏi</a>
                         <a asp-controller="LecturerPapers" asp-action="Index">Đề thi</a>
