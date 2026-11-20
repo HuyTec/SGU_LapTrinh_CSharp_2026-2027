@@ -1,0 +1,1214 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="424ef3a1-720f-4125-9f7d-13b742d2a01c" name="HOANG PHUC@LAPTOP-3ANAB9S6 2026-11-20 22:01:46" runUser="LAPTOP-3ANAB9S6\HOANG PHUC" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-20T22:01:46.8188365+07:00" queuing="2026-11-20T22:01:46.8188370+07:00" start="2026-11-20T22:01:45.5009145+07:00" finish="2026-11-20T22:02:12.6029166+07:00" />
+  <TestSettings name="default" id="53518ce3-b75e-4d39-a24d-9e54ea9a965d">
+    <Deployment runDeploymentRoot="HOANG_PHUC_LAPTOP-3ANAB9S6_2026-11-20_22_01_46" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="41850e1e-5f28-4eb6-be23-8653906c12c4" testId="cfe7352b-28c7-3498-f23c-966f96cdc154" testName="Exam.Tests.ExamRulesTests.ASessionContainedInsideAnotherStillOverlaps" computerName="LAPTOP-3ANAB9S6" duration="00:00:00.0009541" startTime="2026-11-20T22:01:46.7981186+07:00" endTime="2026-11-20T22:01:46.7991228+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="41850e1e-5f28-4eb6-be23-8653906c12c4" />
+    <UnitTestResult executionId="e7ca50f6-4002-4bea-a71f-46f3f855b969" testId="f41200f4-4074-a033-9ac9-82544b0864a3" testName="Exam.Tests.DockerDatabaseStartupTests.RejectsSqlEndpointsOutsideDocker(server: &quot;(localdb)\\MSSQLLocalDB&quot;)" computerName="LAPTOP-3ANAB9S6" duration="00:00:00.0002271" startTime="2026-11-20T22:01:46.8134864+07:00" endTime="2026-11-20T22:01:46.8136832+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e7ca50f6-4002-4bea-a71f-46f3f855b969" />
+    <UnitTestResult executionId="0d301a52-e53c-4c19-ab0d-1de1894bd3ae" testId="b336fed0-7350-1005-93aa-49bfe39a3269" testName="Exam.Tests.RegistrationValidationTests.ValidatesPublicRegistration(accountType: &quot;Administrator&quot;, studentCode: null, invalidField: &quot;AccountType&quot;)" computerName="LAPTOP-3ANAB9S6" duration="00:00:00.0016355" startTime="2026-11-20T22:01:46.7939557+07:00" endTime="2026-11-20T22:01:46.7941325+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0d301a52-e53c-4c19-ab0d-1de1894bd3ae" />
+    <UnitTestResult executionId="223bc5b6-bce1-40fa-8d6b-39dcbcca2d59" testId="0b2a3b34-4ba8-d156-5e51-d09be2646231" testName="Exam.Tests.SqlExamTests.DemoClassMembershipIsPrivateAndJoiningTwiceIsIdempotent" computerName="LAPTOP-3ANAB9S6" duration="00:00:00.1865690" startTime="2026-11-20T22:02:02.7465860+07:00" endTime="2026-11-20T22:02:04.0644149+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="223bc5b6-bce1-40fa-8d6b-39dcbcca2d59" />
+    <UnitTestResult executionId="90070612-d93c-43be-88ba-15d0fde5421b" testId="bc9fbcb4-ae28-564d-e5a7-a8dd84dceaf3" testName="Exam.Tests.DockerDatabaseStartupTests.RejectsSqlEndpointsOutsideDocker(server: &quot;remote-server,14333&quot;)" computerName="LAPTOP-3ANAB9S6" duration="00:00:00.0000145" startTime="2026-11-20T22:01:46.8145129+07:00" endTime="2026-11-20T22:01:46.8146769+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="90070612-d93c-43be-88ba-15d0fde5421b" />
+    <UnitTestResult executionId="d24b1544-d3ad-49ba-bde0-5070aa01fac9" testId="a1da80e1-f6a1-9b59-c410-84990fd63ef8" testName="Exam.Tests.ClassRegistrationTests.AccountCategoriesExcludeAdministratorsBeforeCountingAndPaging" computerName="LAPTOP-3ANAB9S6" duration="00:00:00.3028898" startTime="2026-11-20T22:01:50.2920715+07:00" endTime="2026-11-20T22:01:51.5125668+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d24b1544-d3ad-49ba-bde0-5070aa01fac9" />
+    <UnitTestResult executionId="b78c82e7-637b-4fe1-aaac-2bdef02e530c" testId="9d60bcbc-0647-69cb-a2b8-9d9debc44539" testName="Exam.Tests.ClassRegistrationTests.LecturerClassPageAndMembershipRespectSubjectScope" computerName="LAPTOP-3ANAB9S6" duration="00:00:00.1673416" startTime="2026-11-20T22:02:05.4167300+07:00" endTime="2026-11-20T22:02:06.4120890+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b78c82e7-637b-4fe1-aaac-2bdef02e530c" />
+    <UnitTestResult executionId="1459fbc2-fc3a-40c4-bdfa-8efeed6322ea" testId="e7f00a6d-e4ad-7634-36bc-1ca0e3dc062f" testName="Exam.Tests.ExamRulesTests.TenPointExamsPreserveEarnedPointsAndRoundOnlyTheFinalScore(earned: 10, expected: 10)" computerName="LAPTOP-3ANAB9S6" duration="00:00:00.0000023" startTime="2026-11-20T22:01:46.7978697+07:00" endTime="2026-11-20T22:01:46.7979373+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1459fbc2-fc3a-40c4-bdfa-8efeed6322ea" />
+    <UnitTestResult executionId="85e30f43-59da-4c4b-88bf-e2ce2c565723" testId="ed1e9d99-4af1-455c-c454-22d7e6b3a878" testName="Exam.Tests.SqlExamTests.SavingAtTheExactDeadlineIsRejected" computerName="LAPTOP-3ANAB9S6" duration="00:00:00.0410124" startTime="2026-11-20T22:02:10.8692572+07:00" endTime="2026-11-20T22:02:11.7201786+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="85e30f43-59da-4c4b-88bf-e2ce2c565723">
+      <Output>
+        <ErrorInfo>
+          <Message>Exam.Core.BusinessException : Đợt thi chưa có bản chụp đề hợp lệ. Hãy báo giảng viên kiểm tra và kích hoạt lại đợt.</Message>
+          <StackTrace>   at Exam.Services.ExamService.&lt;&gt;c__DisplayClass14_0.&lt;&lt;StartAsync&gt;b__0&gt;d.MoveNext() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs:line 117&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Exam.Services.ExamService.&lt;&gt;c__DisplayClass13_0`1.&lt;&lt;Serial&gt;b__0&gt;d.MoveNext() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs:line 90&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Exam.Services.ExamService.&lt;&gt;c__DisplayClass13_0`1.&lt;&lt;Serial&gt;b__0&gt;d.MoveNext() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs:line 90&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.&lt;&gt;c__DisplayClass30_0`2.&lt;&lt;ExecuteAsync&gt;b__0&gt;d.MoveNext()&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)&#xD;
+   at Exam.Services.ExamService.Serial[T](Func`1 work) in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs:line 90&#xD;
+   at Exam.Tests.SqlExamTests.Start() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs:line 415&#xD;
+   at Exam.Tests.SqlExamTests.Start() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs:line 415&#xD;
+   at Exam.Tests.SqlExamTests.SavingAtTheExactDeadlineIsRejected() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs:line 470&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="f395b162-b8e6-41a0-add6-79ffee18ed59" testId="f17e50c9-f174-2b8c-10f2-ff4f07d05a5f" testName="Exam.Tests.SqlExamTests.ConcurrentSubmitCreatesExactlyOneResult" computerName="LAPTOP-3ANAB9S6" duration="00:00:00.0344177" startTime="2026-11-20T22:01:53.5711083+07:00" endTime="2026-11-20T22:01:54.4834550+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f395b162-b8e6-41a0-add6-79ffee18ed59">
+      <Output>
+        <ErrorInfo>
+          <Message>Exam.Core.BusinessException : Đợt thi chưa có bản chụp đề hợp lệ. Hãy báo giảng viên kiểm tra và kích hoạt lại đợt.</Message>
+          <StackTrace>   at Exam.Services.ExamService.&lt;&gt;c__DisplayClass14_0.&lt;&lt;StartAsync&gt;b__0&gt;d.MoveNext() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs:line 117&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Exam.Services.ExamService.&lt;&gt;c__DisplayClass13_0`1.&lt;&lt;Serial&gt;b__0&gt;d.MoveNext() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs:line 90&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Exam.Services.ExamService.&lt;&gt;c__DisplayClass13_0`1.&lt;&lt;Serial&gt;b__0&gt;d.MoveNext() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs:line 90&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.&lt;&gt;c__DisplayClass30_0`2.&lt;&lt;ExecuteAsync&gt;b__0&gt;d.MoveNext()&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)&#xD;
+   at Exam.Services.ExamService.Serial[T](Func`1 work) in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs:line 90&#xD;
+   at Exam.Tests.SqlExamTests.Start() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs:line 415&#xD;
+   at Exam.Tests.SqlExamTests.Start() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs:line 415&#xD;
+   at Exam.Tests.SqlExamTests.ConcurrentSubmitCreatesExactlyOneResult() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs:line 454&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="6bc4350e-be77-4f2a-9ec4-2d96c9990dd7" testId="dc7ab3ca-6817-b858-9a2c-1424f5b7c3f6" testName="Exam.Tests.ClassRegistrationTests.RosterMigrationBackfillsEligibleStudentsWithoutRepeatingOrReplacingRows" computerName="LAPTOP-3ANAB9S6" duration="00:00:00.4182345" startTime="2026-11-20T22:01:57.8868290+07:00" endTime="2026-11-20T22:01:59.1336743+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6bc4350e-be77-4f2a-9ec4-2d96c9990dd7" />
+    <UnitTestResult executionId="709b7d07-8a72-45b4-8450-de0c6033fb51" testId="3b1560d6-bd61-dbf9-d265-d35864abb76f" testName="Exam.Tests.SqlExamTests.LecturerPublishesAndExportsOnlyOwnedSession" computerName="LAPTOP-3ANAB9S6" duration="00:00:00.7065357" startTime="2026-11-20T22:01:45.9975490+07:00" endTime="2026-11-20T22:01:50.5666504+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="709b7d07-8a72-45b4-8450-de0c6033fb51">
+      <Output>
+        <ErrorInfo>
+          <Message>Exam.Core.BusinessException : Đợt thi chưa có bản chụp đề hợp lệ. Hãy báo giảng viên kiểm tra và kích hoạt lại đợt.</Message>
+          <StackTrace>   at Exam.Services.ExamService.&lt;&gt;c__DisplayClass14_0.&lt;&lt;StartAsync&gt;b__0&gt;d.MoveNext() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs:line 117&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Exam.Services.ExamService.&lt;&gt;c__DisplayClass13_0`1.&lt;&lt;Serial&gt;b__0&gt;d.MoveNext() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs:line 90&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Exam.Services.ExamService.&lt;&gt;c__DisplayClass13_0`1.&lt;&lt;Serial&gt;b__0&gt;d.MoveNext() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs:line 90&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.&lt;&gt;c__DisplayClass30_0`2.&lt;&lt;ExecuteAsync&gt;b__0&gt;d.MoveNext()&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)&#xD;
+   at Exam.Services.ExamService.Serial[T](Func`1 work) in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs:line 90&#xD;
+   at Exam.Tests.SqlExamTests.LecturerPublishesAndExportsOnlyOwnedSession() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs:line 112&#xD;
+   at Exam.Tests.SqlExamTests.LecturerPublishesAndExportsOnlyOwnedSession() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs:line 127&#xD;
+   at Exam.Tests.SqlExamTests.LecturerPublishesAndExportsOnlyOwnedSession() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs:line 127&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="2dc1d9bd-c2a2-47a5-8ae0-f2f3c8e59d79" testId="df5d7b1c-3482-7dcb-3671-bc35ccad76ff" testName="Exam.Tests.SqlExamTests.RepeatedStartKeepsTheOriginalAttemptAndDeadline" computerName="LAPTOP-3ANAB9S6" duration="00:00:00.0384515" startTime="2026-11-20T22:02:11.7211622+07:00" endTime="2026-11-20T22:02:12.5275981+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2dc1d9bd-c2a2-47a5-8ae0-f2f3c8e59d79">
+      <Output>
+        <ErrorInfo>
+          <Message>Exam.Core.BusinessException : Đợt thi chưa có bản chụp đề hợp lệ. Hãy báo giảng viên kiểm tra và kích hoạt lại đợt.</Message>
+          <StackTrace>   at Exam.Services.ExamService.&lt;&gt;c__DisplayClass14_0.&lt;&lt;StartAsync&gt;b__0&gt;d.MoveNext() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs:line 117&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Exam.Services.ExamService.&lt;&gt;c__DisplayClass13_0`1.&lt;&lt;Serial&gt;b__0&gt;d.MoveNext() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs:line 90&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Exam.Services.ExamService.&lt;&gt;c__DisplayClass13_0`1.&lt;&lt;Serial&gt;b__0&gt;d.MoveNext() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs:line 90&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.&lt;&gt;c__DisplayClass30_0`2.&lt;&lt;ExecuteAsync&gt;b__0&gt;d.MoveNext()&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)&#xD;
+   at Exam.Services.ExamService.Serial[T](Func`1 work) in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs:line 90&#xD;
+   at Exam.Tests.SqlExamTests.Start() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs:line 415&#xD;
+   at Exam.Tests.SqlExamTests.Start() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs:line 415&#xD;
+   at Exam.Tests.SqlExamTests.RepeatedStartKeepsTheOriginalAttemptAndDeadline() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs:line 435&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="607f48e1-4a84-4af9-9dfb-05cc461f5fcb" testId="1c903f14-11f0-e4bc-6a3a-1bde34943f1a" testName="Exam.Tests.RegistrationValidationTests.ValidatesPublicRegistration(accountType: &quot;Student&quot;, studentCode: &quot;SV001&quot;, invalidField: null)" computerName="LAPTOP-3ANAB9S6" duration="00:00:00.0000459" startTime="2026-11-20T22:01:46.7947737+07:00" endTime="2026-11-20T22:01:46.7951021+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="607f48e1-4a84-4af9-9dfb-05cc461f5fcb" />
+    <UnitTestResult executionId="619580bc-8ac2-445c-8631-20685dce7c4b" testId="c9f23cb1-22eb-34e5-639b-bc8c7c0f7fd3" testName="Exam.Tests.ClassRegistrationTests.LegacyRoleMigrationPreservesUserAndReassignsMembership" computerName="LAPTOP-3ANAB9S6" duration="00:00:00.4518448" startTime="2026-11-20T22:01:52.5423979+07:00" endTime="2026-11-20T22:01:53.8892640+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="619580bc-8ac2-445c-8631-20685dce7c4b" />
+    <UnitTestResult executionId="bfe0b146-7eb8-4d62-ac60-3c3e3be60046" testId="be0bf2a5-6ee7-4fad-4381-a302f6b5f40a" testName="Exam.Tests.SqlExamTests.ExpiryCommitsHealthyAttemptsWhenOneResultCannotBeWritten" computerName="LAPTOP-3ANAB9S6" duration="00:00:00.0399436" startTime="2026-11-20T22:01:55.3439404+07:00" endTime="2026-11-20T22:01:56.2841808+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="bfe0b146-7eb8-4d62-ac60-3c3e3be60046">
+      <Output>
+        <ErrorInfo>
+          <Message>Exam.Core.BusinessException : Đợt thi chưa có bản chụp đề hợp lệ. Hãy báo giảng viên kiểm tra và kích hoạt lại đợt.</Message>
+          <StackTrace>   at Exam.Services.ExamService.&lt;&gt;c__DisplayClass14_0.&lt;&lt;StartAsync&gt;b__0&gt;d.MoveNext() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs:line 117&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Exam.Services.ExamService.&lt;&gt;c__DisplayClass13_0`1.&lt;&lt;Serial&gt;b__0&gt;d.MoveNext() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs:line 90&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Exam.Services.ExamService.&lt;&gt;c__DisplayClass13_0`1.&lt;&lt;Serial&gt;b__0&gt;d.MoveNext() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs:line 90&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.&lt;&gt;c__DisplayClass30_0`2.&lt;&lt;ExecuteAsync&gt;b__0&gt;d.MoveNext()&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)&#xD;
+   at Exam.Services.ExamService.Serial[T](Func`1 work) in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs:line 90&#xD;
+   at Exam.Tests.SqlExamTests.Start() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs:line 415&#xD;
+   at Exam.Tests.SqlExamTests.Start() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs:line 415&#xD;
+   at Exam.Tests.SqlExamTests.ExpiryCommitsHealthyAttemptsWhenOneResultCannotBeWritten() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs:line 592&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="bf34385b-26b9-4cb7-a90d-507e31e3902e" testId="a4297840-7294-cf94-c657-6af5251a9e26" testName="Exam.Tests.ExamRulesTests.DeadlineAlwaysGivesTheFullDuration(duration: 30, minutesUntilClose: 60)" computerName="LAPTOP-3ANAB9S6" duration="00:00:00.0000059" startTime="2026-11-20T22:01:46.7908459+07:00" endTime="2026-11-20T22:01:46.7910752+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="bf34385b-26b9-4cb7-a90d-507e31e3902e" />
+    <UnitTestResult executionId="1842c16a-9104-47db-a98f-fdd99d516726" testId="b90849ed-87c7-3634-3d03-ea6aec6b74c4" testName="Exam.Tests.SqlExamTests.AdmissionClosingDoesNotShortenIndividualAttempts" computerName="LAPTOP-3ANAB9S6" duration="00:00:00.0720110" startTime="2026-11-20T22:02:10.0187371+07:00" endTime="2026-11-20T22:02:10.8682630+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1842c16a-9104-47db-a98f-fdd99d516726">
+      <Output>
+        <ErrorInfo>
+          <Message>Exam.Core.BusinessException : Đợt thi chưa có bản chụp đề hợp lệ. Hãy báo giảng viên kiểm tra và kích hoạt lại đợt.</Message>
+          <StackTrace>   at Exam.Services.ExamService.&lt;&gt;c__DisplayClass14_0.&lt;&lt;StartAsync&gt;b__0&gt;d.MoveNext() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs:line 117&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Exam.Services.ExamService.&lt;&gt;c__DisplayClass13_0`1.&lt;&lt;Serial&gt;b__0&gt;d.MoveNext() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs:line 90&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Exam.Services.ExamService.&lt;&gt;c__DisplayClass13_0`1.&lt;&lt;Serial&gt;b__0&gt;d.MoveNext() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs:line 90&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.&lt;&gt;c__DisplayClass30_0`2.&lt;&lt;ExecuteAsync&gt;b__0&gt;d.MoveNext()&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)&#xD;
+   at Exam.Services.ExamService.Serial[T](Func`1 work) in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs:line 90&#xD;
+   at Exam.Tests.SqlExamTests.Start() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs:line 415&#xD;
+   at Exam.Tests.SqlExamTests.Start() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs:line 415&#xD;
+   at Exam.Tests.SqlExamTests.AdmissionClosingDoesNotShortenIndividualAttempts() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\PersonalDeadlineTests.cs:line 38&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="2c8a2df7-1bd6-4d6a-a9ba-54583d99f98c" testId="2dd3e6a9-0738-3708-f574-f8085ca7cf37" testName="Exam.Tests.ClassRegistrationTests.LecturerEnrollmentAllowsOverlappingActivatedSessionsAndRemovalPreservesAttempts" computerName="LAPTOP-3ANAB9S6" duration="00:00:00.2459219" startTime="2026-11-20T22:01:51.5127934+07:00" endTime="2026-11-20T22:01:52.5422537+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2c8a2df7-1bd6-4d6a-a9ba-54583d99f98c" />
+    <UnitTestResult executionId="df7b9412-998c-4539-a457-c07557acfb2a" testId="5a74a390-2057-f684-d19b-3c20283c2ae4" testName="Exam.Tests.ClassRegistrationTests.RegistrationPersistsPhoneAndActivatesLecturer" computerName="LAPTOP-3ANAB9S6" duration="00:00:00.5280717" startTime="2026-11-20T22:01:45.9988394+07:00" endTime="2026-11-20T22:01:50.2904584+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="df7b9412-998c-4539-a457-c07557acfb2a" />
+    <UnitTestResult executionId="988f9136-312e-4078-9560-d188aeffb37c" testId="7ffb1b03-21eb-a307-6fed-f6707b19b9f6" testName="Exam.Tests.SqlExamTests.PaperTotalCannotExceedTenWhenSavedOrMarkedReady" computerName="LAPTOP-3ANAB9S6" duration="00:00:00.4913049" startTime="2026-11-20T22:01:59.2124483+07:00" endTime="2026-11-20T22:02:00.5156241+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="988f9136-312e-4078-9560-d188aeffb37c" />
+    <UnitTestResult executionId="be25d09d-0981-453d-b74a-af96abecfdd0" testId="f0f53ab1-ff16-ed0b-60b3-a3bd73732f33" testName="Exam.Tests.ExamRulesTests.DeadlineAlwaysGivesTheFullDuration(duration: 1, minutesUntilClose: 60)" computerName="LAPTOP-3ANAB9S6" duration="00:00:00.0000136" startTime="2026-11-20T22:01:46.5931178+07:00" endTime="2026-11-20T22:01:46.5931592+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="be25d09d-0981-453d-b74a-af96abecfdd0" />
+    <UnitTestResult executionId="64a7573d-0874-4463-b392-e84db54812ba" testId="83b8fd04-c2b3-61d2-0c83-e645162ba5de" testName="Exam.Tests.DockerDatabaseStartupTests.RequiresAnExplicitDatabase" computerName="LAPTOP-3ANAB9S6" duration="00:00:00.0002860" startTime="2026-11-20T22:01:46.8151111+07:00" endTime="2026-11-20T22:01:46.8152664+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="64a7573d-0874-4463-b392-e84db54812ba" />
+    <UnitTestResult executionId="23166084-98f3-4ad5-9abf-335fefded5a9" testId="dd2e3337-5bc9-7968-ee5b-da8f26f178e0" testName="Exam.Tests.DockerDatabaseStartupTests.RejectsSqlEndpointsOutsideDocker(server: &quot;.\\SQLEXPRESS&quot;)" computerName="LAPTOP-3ANAB9S6" duration="00:00:00.8105675" startTime="2026-11-20T22:01:45.9988245+07:00" endTime="2026-11-20T22:01:46.8130466+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="23166084-98f3-4ad5-9abf-335fefded5a9" />
+    <UnitTestResult executionId="6a347e5e-5a59-4997-b49d-d1ce082feea6" testId="9277c518-2a8b-a43e-be20-e84f44f9be0d" testName="Exam.Tests.ExamRulesTests.TenPointExamsPreserveEarnedPointsAndRoundOnlyTheFinalScore(earned: 7.5, expected: 7.5)" computerName="LAPTOP-3ANAB9S6" duration="00:00:00.0000087" startTime="2026-11-20T22:01:46.7976942+07:00" endTime="2026-11-20T22:01:46.7977573+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6a347e5e-5a59-4997-b49d-d1ce082feea6" />
+    <UnitTestResult executionId="c9bc7976-ce29-43bd-a56a-bb654bf3966f" testId="05f79c99-86dd-0401-f5e9-e1aced3f5303" testName="Exam.Tests.ClassRegistrationTests.LecturerReplacesDraftClassAndActivationLocksConfiguration" computerName="LAPTOP-3ANAB9S6" duration="00:00:00.4531691" startTime="2026-11-20T22:01:59.1339048+07:00" endTime="2026-11-20T22:02:00.4202267+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c9bc7976-ce29-43bd-a56a-bb654bf3966f" />
+    <UnitTestResult executionId="21a18f8e-7f64-4d3f-a816-f6fd2ae82889" testId="bedcf118-55f7-fe39-85ac-82323b15cddb" testName="Exam.Tests.ExamRulesTests.DeadlineAlwaysGivesTheFullDuration(duration: 30, minutesUntilClose: 30)" computerName="LAPTOP-3ANAB9S6" duration="00:00:00.5778072" startTime="2026-11-20T22:01:45.9988135+07:00" endTime="2026-11-20T22:01:46.5873996+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="21a18f8e-7f64-4d3f-a816-f6fd2ae82889" />
+    <UnitTestResult executionId="0578947d-5405-4909-96ea-e8d0c7c5a3ff" testId="24d90a87-06de-22b1-d6ca-a84646102c89" testName="Exam.Tests.SqlExamTests.AttemptPayloadNeverContainsCorrectAnswerFields" computerName="LAPTOP-3ANAB9S6" duration="00:00:00.0393298" startTime="2026-11-20T22:01:57.3090528+07:00" endTime="2026-11-20T22:01:58.2241363+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0578947d-5405-4909-96ea-e8d0c7c5a3ff">
+      <Output>
+        <ErrorInfo>
+          <Message>Exam.Core.BusinessException : Đợt thi chưa có bản chụp đề hợp lệ. Hãy báo giảng viên kiểm tra và kích hoạt lại đợt.</Message>
+          <StackTrace>   at Exam.Services.ExamService.&lt;&gt;c__DisplayClass14_0.&lt;&lt;StartAsync&gt;b__0&gt;d.MoveNext() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs:line 117&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Exam.Services.ExamService.&lt;&gt;c__DisplayClass13_0`1.&lt;&lt;Serial&gt;b__0&gt;d.MoveNext() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs:line 90&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Exam.Services.ExamService.&lt;&gt;c__DisplayClass13_0`1.&lt;&lt;Serial&gt;b__0&gt;d.MoveNext() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs:line 90&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.&lt;&gt;c__DisplayClass30_0`2.&lt;&lt;ExecuteAsync&gt;b__0&gt;d.MoveNext()&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)&#xD;
+   at Exam.Services.ExamService.Serial[T](Func`1 work) in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs:line 90&#xD;
+   at Exam.Tests.SqlExamTests.Start() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs:line 415&#xD;
+   at Exam.Tests.SqlExamTests.Start() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs:line 415&#xD;
+   at Exam.Tests.SqlExamTests.AttemptPayloadNeverContainsCorrectAnswerFields() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs:line 512&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="e645b7ee-07a1-494b-b773-7cc8e6e289db" testId="f1a54747-17f9-99b7-9e13-6b147bddd697" testName="Exam.Tests.DockerDatabaseStartupTests.RejectsSqlEndpointsOutsideDocker(server: &quot;localhost,1433&quot;)" computerName="LAPTOP-3ANAB9S6" duration="00:00:00.0000293" startTime="2026-11-20T22:01:46.8140005+07:00" endTime="2026-11-20T22:01:46.8141673+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e645b7ee-07a1-494b-b773-7cc8e6e289db" />
+    <UnitTestResult executionId="0797d717-811a-4790-a7ef-62534faad5d9" testId="07d68c1b-1a41-0599-38a1-8df4ea57a91a" testName="Exam.Tests.ClassRegistrationTests.DeadlineMigrationExtendsOnlyUnfinishedAttemptsClippedByAdmissionClose" computerName="LAPTOP-3ANAB9S6" duration="00:00:00.5057992" startTime="2026-11-20T22:02:01.4401215+07:00" endTime="2026-11-20T22:02:03.0982286+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0797d717-811a-4790-a7ef-62534faad5d9" />
+    <UnitTestResult executionId="87a5d8b5-462f-4f11-b99e-a430409bff18" testId="b2e05e2f-2575-3d91-0f58-c98108b7bb75" testName="Exam.Tests.ClassRegistrationTests.PostponementClearsTheRosterAndCancellationKeepsIt" computerName="LAPTOP-3ANAB9S6" duration="00:00:00.1893567" startTime="2026-11-20T22:01:56.7556049+07:00" endTime="2026-11-20T22:01:57.8856286+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="87a5d8b5-462f-4f11-b99e-a430409bff18">
+      <Output>
+        <ErrorInfo>
+          <Message>Exam.Core.BusinessException : Đề không còn đủ câu hỏi hoặc phương án hợp lệ. Hãy kiểm tra lại đề trước khi kích hoạt.</Message>
+          <StackTrace>   at Exam.Services.LecturerSessionService.&lt;&gt;c__DisplayClass12_0.&lt;&lt;ChangeStateAsync&gt;b__0&gt;d.MoveNext() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\LecturerSessionService.cs:line 175&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Exam.Services.LecturerSessionService.&lt;&gt;c__DisplayClass10_0`1.&lt;&lt;WriteAsync&gt;b__0&gt;d.MoveNext() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\LecturerSessionService.cs:line 69&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Exam.Services.LecturerSessionService.&lt;&gt;c__DisplayClass10_0`1.&lt;&lt;WriteAsync&gt;b__0&gt;d.MoveNext() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\LecturerSessionService.cs:line 72&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)&#xD;
+   at Exam.Tests.ClassRegistrationTests.PostponementClearsTheRosterAndCancellationKeepsIt() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\LecturerSessionFlowTests.cs:line 123&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="ccee73fc-a07d-4054-b2eb-d7c770413602" testId="563d1745-9010-ca0c-aac9-399bf09054f0" testName="Exam.Tests.SqlExamTests.DatabaseItselfRejectsDuplicateAttemptsEvenWithoutCallingTheService" computerName="LAPTOP-3ANAB9S6" duration="00:00:00.0582186" startTime="2026-11-20T22:02:00.5157405+07:00" endTime="2026-11-20T22:02:01.5303166+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ccee73fc-a07d-4054-b2eb-d7c770413602">
+      <Output>
+        <ErrorInfo>
+          <Message>Exam.Core.BusinessException : Đợt thi chưa có bản chụp đề hợp lệ. Hãy báo giảng viên kiểm tra và kích hoạt lại đợt.</Message>
+          <StackTrace>   at Exam.Services.ExamService.&lt;&gt;c__DisplayClass14_0.&lt;&lt;StartAsync&gt;b__0&gt;d.MoveNext() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs:line 117&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Exam.Services.ExamService.&lt;&gt;c__DisplayClass13_0`1.&lt;&lt;Serial&gt;b__0&gt;d.MoveNext() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs:line 90&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Exam.Services.ExamService.&lt;&gt;c__DisplayClass13_0`1.&lt;&lt;Serial&gt;b__0&gt;d.MoveNext() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs:line 90&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.&lt;&gt;c__DisplayClass30_0`2.&lt;&lt;ExecuteAsync&gt;b__0&gt;d.MoveNext()&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)&#xD;
+   at Exam.Services.ExamService.Serial[T](Func`1 work) in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs:line 90&#xD;
+   at Exam.Tests.SqlExamTests.Start() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs:line 415&#xD;
+   at Exam.Tests.SqlExamTests.Start() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs:line 415&#xD;
+   at Exam.Tests.SqlExamTests.DatabaseItselfRejectsDuplicateAttemptsEvenWithoutCallingTheService() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs:line 646&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="d031d455-2d30-481e-8a76-3f178dff0f78" testId="d67f60fa-2f81-9a44-6a93-dd8e7c2729f0" testName="Exam.Tests.SqlExamTests.UpgradingLegacySessionPreservesAttemptsWithoutGrantingNewAccessFromRoster" computerName="LAPTOP-3ANAB9S6" duration="00:00:01.1531022" startTime="2026-11-20T22:01:50.5683430+07:00" endTime="2026-11-20T22:01:52.6332910+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d031d455-2d30-481e-8a76-3f178dff0f78" />
+    <UnitTestResult executionId="9f48dbef-3bd8-44d4-b491-d089dcbce327" testId="2b1bcaf1-4833-e541-c3b9-1395af8ba054" testName="Exam.Tests.CsvStudentsTests.EscapedQuotesAndAnEmptyFinalFieldArePreserved" computerName="LAPTOP-3ANAB9S6" duration="00:00:00.0027399" startTime="2026-11-20T22:01:46.7934310+07:00" endTime="2026-11-20T22:01:46.7948311+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9f48dbef-3bd8-44d4-b491-d089dcbce327" />
+    <UnitTestResult executionId="cacec29c-28ba-4694-b61f-494ed9031333" testId="fd09df1c-5071-cd3b-4139-4816ec2211ff" testName="Exam.Tests.ExamRulesTests.AdjacentSessionsDoNotOverlap" computerName="LAPTOP-3ANAB9S6" duration="00:00:00.0001678" startTime="2026-11-20T22:01:46.8007868+07:00" endTime="2026-11-20T22:01:46.8008585+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="cacec29c-28ba-4694-b61f-494ed9031333" />
+    <UnitTestResult executionId="01c89ac9-2a1f-421c-ae3b-886584726464" testId="43999b08-b034-a494-ba9e-0f3cf3491be5" testName="Exam.Tests.CsvStudentsTests.MalformedCsvIsRejectedBeforeAnyImport(input: &quot;a,\&quot;đã đóng\&quot;lẫn dữ liệu&quot;)" computerName="LAPTOP-3ANAB9S6" duration="00:00:00.0000135" startTime="2026-11-20T22:01:46.7974450+07:00" endTime="2026-11-20T22:01:46.7975669+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="01c89ac9-2a1f-421c-ae3b-886584726464" />
+    <UnitTestResult executionId="d8b2dce7-bb8c-453b-af95-b57dad38a664" testId="f73a4d48-a6f4-e375-d1e1-98f59c1fa6fd" testName="Exam.Tests.SqlExamTests.AnOptionFromAnotherQuestionIsRejected" computerName="LAPTOP-3ANAB9S6" duration="00:00:00.0379165" startTime="2026-11-20T22:02:07.0308596+07:00" endTime="2026-11-20T22:02:07.8586383+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d8b2dce7-bb8c-453b-af95-b57dad38a664">
+      <Output>
+        <ErrorInfo>
+          <Message>Exam.Core.BusinessException : Đợt thi chưa có bản chụp đề hợp lệ. Hãy báo giảng viên kiểm tra và kích hoạt lại đợt.</Message>
+          <StackTrace>   at Exam.Services.ExamService.&lt;&gt;c__DisplayClass14_0.&lt;&lt;StartAsync&gt;b__0&gt;d.MoveNext() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs:line 117&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Exam.Services.ExamService.&lt;&gt;c__DisplayClass13_0`1.&lt;&lt;Serial&gt;b__0&gt;d.MoveNext() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs:line 90&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Exam.Services.ExamService.&lt;&gt;c__DisplayClass13_0`1.&lt;&lt;Serial&gt;b__0&gt;d.MoveNext() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs:line 90&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.&lt;&gt;c__DisplayClass30_0`2.&lt;&lt;ExecuteAsync&gt;b__0&gt;d.MoveNext()&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)&#xD;
+   at Exam.Services.ExamService.Serial[T](Func`1 work) in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs:line 90&#xD;
+   at Exam.Tests.SqlExamTests.Start() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs:line 415&#xD;
+   at Exam.Tests.SqlExamTests.Start() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs:line 415&#xD;
+   at Exam.Tests.SqlExamTests.AnOptionFromAnotherQuestionIsRejected() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs:line 523&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="b0faffeb-28b4-41ec-88ea-91a153357b55" testId="9c2ee85d-9525-0bab-b8e1-eabb1e7336f3" testName="Exam.Tests.QuestionExcelImportTests.DownloadTemplateIsAnXlsxWithTheExpectedColumns" computerName="LAPTOP-3ANAB9S6" duration="00:00:00.0048768" startTime="2026-11-20T22:01:46.7969353+07:00" endTime="2026-11-20T22:01:46.8026871+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b0faffeb-28b4-41ec-88ea-91a153357b55">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Collections differ&#xD;
+Expected: [···, "Đáp án B", "Đáp án C", "Đáp án D", "Đáp án đúng"]&#xD;
+Actual:   [···, "Đáp án B", "Đáp án C", "Đáp án D", "Đáp án đúng", "Ô A2 trở xuống gợi ý chủ đề cũ; có thể gõ chủ đề m"···]&#xD;
+                                                                   ↑ (pos 8)</Message>
+          <StackTrace>   at Exam.Tests.QuestionExcelImportTests.DownloadTemplateIsAnXlsxWithTheExpectedColumns() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\QuestionExcelImportTests.cs:line 23&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="d955d8a9-3d5c-486f-830f-00b974a6213e" testId="a640cbf9-e86b-86eb-cebd-47b69df84937" testName="Exam.Tests.ClassRegistrationTests.ProfileUpdatesOnlyContactFieldsAndRejectsStaleVersions" computerName="LAPTOP-3ANAB9S6" duration="00:00:00.0964064" startTime="2026-11-20T22:02:00.4203381+07:00" endTime="2026-11-20T22:02:01.4398990+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d955d8a9-3d5c-486f-830f-00b974a6213e" />
+    <UnitTestResult executionId="20e7441e-4c48-4856-a0ee-9ed4cbdbce46" testId="bf59d2a4-0e47-6768-6f70-9e035edad7e5" testName="Exam.Tests.ExamRulesTests.TenPointExamsPreserveEarnedPointsAndRoundOnlyTheFinalScore(earned: 0, expected: 0)" computerName="LAPTOP-3ANAB9S6" duration="00:00:00.0002342" startTime="2026-11-20T22:01:46.7972747+07:00" endTime="2026-11-20T22:01:46.7974955+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="20e7441e-4c48-4856-a0ee-9ed4cbdbce46" />
+    <UnitTestResult executionId="aa4f16e8-0bb7-4560-b3d1-dcf23620fc9e" testId="173968a7-993e-1b54-7cfb-67b74221dcb4" testName="Exam.Tests.RegistrationValidationTests.ValidatesPublicRegistration(accountType: &quot;ExamOfficer&quot;, studentCode: null, invalidField: &quot;AccountType&quot;)" computerName="LAPTOP-3ANAB9S6" duration="00:00:00.0001005" startTime="2026-11-20T22:01:46.7944413+07:00" endTime="2026-11-20T22:01:46.7944907+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="aa4f16e8-0bb7-4560-b3d1-dcf23620fc9e" />
+    <UnitTestResult executionId="2372abea-3f06-469e-a378-1b05d96f7a75" testId="62da118e-15ea-2915-447e-70e57cc3dc10" testName="Exam.Tests.CsvStudentsTests.MalformedCsvIsRejectedBeforeAnyImport(input: &quot;a,nội\&quot;dung&quot;)" computerName="LAPTOP-3ANAB9S6" duration="00:00:00.0001977" startTime="2026-11-20T22:01:46.7972301+07:00" endTime="2026-11-20T22:01:46.7973453+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2372abea-3f06-469e-a378-1b05d96f7a75" />
+    <UnitTestResult executionId="db6e363d-35c9-4acb-8306-a5770aab02c7" testId="061f4ffe-6845-3191-5ac7-08a2b6a8857c" testName="Exam.Tests.SqlExamTests.CodeLookupRequiresClassAndDoesNotCreateAttempt" computerName="LAPTOP-3ANAB9S6" duration="00:00:00.1429437" startTime="2026-11-20T22:02:04.0645404+07:00" endTime="2026-11-20T22:02:05.1633438+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="db6e363d-35c9-4acb-8306-a5770aab02c7">
+      <Output>
+        <ErrorInfo>
+          <Message>Exam.Core.BusinessException : Đợt thi chưa có bản chụp đề hợp lệ. Hãy báo giảng viên kiểm tra và kích hoạt lại đợt.</Message>
+          <StackTrace>   at Exam.Services.ExamService.&lt;&gt;c__DisplayClass14_0.&lt;&lt;StartAsync&gt;b__0&gt;d.MoveNext() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs:line 117&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Exam.Services.ExamService.&lt;&gt;c__DisplayClass13_0`1.&lt;&lt;Serial&gt;b__0&gt;d.MoveNext() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs:line 90&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Exam.Services.ExamService.&lt;&gt;c__DisplayClass13_0`1.&lt;&lt;Serial&gt;b__0&gt;d.MoveNext() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs:line 90&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.&lt;&gt;c__DisplayClass30_0`2.&lt;&lt;ExecuteAsync&gt;b__0&gt;d.MoveNext()&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)&#xD;
+   at Exam.Services.ExamService.Serial[T](Func`1 work) in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs:line 90&#xD;
+   at Exam.Tests.SqlExamTests.CodeLookupRequiresClassAndDoesNotCreateAttempt() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs:line 286&#xD;
+   at Exam.Tests.SqlExamTests.CodeLookupRequiresClassAndDoesNotCreateAttempt() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs:line 291&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="cb4cef74-684c-44d7-8541-16d1c0c54686" testId="fbc3e182-1d91-60fe-d8f4-944c0784292d" testName="Exam.Tests.SqlExamTests.DatabaseRejectsDuplicateSessionClassAndAccessCode" computerName="LAPTOP-3ANAB9S6" duration="00:00:00.0639932" startTime="2026-11-20T22:02:05.1645108+07:00" endTime="2026-11-20T22:02:06.1537280+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="cb4cef74-684c-44d7-8541-16d1c0c54686" />
+    <UnitTestResult executionId="e0ea919b-ccb9-4728-93d7-908fd9b8681f" testId="79c554bb-030f-dc0d-9f56-9806c23e99af" testName="Exam.Tests.ClassRegistrationTests.LecturerCreatesOnlyWithinAssignedSubjectAndStudentSeesOwnMembership" computerName="LAPTOP-3ANAB9S6" duration="00:00:00.1130309" startTime="2026-11-20T22:02:04.3238950+07:00" endTime="2026-11-20T22:02:05.4166127+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e0ea919b-ccb9-4728-93d7-908fd9b8681f" />
+    <UnitTestResult executionId="1544b484-f507-46d8-bd64-0e7bb830d0a0" testId="1d110222-20f7-f040-7b5e-c6122c1e8a96" testName="Exam.Tests.RegistrationValidationTests.ValidatesPublicRegistration(accountType: &quot;Lecturer&quot;, studentCode: null, invalidField: null)" computerName="LAPTOP-3ANAB9S6" duration="00:00:00.5807991" startTime="2026-11-20T22:01:45.9987657+07:00" endTime="2026-11-20T22:01:46.7935914+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1544b484-f507-46d8-bd64-0e7bb830d0a0" />
+    <UnitTestResult executionId="63f27bde-b1d9-474f-9d3e-7f6e155cd80e" testId="ca7aebbb-ddea-6c13-6629-c4a92e7feaf2" testName="Exam.Tests.ClassRegistrationTests.WebLecturerWorkflowAndStudentClassNavigation" computerName="LAPTOP-3ANAB9S6" duration="00:00:00.2470395" startTime="2026-11-20T22:01:54.8925131+07:00" endTime="2026-11-20T22:01:55.9158391+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="63f27bde-b1d9-474f-9d3e-7f6e155cd80e">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.True() Failure&#xD;
+Expected: True&#xD;
+Actual:   False</Message>
+          <StackTrace>   at Exam.Tests.ClassRegistrationTests.WebLecturerWorkflowAndStudentClassNavigation() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\WebLecturerFlowTests.cs:line 47&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="4d184c29-17b2-4130-b7b1-fe1b04da1ca7" testId="e4a2763b-83ba-711b-48c3-b9a2d1b1c1d8" testName="Exam.Tests.CsvStudentsTests.QuotedNamesAndEmbeddedLineBreaksRemainInTheCorrectColumns" computerName="LAPTOP-3ANAB9S6" duration="00:00:00.5778132" startTime="2026-11-20T22:01:45.9988509+07:00" endTime="2026-11-20T22:01:46.5822749+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4d184c29-17b2-4130-b7b1-fe1b04da1ca7" />
+    <UnitTestResult executionId="1df8738f-d027-4446-8139-399ec66e5ce2" testId="acd7a671-204b-82da-6409-957c85a57022" testName="Exam.Tests.SqlExamTests.ConcurrentStartCreatesOneAttemptAndReturnsTheSameId" computerName="LAPTOP-3ANAB9S6" duration="00:00:00.0661323" startTime="2026-11-20T22:02:07.8597852+07:00" endTime="2026-11-20T22:02:08.7304741+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1df8738f-d027-4446-8139-399ec66e5ce2">
+      <Output>
+        <ErrorInfo>
+          <Message>Exam.Core.BusinessException : Đợt thi chưa có bản chụp đề hợp lệ. Hãy báo giảng viên kiểm tra và kích hoạt lại đợt.</Message>
+          <StackTrace>   at Exam.Services.ExamService.&lt;&gt;c__DisplayClass14_0.&lt;&lt;StartAsync&gt;b__0&gt;d.MoveNext() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs:line 117&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Exam.Services.ExamService.&lt;&gt;c__DisplayClass13_0`1.&lt;&lt;Serial&gt;b__0&gt;d.MoveNext() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs:line 90&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Exam.Services.ExamService.&lt;&gt;c__DisplayClass13_0`1.&lt;&lt;Serial&gt;b__0&gt;d.MoveNext() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs:line 90&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.&lt;&gt;c__DisplayClass30_0`2.&lt;&lt;ExecuteAsync&gt;b__0&gt;d.MoveNext()&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)&#xD;
+   at Exam.Services.ExamService.Serial[T](Func`1 work) in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs:line 90&#xD;
+   at Exam.Tests.SqlExamTests.&lt;ConcurrentStartCreatesOneAttemptAndReturnsTheSameId&gt;g__StartSeparately|19_0() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs:line 424&#xD;
+   at Exam.Tests.SqlExamTests.&lt;ConcurrentStartCreatesOneAttemptAndReturnsTheSameId&gt;g__StartSeparately|19_0() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs:line 424&#xD;
+   at Exam.Tests.SqlExamTests.ConcurrentStartCreatesOneAttemptAndReturnsTheSameId() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs:line 426&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="7d0b915f-4630-4f5b-9bb5-ee00670368a9" testId="3ae72a3b-960e-02f3-4f6a-c3c125c03286" testName="Exam.Tests.SqlExamTests.AnotherStudentCannotTriggerGradingOfAnExpiredAttempt" computerName="LAPTOP-3ANAB9S6" duration="00:00:00.0372411" startTime="2026-11-20T22:01:56.2859951+07:00" endTime="2026-11-20T22:01:57.3077367+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7d0b915f-4630-4f5b-9bb5-ee00670368a9">
+      <Output>
+        <ErrorInfo>
+          <Message>Exam.Core.BusinessException : Đợt thi chưa có bản chụp đề hợp lệ. Hãy báo giảng viên kiểm tra và kích hoạt lại đợt.</Message>
+          <StackTrace>   at Exam.Services.ExamService.&lt;&gt;c__DisplayClass14_0.&lt;&lt;StartAsync&gt;b__0&gt;d.MoveNext() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs:line 117&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Exam.Services.ExamService.&lt;&gt;c__DisplayClass13_0`1.&lt;&lt;Serial&gt;b__0&gt;d.MoveNext() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs:line 90&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Exam.Services.ExamService.&lt;&gt;c__DisplayClass13_0`1.&lt;&lt;Serial&gt;b__0&gt;d.MoveNext() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs:line 90&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.&lt;&gt;c__DisplayClass30_0`2.&lt;&lt;ExecuteAsync&gt;b__0&gt;d.MoveNext()&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)&#xD;
+   at Exam.Services.ExamService.Serial[T](Func`1 work) in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs:line 90&#xD;
+   at Exam.Tests.SqlExamTests.Start() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs:line 415&#xD;
+   at Exam.Tests.SqlExamTests.Start() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs:line 415&#xD;
+   at Exam.Tests.SqlExamTests.AnotherStudentCannotTriggerGradingOfAnExpiredAttempt() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs:line 496&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="1173ee35-26e1-4dfc-81b5-f247b18fbc6d" testId="66556560-cfaf-71b8-3fb8-31b435217a9f" testName="Exam.Tests.ClassRegistrationTests.ClassDetailRequiresMembershipAndHidesDraftAndWrongSubjectSessions" computerName="LAPTOP-3ANAB9S6" duration="00:00:00.1622628" startTime="2026-11-20T22:01:53.8894070+07:00" endTime="2026-11-20T22:01:54.8923571+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1173ee35-26e1-4dfc-81b5-f247b18fbc6d" />
+    <UnitTestResult executionId="3470a296-65bb-443a-9707-f13e6a8e2522" testId="82581c06-21f3-e989-4ae6-736808847433" testName="Exam.Tests.CsvStudentsTests.MalformedCsvIsRejectedBeforeAnyImport(input: &quot;a,\&quot;chưa đóng&quot;)" computerName="LAPTOP-3ANAB9S6" duration="00:00:00.0005150" startTime="2026-11-20T22:01:46.7950472+07:00" endTime="2026-11-20T22:01:46.7969994+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3470a296-65bb-443a-9707-f13e6a8e2522" />
+    <UnitTestResult executionId="8a559f76-a62e-480e-b917-aef9bf68147a" testId="47617cda-c169-e6cd-5c2b-e832c11a038d" testName="Exam.Tests.ExamRulesTests.TenPointExamsPreserveEarnedPointsAndRoundOnlyTheFinalScore(earned: 2.345, expected: 2.35)" computerName="LAPTOP-3ANAB9S6" duration="00:00:00.0033417" startTime="2026-11-20T22:01:46.7932543+07:00" endTime="2026-11-20T22:01:46.7970984+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8a559f76-a62e-480e-b917-aef9bf68147a" />
+    <UnitTestResult executionId="4aa34c1f-7db3-4744-ac85-d7f27a99deaa" testId="5d08def4-7a0d-5c7b-f1ea-aa8309d08c77" testName="Exam.Tests.SqlExamTests.LecturerActivatesDraftForAssignedClassAndStudentCanJoin" computerName="LAPTOP-3ANAB9S6" duration="00:00:00.4758612" startTime="2026-11-20T22:02:08.7312806+07:00" endTime="2026-11-20T22:02:10.0186192+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4aa34c1f-7db3-4744-ac85-d7f27a99deaa" />
+    <UnitTestResult executionId="2782be5c-5515-4902-b16d-0b6716120e4d" testId="00f254be-9565-9283-e9b3-75f822a3aaac" testName="Exam.Tests.SqlExamTests.AnotherStudentCannotOpenOrChangeTheAttempt" computerName="LAPTOP-3ANAB9S6" duration="00:00:00.0529878" startTime="2026-11-20T22:01:52.6334689+07:00" endTime="2026-11-20T22:01:53.5684184+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2782be5c-5515-4902-b16d-0b6716120e4d">
+      <Output>
+        <ErrorInfo>
+          <Message>Exam.Core.BusinessException : Đợt thi chưa có bản chụp đề hợp lệ. Hãy báo giảng viên kiểm tra và kích hoạt lại đợt.</Message>
+          <StackTrace>   at Exam.Services.ExamService.&lt;&gt;c__DisplayClass14_0.&lt;&lt;StartAsync&gt;b__0&gt;d.MoveNext() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs:line 117&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Exam.Services.ExamService.&lt;&gt;c__DisplayClass13_0`1.&lt;&lt;Serial&gt;b__0&gt;d.MoveNext() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs:line 90&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Exam.Services.ExamService.&lt;&gt;c__DisplayClass13_0`1.&lt;&lt;Serial&gt;b__0&gt;d.MoveNext() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs:line 90&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.&lt;&gt;c__DisplayClass30_0`2.&lt;&lt;ExecuteAsync&gt;b__0&gt;d.MoveNext()&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)&#xD;
+   at Exam.Services.ExamService.Serial[T](Func`1 work) in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs:line 90&#xD;
+   at Exam.Tests.SqlExamTests.Start() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs:line 415&#xD;
+   at Exam.Tests.SqlExamTests.Start() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs:line 415&#xD;
+   at Exam.Tests.SqlExamTests.AnotherStudentCannotOpenOrChangeTheAttempt() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs:line 486&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="257d4774-154b-4241-b199-474bc45a23f4" testId="bc85a1f4-af72-7ffc-2364-5a6dd6632a96" testName="Exam.Tests.QuestionExcelImportTests.SubjectTemplateIncludesTopicChoicesAndDropdownValidation" computerName="LAPTOP-3ANAB9S6" duration="00:00:00.5834895" startTime="2026-11-20T22:01:45.9987988+07:00" endTime="2026-11-20T22:01:46.7952235+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="257d4774-154b-4241-b199-474bc45a23f4" />
+    <UnitTestResult executionId="f1825eb7-3e15-415e-9f13-ce4f2cf17166" testId="35d0aad0-0d9d-2b85-3996-70f14565ecbb" testName="Exam.Tests.SqlExamTests.DatabaseItselfRejectsAnOptionOwnedByAnotherQuestion" computerName="LAPTOP-3ANAB9S6" duration="00:00:00.0350606" startTime="2026-11-20T22:02:06.1538556+07:00" endTime="2026-11-20T22:02:07.0295392+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f1825eb7-3e15-415e-9f13-ce4f2cf17166">
+      <Output>
+        <ErrorInfo>
+          <Message>Exam.Core.BusinessException : Đợt thi chưa có bản chụp đề hợp lệ. Hãy báo giảng viên kiểm tra và kích hoạt lại đợt.</Message>
+          <StackTrace>   at Exam.Services.ExamService.&lt;&gt;c__DisplayClass14_0.&lt;&lt;StartAsync&gt;b__0&gt;d.MoveNext() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs:line 117&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Exam.Services.ExamService.&lt;&gt;c__DisplayClass13_0`1.&lt;&lt;Serial&gt;b__0&gt;d.MoveNext() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs:line 90&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Exam.Services.ExamService.&lt;&gt;c__DisplayClass13_0`1.&lt;&lt;Serial&gt;b__0&gt;d.MoveNext() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs:line 90&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.&lt;&gt;c__DisplayClass30_0`2.&lt;&lt;ExecuteAsync&gt;b__0&gt;d.MoveNext()&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)&#xD;
+   at Exam.Services.ExamService.Serial[T](Func`1 work) in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs:line 90&#xD;
+   at Exam.Tests.SqlExamTests.Start() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs:line 415&#xD;
+   at Exam.Tests.SqlExamTests.Start() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs:line 415&#xD;
+   at Exam.Tests.SqlExamTests.DatabaseItselfRejectsAnOptionOwnedByAnotherQuestion() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs:line 656&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="e5f53ec3-6ec5-4c0d-afde-535717fee544" testId="b2317bfd-c648-55e9-a778-8391648ae1b4" testName="Exam.Tests.DockerDatabaseStartupTests.AllowsDockerDatabaseAndIsolatedTestDatabases(server: &quot;localhost,14333&quot;)" computerName="LAPTOP-3ANAB9S6" duration="00:00:00.0001104" startTime="2026-11-20T22:01:46.8154418+07:00" endTime="2026-11-20T22:01:46.8154925+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e5f53ec3-6ec5-4c0d-afde-535717fee544" />
+    <UnitTestResult executionId="45beab5d-2a56-4f73-b20d-59b7e0825eb0" testId="2615e923-1a6c-3a3c-8101-5df4ccb7f803" testName="Exam.Tests.ClassRegistrationTests.SessionValidationIdentifiesOnlyTheFieldThatNeedsCorrection" computerName="LAPTOP-3ANAB9S6" duration="00:00:00.0332681" startTime="2026-11-20T22:01:55.9166788+07:00" endTime="2026-11-20T22:01:56.7554753+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="45beab5d-2a56-4f73-b20d-59b7e0825eb0" />
+    <UnitTestResult executionId="2c5cf270-b1e0-4844-ba0f-ba71e24515c2" testId="13d7b362-909b-5bc4-a516-e6c3fb19cc18" testName="Exam.Tests.RegistrationValidationTests.ValidatesPublicRegistration(accountType: &quot;Student&quot;, studentCode: null, invalidField: &quot;StudentCode&quot;)" computerName="LAPTOP-3ANAB9S6" duration="00:00:00.0003961" startTime="2026-11-20T22:01:46.7945883+07:00" endTime="2026-11-20T22:01:46.7946665+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2c5cf270-b1e0-4844-ba0f-ba71e24515c2" />
+    <UnitTestResult executionId="5628291b-5351-498c-9d8f-a3e6d4cda72b" testId="da8bef32-0d4d-8e3b-4b33-1eccc45cd957" testName="Exam.Tests.ExamRulesTests.DeadlineAlwaysGivesTheFullDuration(duration: 60, minutesUntilClose: 30)" computerName="LAPTOP-3ANAB9S6" duration="00:00:00.0002438" startTime="2026-11-20T22:01:46.5929053+07:00" endTime="2026-11-20T22:01:46.5930221+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5628291b-5351-498c-9d8f-a3e6d4cda72b" />
+    <UnitTestResult executionId="9a83bc73-7e8e-49c8-b615-624c9ffd25b9" testId="51a41cf6-8bd9-4a3e-1e0e-6e0400646874" testName="Exam.Tests.SqlExamTests.SnapshotAndGradingSurviveSourceChangesAndUnpublishedResultsStayHidden" computerName="LAPTOP-3ANAB9S6" duration="00:00:00.0523800" startTime="2026-11-20T22:02:01.5316866+07:00" endTime="2026-11-20T22:02:02.7448062+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9a83bc73-7e8e-49c8-b615-624c9ffd25b9">
+      <Output>
+        <ErrorInfo>
+          <Message>Exam.Core.BusinessException : Đợt thi chưa có bản chụp đề hợp lệ. Hãy báo giảng viên kiểm tra và kích hoạt lại đợt.</Message>
+          <StackTrace>   at Exam.Services.ExamService.&lt;&gt;c__DisplayClass14_0.&lt;&lt;StartAsync&gt;b__0&gt;d.MoveNext() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs:line 117&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Exam.Services.ExamService.&lt;&gt;c__DisplayClass13_0`1.&lt;&lt;Serial&gt;b__0&gt;d.MoveNext() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs:line 90&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Exam.Services.ExamService.&lt;&gt;c__DisplayClass13_0`1.&lt;&lt;Serial&gt;b__0&gt;d.MoveNext() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs:line 90&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.&lt;&gt;c__DisplayClass30_0`2.&lt;&lt;ExecuteAsync&gt;b__0&gt;d.MoveNext()&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)&#xD;
+   at Exam.Services.ExamService.Serial[T](Func`1 work) in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs:line 90&#xD;
+   at Exam.Tests.SqlExamTests.Start() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs:line 415&#xD;
+   at Exam.Tests.SqlExamTests.Start() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs:line 415&#xD;
+   at Exam.Tests.SqlExamTests.SnapshotAndGradingSurviveSourceChangesAndUnpublishedResultsStayHidden() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs:line 534&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="7114e28c-d5d0-41e4-a8bd-0c32050ff9aa" testId="9202cbf4-de3a-557d-3d29-e6c03d68ec37" testName="Exam.Tests.SqlExamTests.ExpiryWorksWithoutAnOpenBrowserAndRepeatedSubmissionDoesNotCreateAnotherResult" computerName="LAPTOP-3ANAB9S6" duration="00:00:00.0323456" startTime="2026-11-20T22:01:54.4851003+07:00" endTime="2026-11-20T22:01:55.3427391+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7114e28c-d5d0-41e4-a8bd-0c32050ff9aa">
+      <Output>
+        <ErrorInfo>
+          <Message>Exam.Core.BusinessException : Đợt thi chưa có bản chụp đề hợp lệ. Hãy báo giảng viên kiểm tra và kích hoạt lại đợt.</Message>
+          <StackTrace>   at Exam.Services.ExamService.&lt;&gt;c__DisplayClass14_0.&lt;&lt;StartAsync&gt;b__0&gt;d.MoveNext() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs:line 117&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Exam.Services.ExamService.&lt;&gt;c__DisplayClass13_0`1.&lt;&lt;Serial&gt;b__0&gt;d.MoveNext() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs:line 90&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Exam.Services.ExamService.&lt;&gt;c__DisplayClass13_0`1.&lt;&lt;Serial&gt;b__0&gt;d.MoveNext() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs:line 90&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.&lt;&gt;c__DisplayClass30_0`2.&lt;&lt;ExecuteAsync&gt;b__0&gt;d.MoveNext()&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)&#xD;
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)&#xD;
+   at Exam.Services.ExamService.Serial[T](Func`1 work) in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs:line 90&#xD;
+   at Exam.Tests.SqlExamTests.Start() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs:line 415&#xD;
+   at Exam.Tests.SqlExamTests.Start() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs:line 415&#xD;
+   at Exam.Tests.SqlExamTests.ExpiryWorksWithoutAnOpenBrowserAndRepeatedSubmissionDoesNotCreateAnotherResult() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs:line 578&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="97347d55-396a-46b0-a73f-0f56ac77369a" testId="e5319687-77d9-8229-b3c8-518ae838c6a4" testName="Exam.Tests.DockerDatabaseStartupTests.AllowsDockerDatabaseAndIsolatedTestDatabases(server: &quot;tcp:127.0.0.1,14333&quot;)" computerName="LAPTOP-3ANAB9S6" duration="00:00:00.0001279" startTime="2026-11-20T22:01:46.8156037+07:00" endTime="2026-11-20T22:01:46.8156654+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="97347d55-396a-46b0-a73f-0f56ac77369a" />
+    <UnitTestResult executionId="1397ade8-ecb3-48c6-8f5d-58ac25a00d67" testId="8b782cd9-9753-10d3-f3c6-2527c4637f4d" testName="Exam.Tests.ClassRegistrationTests.PublicationImmediatelyShowsFinishedResultsAndAutomaticallyIncludesLaterSubmissions" computerName="LAPTOP-3ANAB9S6" duration="00:00:00.1994872" startTime="2026-11-20T22:02:03.0983649+07:00" endTime="2026-11-20T22:02:04.3224944+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1397ade8-ecb3-48c6-8f5d-58ac25a00d67">
+      <Output>
+        <ErrorInfo>
+          <Message>Exam.Core.BusinessException : Đợt thi chưa có bản chụp đề hợp lệ. Hãy báo giảng viên kiểm tra và kích hoạt lại đợt.</Message>
+          <StackTrace>   at Exam.Services.ExamService.&lt;&gt;c__DisplayClass14_0.&lt;&lt;StartAsync&gt;b__0&gt;d.MoveNext() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs:line 117&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Exam.Services.ExamService.&lt;&gt;c__DisplayClass13_0`1.&lt;&lt;Serial&gt;b__0&gt;d.MoveNext() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs:line 90&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Exam.Services.ExamService.&lt;&gt;c__DisplayClass13_0`1.&lt;&lt;Serial&gt;b__0&gt;d.MoveNext() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs:line 90&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)&#xD;
+   at Exam.Services.ExamService.Serial[T](Func`1 work) in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs:line 90&#xD;
+   at Exam.Tests.ClassRegistrationTests.PublicationImmediatelyShowsFinishedResultsAndAutomaticallyIncludesLaterSubmissions() in D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\PersonalDeadlinePublicationTests.cs:line 35&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="510ff08a-699f-4777-aab7-362a835db716" testId="92c9b9b8-1c58-7202-0bc2-e5d22ee8eb6d" testName="Exam.Tests.SqlExamTests.StartingAfterTheSessionClosesDoesNotCreateAnAttempt" computerName="LAPTOP-3ANAB9S6" duration="00:00:00.0773754" startTime="2026-11-20T22:01:58.2251742+07:00" endTime="2026-11-20T22:01:59.2123415+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="510ff08a-699f-4777-aab7-362a835db716" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="Exam.Tests.SqlExamTests.ConcurrentSubmitCreatesExactlyOneResult" storage="d:\sgu_laptrinh_csharp_2026-2027\exam management application\artifacts\review-test\exam.tests.dll" id="f17e50c9-f174-2b8c-10f2-ff4f07d05a5f">
+      <Execution id="f395b162-b8e6-41a0-add6-79ffee18ed59" />
+      <TestMethod codeBase="D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\artifacts\review-test\Exam.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Exam.Tests.SqlExamTests" name="ConcurrentSubmitCreatesExactlyOneResult" />
+    </UnitTest>
+    <UnitTest name="Exam.Tests.DockerDatabaseStartupTests.RequiresAnExplicitDatabase" storage="d:\sgu_laptrinh_csharp_2026-2027\exam management application\artifacts\review-test\exam.tests.dll" id="83b8fd04-c2b3-61d2-0c83-e645162ba5de">
+      <Execution id="64a7573d-0874-4463-b392-e84db54812ba" />
+      <TestMethod codeBase="D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\artifacts\review-test\Exam.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Exam.Tests.DockerDatabaseStartupTests" name="RequiresAnExplicitDatabase" />
+    </UnitTest>
+    <UnitTest name="Exam.Tests.ClassRegistrationTests.LegacyRoleMigrationPreservesUserAndReassignsMembership" storage="d:\sgu_laptrinh_csharp_2026-2027\exam management application\artifacts\review-test\exam.tests.dll" id="c9f23cb1-22eb-34e5-639b-bc8c7c0f7fd3">
+      <Execution id="619580bc-8ac2-445c-8631-20685dce7c4b" />
+      <TestMethod codeBase="D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\artifacts\review-test\Exam.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Exam.Tests.ClassRegistrationTests" name="LegacyRoleMigrationPreservesUserAndReassignsMembership" />
+    </UnitTest>
+    <UnitTest name="Exam.Tests.SqlExamTests.UpgradingLegacySessionPreservesAttemptsWithoutGrantingNewAccessFromRoster" storage="d:\sgu_laptrinh_csharp_2026-2027\exam management application\artifacts\review-test\exam.tests.dll" id="d67f60fa-2f81-9a44-6a93-dd8e7c2729f0">
+      <Execution id="d031d455-2d30-481e-8a76-3f178dff0f78" />
+      <TestMethod codeBase="D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\artifacts\review-test\Exam.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Exam.Tests.SqlExamTests" name="UpgradingLegacySessionPreservesAttemptsWithoutGrantingNewAccessFromRoster" />
+    </UnitTest>
+    <UnitTest name="Exam.Tests.ExamRulesTests.DeadlineAlwaysGivesTheFullDuration(duration: 30, minutesUntilClose: 30)" storage="d:\sgu_laptrinh_csharp_2026-2027\exam management application\artifacts\review-test\exam.tests.dll" id="bedcf118-55f7-fe39-85ac-82323b15cddb">
+      <Execution id="21a18f8e-7f64-4d3f-a816-f6fd2ae82889" />
+      <TestMethod codeBase="D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\artifacts\review-test\Exam.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Exam.Tests.ExamRulesTests" name="DeadlineAlwaysGivesTheFullDuration" />
+    </UnitTest>
+    <UnitTest name="Exam.Tests.ClassRegistrationTests.LecturerEnrollmentAllowsOverlappingActivatedSessionsAndRemovalPreservesAttempts" storage="d:\sgu_laptrinh_csharp_2026-2027\exam management application\artifacts\review-test\exam.tests.dll" id="2dd3e6a9-0738-3708-f574-f8085ca7cf37">
+      <Execution id="2c8a2df7-1bd6-4d6a-a9ba-54583d99f98c" />
+      <TestMethod codeBase="D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\artifacts\review-test\Exam.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Exam.Tests.ClassRegistrationTests" name="LecturerEnrollmentAllowsOverlappingActivatedSessionsAndRemovalPreservesAttempts" />
+    </UnitTest>
+    <UnitTest name="Exam.Tests.ClassRegistrationTests.AccountCategoriesExcludeAdministratorsBeforeCountingAndPaging" storage="d:\sgu_laptrinh_csharp_2026-2027\exam management application\artifacts\review-test\exam.tests.dll" id="a1da80e1-f6a1-9b59-c410-84990fd63ef8">
+      <Execution id="d24b1544-d3ad-49ba-bde0-5070aa01fac9" />
+      <TestMethod codeBase="D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\artifacts\review-test\Exam.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Exam.Tests.ClassRegistrationTests" name="AccountCategoriesExcludeAdministratorsBeforeCountingAndPaging" />
+    </UnitTest>
+    <UnitTest name="Exam.Tests.RegistrationValidationTests.ValidatesPublicRegistration(accountType: &quot;ExamOfficer&quot;, studentCode: null, invalidField: &quot;AccountType&quot;)" storage="d:\sgu_laptrinh_csharp_2026-2027\exam management application\artifacts\review-test\exam.tests.dll" id="173968a7-993e-1b54-7cfb-67b74221dcb4">
+      <Execution id="aa4f16e8-0bb7-4560-b3d1-dcf23620fc9e" />
+      <TestMethod codeBase="D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\artifacts\review-test\Exam.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Exam.Tests.RegistrationValidationTests" name="ValidatesPublicRegistration" />
+    </UnitTest>
+    <UnitTest name="Exam.Tests.SqlExamTests.AdmissionClosingDoesNotShortenIndividualAttempts" storage="d:\sgu_laptrinh_csharp_2026-2027\exam management application\artifacts\review-test\exam.tests.dll" id="b90849ed-87c7-3634-3d03-ea6aec6b74c4">
+      <Execution id="1842c16a-9104-47db-a98f-fdd99d516726" />
+      <TestMethod codeBase="D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\artifacts\review-test\Exam.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Exam.Tests.SqlExamTests" name="AdmissionClosingDoesNotShortenIndividualAttempts" />
+    </UnitTest>
+    <UnitTest name="Exam.Tests.ClassRegistrationTests.LecturerCreatesOnlyWithinAssignedSubjectAndStudentSeesOwnMembership" storage="d:\sgu_laptrinh_csharp_2026-2027\exam management application\artifacts\review-test\exam.tests.dll" id="79c554bb-030f-dc0d-9f56-9806c23e99af">
+      <Execution id="e0ea919b-ccb9-4728-93d7-908fd9b8681f" />
+      <TestMethod codeBase="D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\artifacts\review-test\Exam.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Exam.Tests.ClassRegistrationTests" name="LecturerCreatesOnlyWithinAssignedSubjectAndStudentSeesOwnMembership" />
+    </UnitTest>
+    <UnitTest name="Exam.Tests.ExamRulesTests.DeadlineAlwaysGivesTheFullDuration(duration: 1, minutesUntilClose: 60)" storage="d:\sgu_laptrinh_csharp_2026-2027\exam management application\artifacts\review-test\exam.tests.dll" id="f0f53ab1-ff16-ed0b-60b3-a3bd73732f33">
+      <Execution id="be25d09d-0981-453d-b74a-af96abecfdd0" />
+      <TestMethod codeBase="D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\artifacts\review-test\Exam.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Exam.Tests.ExamRulesTests" name="DeadlineAlwaysGivesTheFullDuration" />
+    </UnitTest>
+    <UnitTest name="Exam.Tests.SqlExamTests.AnOptionFromAnotherQuestionIsRejected" storage="d:\sgu_laptrinh_csharp_2026-2027\exam management application\artifacts\review-test\exam.tests.dll" id="f73a4d48-a6f4-e375-d1e1-98f59c1fa6fd">
+      <Execution id="d8b2dce7-bb8c-453b-af95-b57dad38a664" />
+      <TestMethod codeBase="D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\artifacts\review-test\Exam.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Exam.Tests.SqlExamTests" name="AnOptionFromAnotherQuestionIsRejected" />
+    </UnitTest>
+    <UnitTest name="Exam.Tests.QuestionExcelImportTests.SubjectTemplateIncludesTopicChoicesAndDropdownValidation" storage="d:\sgu_laptrinh_csharp_2026-2027\exam management application\artifacts\review-test\exam.tests.dll" id="bc85a1f4-af72-7ffc-2364-5a6dd6632a96">
+      <Execution id="257d4774-154b-4241-b199-474bc45a23f4" />
+      <TestMethod codeBase="D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\artifacts\review-test\Exam.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Exam.Tests.QuestionExcelImportTests" name="SubjectTemplateIncludesTopicChoicesAndDropdownValidation" />
+    </UnitTest>
+    <UnitTest name="Exam.Tests.SqlExamTests.ExpiryWorksWithoutAnOpenBrowserAndRepeatedSubmissionDoesNotCreateAnotherResult" storage="d:\sgu_laptrinh_csharp_2026-2027\exam management application\artifacts\review-test\exam.tests.dll" id="9202cbf4-de3a-557d-3d29-e6c03d68ec37">
+      <Execution id="7114e28c-d5d0-41e4-a8bd-0c32050ff9aa" />
+      <TestMethod codeBase="D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\artifacts\review-test\Exam.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Exam.Tests.SqlExamTests" name="ExpiryWorksWithoutAnOpenBrowserAndRepeatedSubmissionDoesNotCreateAnotherResult" />
+    </UnitTest>
+    <UnitTest name="Exam.Tests.QuestionExcelImportTests.DownloadTemplateIsAnXlsxWithTheExpectedColumns" storage="d:\sgu_laptrinh_csharp_2026-2027\exam management application\artifacts\review-test\exam.tests.dll" id="9c2ee85d-9525-0bab-b8e1-eabb1e7336f3">
+      <Execution id="b0faffeb-28b4-41ec-88ea-91a153357b55" />
+      <TestMethod codeBase="D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\artifacts\review-test\Exam.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Exam.Tests.QuestionExcelImportTests" name="DownloadTemplateIsAnXlsxWithTheExpectedColumns" />
+    </UnitTest>
+    <UnitTest name="Exam.Tests.SqlExamTests.CodeLookupRequiresClassAndDoesNotCreateAttempt" storage="d:\sgu_laptrinh_csharp_2026-2027\exam management application\artifacts\review-test\exam.tests.dll" id="061f4ffe-6845-3191-5ac7-08a2b6a8857c">
+      <Execution id="db6e363d-35c9-4acb-8306-a5770aab02c7" />
+      <TestMethod codeBase="D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\artifacts\review-test\Exam.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Exam.Tests.SqlExamTests" name="CodeLookupRequiresClassAndDoesNotCreateAttempt" />
+    </UnitTest>
+    <UnitTest name="Exam.Tests.SqlExamTests.AnotherStudentCannotTriggerGradingOfAnExpiredAttempt" storage="d:\sgu_laptrinh_csharp_2026-2027\exam management application\artifacts\review-test\exam.tests.dll" id="3ae72a3b-960e-02f3-4f6a-c3c125c03286">
+      <Execution id="7d0b915f-4630-4f5b-9bb5-ee00670368a9" />
+      <TestMethod codeBase="D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\artifacts\review-test\Exam.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Exam.Tests.SqlExamTests" name="AnotherStudentCannotTriggerGradingOfAnExpiredAttempt" />
+    </UnitTest>
+    <UnitTest name="Exam.Tests.ClassRegistrationTests.RosterMigrationBackfillsEligibleStudentsWithoutRepeatingOrReplacingRows" storage="d:\sgu_laptrinh_csharp_2026-2027\exam management application\artifacts\review-test\exam.tests.dll" id="dc7ab3ca-6817-b858-9a2c-1424f5b7c3f6">
+      <Execution id="6bc4350e-be77-4f2a-9ec4-2d96c9990dd7" />
+      <TestMethod codeBase="D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\artifacts\review-test\Exam.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Exam.Tests.ClassRegistrationTests" name="RosterMigrationBackfillsEligibleStudentsWithoutRepeatingOrReplacingRows" />
+    </UnitTest>
+    <UnitTest name="Exam.Tests.CsvStudentsTests.QuotedNamesAndEmbeddedLineBreaksRemainInTheCorrectColumns" storage="d:\sgu_laptrinh_csharp_2026-2027\exam management application\artifacts\review-test\exam.tests.dll" id="e4a2763b-83ba-711b-48c3-b9a2d1b1c1d8">
+      <Execution id="4d184c29-17b2-4130-b7b1-fe1b04da1ca7" />
+      <TestMethod codeBase="D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\artifacts\review-test\Exam.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Exam.Tests.CsvStudentsTests" name="QuotedNamesAndEmbeddedLineBreaksRemainInTheCorrectColumns" />
+    </UnitTest>
+    <UnitTest name="Exam.Tests.DockerDatabaseStartupTests.RejectsSqlEndpointsOutsideDocker(server: &quot;(localdb)\\MSSQLLocalDB&quot;)" storage="d:\sgu_laptrinh_csharp_2026-2027\exam management application\artifacts\review-test\exam.tests.dll" id="f41200f4-4074-a033-9ac9-82544b0864a3">
+      <Execution id="e7ca50f6-4002-4bea-a71f-46f3f855b969" />
+      <TestMethod codeBase="D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\artifacts\review-test\Exam.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Exam.Tests.DockerDatabaseStartupTests" name="RejectsSqlEndpointsOutsideDocker" />
+    </UnitTest>
+    <UnitTest name="Exam.Tests.DockerDatabaseStartupTests.AllowsDockerDatabaseAndIsolatedTestDatabases(server: &quot;localhost,14333&quot;)" storage="d:\sgu_laptrinh_csharp_2026-2027\exam management application\artifacts\review-test\exam.tests.dll" id="b2317bfd-c648-55e9-a778-8391648ae1b4">
+      <Execution id="e5f53ec3-6ec5-4c0d-afde-535717fee544" />
+      <TestMethod codeBase="D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\artifacts\review-test\Exam.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Exam.Tests.DockerDatabaseStartupTests" name="AllowsDockerDatabaseAndIsolatedTestDatabases" />
+    </UnitTest>
+    <UnitTest name="Exam.Tests.DockerDatabaseStartupTests.RejectsSqlEndpointsOutsideDocker(server: &quot;localhost,1433&quot;)" storage="d:\sgu_laptrinh_csharp_2026-2027\exam management application\artifacts\review-test\exam.tests.dll" id="f1a54747-17f9-99b7-9e13-6b147bddd697">
+      <Execution id="e645b7ee-07a1-494b-b773-7cc8e6e289db" />
+      <TestMethod codeBase="D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\artifacts\review-test\Exam.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Exam.Tests.DockerDatabaseStartupTests" name="RejectsSqlEndpointsOutsideDocker" />
+    </UnitTest>
+    <UnitTest name="Exam.Tests.ClassRegistrationTests.WebLecturerWorkflowAndStudentClassNavigation" storage="d:\sgu_laptrinh_csharp_2026-2027\exam management application\artifacts\review-test\exam.tests.dll" id="ca7aebbb-ddea-6c13-6629-c4a92e7feaf2">
+      <Execution id="63f27bde-b1d9-474f-9d3e-7f6e155cd80e" />
+      <TestMethod codeBase="D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\artifacts\review-test\Exam.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Exam.Tests.ClassRegistrationTests" name="WebLecturerWorkflowAndStudentClassNavigation" />
+    </UnitTest>
+    <UnitTest name="Exam.Tests.ExamRulesTests.TenPointExamsPreserveEarnedPointsAndRoundOnlyTheFinalScore(earned: 7.5, expected: 7.5)" storage="d:\sgu_laptrinh_csharp_2026-2027\exam management application\artifacts\review-test\exam.tests.dll" id="9277c518-2a8b-a43e-be20-e84f44f9be0d">
+      <Execution id="6a347e5e-5a59-4997-b49d-d1ce082feea6" />
+      <TestMethod codeBase="D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\artifacts\review-test\Exam.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Exam.Tests.ExamRulesTests" name="TenPointExamsPreserveEarnedPointsAndRoundOnlyTheFinalScore" />
+    </UnitTest>
+    <UnitTest name="Exam.Tests.DockerDatabaseStartupTests.RejectsSqlEndpointsOutsideDocker(server: &quot;.\\SQLEXPRESS&quot;)" storage="d:\sgu_laptrinh_csharp_2026-2027\exam management application\artifacts\review-test\exam.tests.dll" id="dd2e3337-5bc9-7968-ee5b-da8f26f178e0">
+      <Execution id="23166084-98f3-4ad5-9abf-335fefded5a9" />
+      <TestMethod codeBase="D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\artifacts\review-test\Exam.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Exam.Tests.DockerDatabaseStartupTests" name="RejectsSqlEndpointsOutsideDocker" />
+    </UnitTest>
+    <UnitTest name="Exam.Tests.CsvStudentsTests.MalformedCsvIsRejectedBeforeAnyImport(input: &quot;a,\&quot;chưa đóng&quot;)" storage="d:\sgu_laptrinh_csharp_2026-2027\exam management application\artifacts\review-test\exam.tests.dll" id="82581c06-21f3-e989-4ae6-736808847433">
+      <Execution id="3470a296-65bb-443a-9707-f13e6a8e2522" />
+      <TestMethod codeBase="D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\artifacts\review-test\Exam.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Exam.Tests.CsvStudentsTests" name="MalformedCsvIsRejectedBeforeAnyImport" />
+    </UnitTest>
+    <UnitTest name="Exam.Tests.ClassRegistrationTests.PostponementClearsTheRosterAndCancellationKeepsIt" storage="d:\sgu_laptrinh_csharp_2026-2027\exam management application\artifacts\review-test\exam.tests.dll" id="b2e05e2f-2575-3d91-0f58-c98108b7bb75">
+      <Execution id="87a5d8b5-462f-4f11-b99e-a430409bff18" />
+      <TestMethod codeBase="D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\artifacts\review-test\Exam.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Exam.Tests.ClassRegistrationTests" name="PostponementClearsTheRosterAndCancellationKeepsIt" />
+    </UnitTest>
+    <UnitTest name="Exam.Tests.SqlExamTests.AttemptPayloadNeverContainsCorrectAnswerFields" storage="d:\sgu_laptrinh_csharp_2026-2027\exam management application\artifacts\review-test\exam.tests.dll" id="24d90a87-06de-22b1-d6ca-a84646102c89">
+      <Execution id="0578947d-5405-4909-96ea-e8d0c7c5a3ff" />
+      <TestMethod codeBase="D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\artifacts\review-test\Exam.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Exam.Tests.SqlExamTests" name="AttemptPayloadNeverContainsCorrectAnswerFields" />
+    </UnitTest>
+    <UnitTest name="Exam.Tests.ExamRulesTests.TenPointExamsPreserveEarnedPointsAndRoundOnlyTheFinalScore(earned: 10, expected: 10)" storage="d:\sgu_laptrinh_csharp_2026-2027\exam management application\artifacts\review-test\exam.tests.dll" id="e7f00a6d-e4ad-7634-36bc-1ca0e3dc062f">
+      <Execution id="1459fbc2-fc3a-40c4-bdfa-8efeed6322ea" />
+      <TestMethod codeBase="D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\artifacts\review-test\Exam.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Exam.Tests.ExamRulesTests" name="TenPointExamsPreserveEarnedPointsAndRoundOnlyTheFinalScore" />
+    </UnitTest>
+    <UnitTest name="Exam.Tests.RegistrationValidationTests.ValidatesPublicRegistration(accountType: &quot;Lecturer&quot;, studentCode: null, invalidField: null)" storage="d:\sgu_laptrinh_csharp_2026-2027\exam management application\artifacts\review-test\exam.tests.dll" id="1d110222-20f7-f040-7b5e-c6122c1e8a96">
+      <Execution id="1544b484-f507-46d8-bd64-0e7bb830d0a0" />
+      <TestMethod codeBase="D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\artifacts\review-test\Exam.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Exam.Tests.RegistrationValidationTests" name="ValidatesPublicRegistration" />
+    </UnitTest>
+    <UnitTest name="Exam.Tests.SqlExamTests.LecturerPublishesAndExportsOnlyOwnedSession" storage="d:\sgu_laptrinh_csharp_2026-2027\exam management application\artifacts\review-test\exam.tests.dll" id="3b1560d6-bd61-dbf9-d265-d35864abb76f">
+      <Execution id="709b7d07-8a72-45b4-8450-de0c6033fb51" />
+      <TestMethod codeBase="D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\artifacts\review-test\Exam.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Exam.Tests.SqlExamTests" name="LecturerPublishesAndExportsOnlyOwnedSession" />
+    </UnitTest>
+    <UnitTest name="Exam.Tests.RegistrationValidationTests.ValidatesPublicRegistration(accountType: &quot;Administrator&quot;, studentCode: null, invalidField: &quot;AccountType&quot;)" storage="d:\sgu_laptrinh_csharp_2026-2027\exam management application\artifacts\review-test\exam.tests.dll" id="b336fed0-7350-1005-93aa-49bfe39a3269">
+      <Execution id="0d301a52-e53c-4c19-ab0d-1de1894bd3ae" />
+      <TestMethod codeBase="D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\artifacts\review-test\Exam.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Exam.Tests.RegistrationValidationTests" name="ValidatesPublicRegistration" />
+    </UnitTest>
+    <UnitTest name="Exam.Tests.SqlExamTests.StartingAfterTheSessionClosesDoesNotCreateAnAttempt" storage="d:\sgu_laptrinh_csharp_2026-2027\exam management application\artifacts\review-test\exam.tests.dll" id="92c9b9b8-1c58-7202-0bc2-e5d22ee8eb6d">
+      <Execution id="510ff08a-699f-4777-aab7-362a835db716" />
+      <TestMethod codeBase="D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\artifacts\review-test\Exam.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Exam.Tests.SqlExamTests" name="StartingAfterTheSessionClosesDoesNotCreateAnAttempt" />
+    </UnitTest>
+    <UnitTest name="Exam.Tests.CsvStudentsTests.MalformedCsvIsRejectedBeforeAnyImport(input: &quot;a,nội\&quot;dung&quot;)" storage="d:\sgu_laptrinh_csharp_2026-2027\exam management application\artifacts\review-test\exam.tests.dll" id="62da118e-15ea-2915-447e-70e57cc3dc10">
+      <Execution id="2372abea-3f06-469e-a378-1b05d96f7a75" />
+      <TestMethod codeBase="D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\artifacts\review-test\Exam.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Exam.Tests.CsvStudentsTests" name="MalformedCsvIsRejectedBeforeAnyImport" />
+    </UnitTest>
+    <UnitTest name="Exam.Tests.ClassRegistrationTests.ClassDetailRequiresMembershipAndHidesDraftAndWrongSubjectSessions" storage="d:\sgu_laptrinh_csharp_2026-2027\exam management application\artifacts\review-test\exam.tests.dll" id="66556560-cfaf-71b8-3fb8-31b435217a9f">
+      <Execution id="1173ee35-26e1-4dfc-81b5-f247b18fbc6d" />
+      <TestMethod codeBase="D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\artifacts\review-test\Exam.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Exam.Tests.ClassRegistrationTests" name="ClassDetailRequiresMembershipAndHidesDraftAndWrongSubjectSessions" />
+    </UnitTest>
+    <UnitTest name="Exam.Tests.SqlExamTests.SavingAtTheExactDeadlineIsRejected" storage="d:\sgu_laptrinh_csharp_2026-2027\exam management application\artifacts\review-test\exam.tests.dll" id="ed1e9d99-4af1-455c-c454-22d7e6b3a878">
+      <Execution id="85e30f43-59da-4c4b-88bf-e2ce2c565723" />
+      <TestMethod codeBase="D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\artifacts\review-test\Exam.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Exam.Tests.SqlExamTests" name="SavingAtTheExactDeadlineIsRejected" />
+    </UnitTest>
+    <UnitTest name="Exam.Tests.ExamRulesTests.ASessionContainedInsideAnotherStillOverlaps" storage="d:\sgu_laptrinh_csharp_2026-2027\exam management application\artifacts\review-test\exam.tests.dll" id="cfe7352b-28c7-3498-f23c-966f96cdc154">
+      <Execution id="41850e1e-5f28-4eb6-be23-8653906c12c4" />
+      <TestMethod codeBase="D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\artifacts\review-test\Exam.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Exam.Tests.ExamRulesTests" name="ASessionContainedInsideAnotherStillOverlaps" />
+    </UnitTest>
+    <UnitTest name="Exam.Tests.ExamRulesTests.DeadlineAlwaysGivesTheFullDuration(duration: 60, minutesUntilClose: 30)" storage="d:\sgu_laptrinh_csharp_2026-2027\exam management application\artifacts\review-test\exam.tests.dll" id="da8bef32-0d4d-8e3b-4b33-1eccc45cd957">
+      <Execution id="5628291b-5351-498c-9d8f-a3e6d4cda72b" />
+      <TestMethod codeBase="D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\artifacts\review-test\Exam.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Exam.Tests.ExamRulesTests" name="DeadlineAlwaysGivesTheFullDuration" />
+    </UnitTest>
+    <UnitTest name="Exam.Tests.ExamRulesTests.DeadlineAlwaysGivesTheFullDuration(duration: 30, minutesUntilClose: 60)" storage="d:\sgu_laptrinh_csharp_2026-2027\exam management application\artifacts\review-test\exam.tests.dll" id="a4297840-7294-cf94-c657-6af5251a9e26">
+      <Execution id="bf34385b-26b9-4cb7-a90d-507e31e3902e" />
+      <TestMethod codeBase="D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\artifacts\review-test\Exam.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Exam.Tests.ExamRulesTests" name="DeadlineAlwaysGivesTheFullDuration" />
+    </UnitTest>
+    <UnitTest name="Exam.Tests.SqlExamTests.DemoClassMembershipIsPrivateAndJoiningTwiceIsIdempotent" storage="d:\sgu_laptrinh_csharp_2026-2027\exam management application\artifacts\review-test\exam.tests.dll" id="0b2a3b34-4ba8-d156-5e51-d09be2646231">
+      <Execution id="223bc5b6-bce1-40fa-8d6b-39dcbcca2d59" />
+      <TestMethod codeBase="D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\artifacts\review-test\Exam.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Exam.Tests.SqlExamTests" name="DemoClassMembershipIsPrivateAndJoiningTwiceIsIdempotent" />
+    </UnitTest>
+    <UnitTest name="Exam.Tests.RegistrationValidationTests.ValidatesPublicRegistration(accountType: &quot;Student&quot;, studentCode: null, invalidField: &quot;StudentCode&quot;)" storage="d:\sgu_laptrinh_csharp_2026-2027\exam management application\artifacts\review-test\exam.tests.dll" id="13d7b362-909b-5bc4-a516-e6c3fb19cc18">
+      <Execution id="2c5cf270-b1e0-4844-ba0f-ba71e24515c2" />
+      <TestMethod codeBase="D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\artifacts\review-test\Exam.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Exam.Tests.RegistrationValidationTests" name="ValidatesPublicRegistration" />
+    </UnitTest>
+    <UnitTest name="Exam.Tests.SqlExamTests.SnapshotAndGradingSurviveSourceChangesAndUnpublishedResultsStayHidden" storage="d:\sgu_laptrinh_csharp_2026-2027\exam management application\artifacts\review-test\exam.tests.dll" id="51a41cf6-8bd9-4a3e-1e0e-6e0400646874">
+      <Execution id="9a83bc73-7e8e-49c8-b615-624c9ffd25b9" />
+      <TestMethod codeBase="D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\artifacts\review-test\Exam.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Exam.Tests.SqlExamTests" name="SnapshotAndGradingSurviveSourceChangesAndUnpublishedResultsStayHidden" />
+    </UnitTest>
+    <UnitTest name="Exam.Tests.SqlExamTests.RepeatedStartKeepsTheOriginalAttemptAndDeadline" storage="d:\sgu_laptrinh_csharp_2026-2027\exam management application\artifacts\review-test\exam.tests.dll" id="df5d7b1c-3482-7dcb-3671-bc35ccad76ff">
+      <Execution id="2dc1d9bd-c2a2-47a5-8ae0-f2f3c8e59d79" />
+      <TestMethod codeBase="D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\artifacts\review-test\Exam.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Exam.Tests.SqlExamTests" name="RepeatedStartKeepsTheOriginalAttemptAndDeadline" />
+    </UnitTest>
+    <UnitTest name="Exam.Tests.RegistrationValidationTests.ValidatesPublicRegistration(accountType: &quot;Student&quot;, studentCode: &quot;SV001&quot;, invalidField: null)" storage="d:\sgu_laptrinh_csharp_2026-2027\exam management application\artifacts\review-test\exam.tests.dll" id="1c903f14-11f0-e4bc-6a3a-1bde34943f1a">
+      <Execution id="607f48e1-4a84-4af9-9dfb-05cc461f5fcb" />
+      <TestMethod codeBase="D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\artifacts\review-test\Exam.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Exam.Tests.RegistrationValidationTests" name="ValidatesPublicRegistration" />
+    </UnitTest>
+    <UnitTest name="Exam.Tests.ClassRegistrationTests.RegistrationPersistsPhoneAndActivatesLecturer" storage="d:\sgu_laptrinh_csharp_2026-2027\exam management application\artifacts\review-test\exam.tests.dll" id="5a74a390-2057-f684-d19b-3c20283c2ae4">
+      <Execution id="df7b9412-998c-4539-a457-c07557acfb2a" />
+      <TestMethod codeBase="D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\artifacts\review-test\Exam.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Exam.Tests.ClassRegistrationTests" name="RegistrationPersistsPhoneAndActivatesLecturer" />
+    </UnitTest>
+    <UnitTest name="Exam.Tests.ExamRulesTests.AdjacentSessionsDoNotOverlap" storage="d:\sgu_laptrinh_csharp_2026-2027\exam management application\artifacts\review-test\exam.tests.dll" id="fd09df1c-5071-cd3b-4139-4816ec2211ff">
+      <Execution id="cacec29c-28ba-4694-b61f-494ed9031333" />
+      <TestMethod codeBase="D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\artifacts\review-test\Exam.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Exam.Tests.ExamRulesTests" name="AdjacentSessionsDoNotOverlap" />
+    </UnitTest>
+    <UnitTest name="Exam.Tests.DockerDatabaseStartupTests.RejectsSqlEndpointsOutsideDocker(server: &quot;remote-server,14333&quot;)" storage="d:\sgu_laptrinh_csharp_2026-2027\exam management application\artifacts\review-test\exam.tests.dll" id="bc9fbcb4-ae28-564d-e5a7-a8dd84dceaf3">
+      <Execution id="90070612-d93c-43be-88ba-15d0fde5421b" />
+      <TestMethod codeBase="D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\artifacts\review-test\Exam.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Exam.Tests.DockerDatabaseStartupTests" name="RejectsSqlEndpointsOutsideDocker" />
+    </UnitTest>
+    <UnitTest name="Exam.Tests.CsvStudentsTests.EscapedQuotesAndAnEmptyFinalFieldArePreserved" storage="d:\sgu_laptrinh_csharp_2026-2027\exam management application\artifacts\review-test\exam.tests.dll" id="2b1bcaf1-4833-e541-c3b9-1395af8ba054">
+      <Execution id="9f48dbef-3bd8-44d4-b491-d089dcbce327" />
+      <TestMethod codeBase="D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\artifacts\review-test\Exam.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Exam.Tests.CsvStudentsTests" name="EscapedQuotesAndAnEmptyFinalFieldArePreserved" />
+    </UnitTest>
+    <UnitTest name="Exam.Tests.ExamRulesTests.TenPointExamsPreserveEarnedPointsAndRoundOnlyTheFinalScore(earned: 2.345, expected: 2.35)" storage="d:\sgu_laptrinh_csharp_2026-2027\exam management application\artifacts\review-test\exam.tests.dll" id="47617cda-c169-e6cd-5c2b-e832c11a038d">
+      <Execution id="8a559f76-a62e-480e-b917-aef9bf68147a" />
+      <TestMethod codeBase="D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\artifacts\review-test\Exam.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Exam.Tests.ExamRulesTests" name="TenPointExamsPreserveEarnedPointsAndRoundOnlyTheFinalScore" />
+    </UnitTest>
+    <UnitTest name="Exam.Tests.ClassRegistrationTests.SessionValidationIdentifiesOnlyTheFieldThatNeedsCorrection" storage="d:\sgu_laptrinh_csharp_2026-2027\exam management application\artifacts\review-test\exam.tests.dll" id="2615e923-1a6c-3a3c-8101-5df4ccb7f803">
+      <Execution id="45beab5d-2a56-4f73-b20d-59b7e0825eb0" />
+      <TestMethod codeBase="D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\artifacts\review-test\Exam.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Exam.Tests.ClassRegistrationTests" name="SessionValidationIdentifiesOnlyTheFieldThatNeedsCorrection" />
+    </UnitTest>
+    <UnitTest name="Exam.Tests.SqlExamTests.ExpiryCommitsHealthyAttemptsWhenOneResultCannotBeWritten" storage="d:\sgu_laptrinh_csharp_2026-2027\exam management application\artifacts\review-test\exam.tests.dll" id="be0bf2a5-6ee7-4fad-4381-a302f6b5f40a">
+      <Execution id="bfe0b146-7eb8-4d62-ac60-3c3e3be60046" />
+      <TestMethod codeBase="D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\artifacts\review-test\Exam.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Exam.Tests.SqlExamTests" name="ExpiryCommitsHealthyAttemptsWhenOneResultCannotBeWritten" />
+    </UnitTest>
+    <UnitTest name="Exam.Tests.SqlExamTests.AnotherStudentCannotOpenOrChangeTheAttempt" storage="d:\sgu_laptrinh_csharp_2026-2027\exam management application\artifacts\review-test\exam.tests.dll" id="00f254be-9565-9283-e9b3-75f822a3aaac">
+      <Execution id="2782be5c-5515-4902-b16d-0b6716120e4d" />
+      <TestMethod codeBase="D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\artifacts\review-test\Exam.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Exam.Tests.SqlExamTests" name="AnotherStudentCannotOpenOrChangeTheAttempt" />
+    </UnitTest>
+    <UnitTest name="Exam.Tests.SqlExamTests.ConcurrentStartCreatesOneAttemptAndReturnsTheSameId" storage="d:\sgu_laptrinh_csharp_2026-2027\exam management application\artifacts\review-test\exam.tests.dll" id="acd7a671-204b-82da-6409-957c85a57022">
+      <Execution id="1df8738f-d027-4446-8139-399ec66e5ce2" />
+      <TestMethod codeBase="D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\artifacts\review-test\Exam.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Exam.Tests.SqlExamTests" name="ConcurrentStartCreatesOneAttemptAndReturnsTheSameId" />
+    </UnitTest>
+    <UnitTest name="Exam.Tests.DockerDatabaseStartupTests.AllowsDockerDatabaseAndIsolatedTestDatabases(server: &quot;tcp:127.0.0.1,14333&quot;)" storage="d:\sgu_laptrinh_csharp_2026-2027\exam management application\artifacts\review-test\exam.tests.dll" id="e5319687-77d9-8229-b3c8-518ae838c6a4">
+      <Execution id="97347d55-396a-46b0-a73f-0f56ac77369a" />
+      <TestMethod codeBase="D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\artifacts\review-test\Exam.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Exam.Tests.DockerDatabaseStartupTests" name="AllowsDockerDatabaseAndIsolatedTestDatabases" />
+    </UnitTest>
+    <UnitTest name="Exam.Tests.SqlExamTests.DatabaseItselfRejectsAnOptionOwnedByAnotherQuestion" storage="d:\sgu_laptrinh_csharp_2026-2027\exam management application\artifacts\review-test\exam.tests.dll" id="35d0aad0-0d9d-2b85-3996-70f14565ecbb">
+      <Execution id="f1825eb7-3e15-415e-9f13-ce4f2cf17166" />
+      <TestMethod codeBase="D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\artifacts\review-test\Exam.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Exam.Tests.SqlExamTests" name="DatabaseItselfRejectsAnOptionOwnedByAnotherQuestion" />
+    </UnitTest>
+    <UnitTest name="Exam.Tests.SqlExamTests.DatabaseItselfRejectsDuplicateAttemptsEvenWithoutCallingTheService" storage="d:\sgu_laptrinh_csharp_2026-2027\exam management application\artifacts\review-test\exam.tests.dll" id="563d1745-9010-ca0c-aac9-399bf09054f0">
+      <Execution id="ccee73fc-a07d-4054-b2eb-d7c770413602" />
+      <TestMethod codeBase="D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\artifacts\review-test\Exam.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Exam.Tests.SqlExamTests" name="DatabaseItselfRejectsDuplicateAttemptsEvenWithoutCallingTheService" />
+    </UnitTest>
+    <UnitTest name="Exam.Tests.ExamRulesTests.TenPointExamsPreserveEarnedPointsAndRoundOnlyTheFinalScore(earned: 0, expected: 0)" storage="d:\sgu_laptrinh_csharp_2026-2027\exam management application\artifacts\review-test\exam.tests.dll" id="bf59d2a4-0e47-6768-6f70-9e035edad7e5">
+      <Execution id="20e7441e-4c48-4856-a0ee-9ed4cbdbce46" />
+      <TestMethod codeBase="D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\artifacts\review-test\Exam.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Exam.Tests.ExamRulesTests" name="TenPointExamsPreserveEarnedPointsAndRoundOnlyTheFinalScore" />
+    </UnitTest>
+    <UnitTest name="Exam.Tests.SqlExamTests.LecturerActivatesDraftForAssignedClassAndStudentCanJoin" storage="d:\sgu_laptrinh_csharp_2026-2027\exam management application\artifacts\review-test\exam.tests.dll" id="5d08def4-7a0d-5c7b-f1ea-aa8309d08c77">
+      <Execution id="4aa34c1f-7db3-4744-ac85-d7f27a99deaa" />
+      <TestMethod codeBase="D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\artifacts\review-test\Exam.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Exam.Tests.SqlExamTests" name="LecturerActivatesDraftForAssignedClassAndStudentCanJoin" />
+    </UnitTest>
+    <UnitTest name="Exam.Tests.CsvStudentsTests.MalformedCsvIsRejectedBeforeAnyImport(input: &quot;a,\&quot;đã đóng\&quot;lẫn dữ liệu&quot;)" storage="d:\sgu_laptrinh_csharp_2026-2027\exam management application\artifacts\review-test\exam.tests.dll" id="43999b08-b034-a494-ba9e-0f3cf3491be5">
+      <Execution id="01c89ac9-2a1f-421c-ae3b-886584726464" />
+      <TestMethod codeBase="D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\artifacts\review-test\Exam.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Exam.Tests.CsvStudentsTests" name="MalformedCsvIsRejectedBeforeAnyImport" />
+    </UnitTest>
+    <UnitTest name="Exam.Tests.ClassRegistrationTests.LecturerReplacesDraftClassAndActivationLocksConfiguration" storage="d:\sgu_laptrinh_csharp_2026-2027\exam management application\artifacts\review-test\exam.tests.dll" id="05f79c99-86dd-0401-f5e9-e1aced3f5303">
+      <Execution id="c9bc7976-ce29-43bd-a56a-bb654bf3966f" />
+      <TestMethod codeBase="D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\artifacts\review-test\Exam.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Exam.Tests.ClassRegistrationTests" name="LecturerReplacesDraftClassAndActivationLocksConfiguration" />
+    </UnitTest>
+    <UnitTest name="Exam.Tests.ClassRegistrationTests.PublicationImmediatelyShowsFinishedResultsAndAutomaticallyIncludesLaterSubmissions" storage="d:\sgu_laptrinh_csharp_2026-2027\exam management application\artifacts\review-test\exam.tests.dll" id="8b782cd9-9753-10d3-f3c6-2527c4637f4d">
+      <Execution id="1397ade8-ecb3-48c6-8f5d-58ac25a00d67" />
+      <TestMethod codeBase="D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\artifacts\review-test\Exam.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Exam.Tests.ClassRegistrationTests" name="PublicationImmediatelyShowsFinishedResultsAndAutomaticallyIncludesLaterSubmissions" />
+    </UnitTest>
+    <UnitTest name="Exam.Tests.SqlExamTests.PaperTotalCannotExceedTenWhenSavedOrMarkedReady" storage="d:\sgu_laptrinh_csharp_2026-2027\exam management application\artifacts\review-test\exam.tests.dll" id="7ffb1b03-21eb-a307-6fed-f6707b19b9f6">
+      <Execution id="988f9136-312e-4078-9560-d188aeffb37c" />
+      <TestMethod codeBase="D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\artifacts\review-test\Exam.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Exam.Tests.SqlExamTests" name="PaperTotalCannotExceedTenWhenSavedOrMarkedReady" />
+    </UnitTest>
+    <UnitTest name="Exam.Tests.ClassRegistrationTests.LecturerClassPageAndMembershipRespectSubjectScope" storage="d:\sgu_laptrinh_csharp_2026-2027\exam management application\artifacts\review-test\exam.tests.dll" id="9d60bcbc-0647-69cb-a2b8-9d9debc44539">
+      <Execution id="b78c82e7-637b-4fe1-aaac-2bdef02e530c" />
+      <TestMethod codeBase="D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\artifacts\review-test\Exam.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Exam.Tests.ClassRegistrationTests" name="LecturerClassPageAndMembershipRespectSubjectScope" />
+    </UnitTest>
+    <UnitTest name="Exam.Tests.ClassRegistrationTests.ProfileUpdatesOnlyContactFieldsAndRejectsStaleVersions" storage="d:\sgu_laptrinh_csharp_2026-2027\exam management application\artifacts\review-test\exam.tests.dll" id="a640cbf9-e86b-86eb-cebd-47b69df84937">
+      <Execution id="d955d8a9-3d5c-486f-830f-00b974a6213e" />
+      <TestMethod codeBase="D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\artifacts\review-test\Exam.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Exam.Tests.ClassRegistrationTests" name="ProfileUpdatesOnlyContactFieldsAndRejectsStaleVersions" />
+    </UnitTest>
+    <UnitTest name="Exam.Tests.ClassRegistrationTests.DeadlineMigrationExtendsOnlyUnfinishedAttemptsClippedByAdmissionClose" storage="d:\sgu_laptrinh_csharp_2026-2027\exam management application\artifacts\review-test\exam.tests.dll" id="07d68c1b-1a41-0599-38a1-8df4ea57a91a">
+      <Execution id="0797d717-811a-4790-a7ef-62534faad5d9" />
+      <TestMethod codeBase="D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\artifacts\review-test\Exam.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Exam.Tests.ClassRegistrationTests" name="DeadlineMigrationExtendsOnlyUnfinishedAttemptsClippedByAdmissionClose" />
+    </UnitTest>
+    <UnitTest name="Exam.Tests.SqlExamTests.DatabaseRejectsDuplicateSessionClassAndAccessCode" storage="d:\sgu_laptrinh_csharp_2026-2027\exam management application\artifacts\review-test\exam.tests.dll" id="fbc3e182-1d91-60fe-d8f4-944c0784292d">
+      <Execution id="cb4cef74-684c-44d7-8541-16d1c0c54686" />
+      <TestMethod codeBase="D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\artifacts\review-test\Exam.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Exam.Tests.SqlExamTests" name="DatabaseRejectsDuplicateSessionClassAndAccessCode" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="cfe7352b-28c7-3498-f23c-966f96cdc154" executionId="41850e1e-5f28-4eb6-be23-8653906c12c4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f41200f4-4074-a033-9ac9-82544b0864a3" executionId="e7ca50f6-4002-4bea-a71f-46f3f855b969" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b336fed0-7350-1005-93aa-49bfe39a3269" executionId="0d301a52-e53c-4c19-ab0d-1de1894bd3ae" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0b2a3b34-4ba8-d156-5e51-d09be2646231" executionId="223bc5b6-bce1-40fa-8d6b-39dcbcca2d59" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="bc9fbcb4-ae28-564d-e5a7-a8dd84dceaf3" executionId="90070612-d93c-43be-88ba-15d0fde5421b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a1da80e1-f6a1-9b59-c410-84990fd63ef8" executionId="d24b1544-d3ad-49ba-bde0-5070aa01fac9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9d60bcbc-0647-69cb-a2b8-9d9debc44539" executionId="b78c82e7-637b-4fe1-aaac-2bdef02e530c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e7f00a6d-e4ad-7634-36bc-1ca0e3dc062f" executionId="1459fbc2-fc3a-40c4-bdfa-8efeed6322ea" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ed1e9d99-4af1-455c-c454-22d7e6b3a878" executionId="85e30f43-59da-4c4b-88bf-e2ce2c565723" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f17e50c9-f174-2b8c-10f2-ff4f07d05a5f" executionId="f395b162-b8e6-41a0-add6-79ffee18ed59" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="dc7ab3ca-6817-b858-9a2c-1424f5b7c3f6" executionId="6bc4350e-be77-4f2a-9ec4-2d96c9990dd7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3b1560d6-bd61-dbf9-d265-d35864abb76f" executionId="709b7d07-8a72-45b4-8450-de0c6033fb51" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="df5d7b1c-3482-7dcb-3671-bc35ccad76ff" executionId="2dc1d9bd-c2a2-47a5-8ae0-f2f3c8e59d79" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1c903f14-11f0-e4bc-6a3a-1bde34943f1a" executionId="607f48e1-4a84-4af9-9dfb-05cc461f5fcb" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c9f23cb1-22eb-34e5-639b-bc8c7c0f7fd3" executionId="619580bc-8ac2-445c-8631-20685dce7c4b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="be0bf2a5-6ee7-4fad-4381-a302f6b5f40a" executionId="bfe0b146-7eb8-4d62-ac60-3c3e3be60046" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a4297840-7294-cf94-c657-6af5251a9e26" executionId="bf34385b-26b9-4cb7-a90d-507e31e3902e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b90849ed-87c7-3634-3d03-ea6aec6b74c4" executionId="1842c16a-9104-47db-a98f-fdd99d516726" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2dd3e6a9-0738-3708-f574-f8085ca7cf37" executionId="2c8a2df7-1bd6-4d6a-a9ba-54583d99f98c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5a74a390-2057-f684-d19b-3c20283c2ae4" executionId="df7b9412-998c-4539-a457-c07557acfb2a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7ffb1b03-21eb-a307-6fed-f6707b19b9f6" executionId="988f9136-312e-4078-9560-d188aeffb37c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f0f53ab1-ff16-ed0b-60b3-a3bd73732f33" executionId="be25d09d-0981-453d-b74a-af96abecfdd0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="83b8fd04-c2b3-61d2-0c83-e645162ba5de" executionId="64a7573d-0874-4463-b392-e84db54812ba" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="dd2e3337-5bc9-7968-ee5b-da8f26f178e0" executionId="23166084-98f3-4ad5-9abf-335fefded5a9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9277c518-2a8b-a43e-be20-e84f44f9be0d" executionId="6a347e5e-5a59-4997-b49d-d1ce082feea6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="05f79c99-86dd-0401-f5e9-e1aced3f5303" executionId="c9bc7976-ce29-43bd-a56a-bb654bf3966f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="bedcf118-55f7-fe39-85ac-82323b15cddb" executionId="21a18f8e-7f64-4d3f-a816-f6fd2ae82889" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="24d90a87-06de-22b1-d6ca-a84646102c89" executionId="0578947d-5405-4909-96ea-e8d0c7c5a3ff" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f1a54747-17f9-99b7-9e13-6b147bddd697" executionId="e645b7ee-07a1-494b-b773-7cc8e6e289db" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="07d68c1b-1a41-0599-38a1-8df4ea57a91a" executionId="0797d717-811a-4790-a7ef-62534faad5d9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b2e05e2f-2575-3d91-0f58-c98108b7bb75" executionId="87a5d8b5-462f-4f11-b99e-a430409bff18" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="563d1745-9010-ca0c-aac9-399bf09054f0" executionId="ccee73fc-a07d-4054-b2eb-d7c770413602" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d67f60fa-2f81-9a44-6a93-dd8e7c2729f0" executionId="d031d455-2d30-481e-8a76-3f178dff0f78" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2b1bcaf1-4833-e541-c3b9-1395af8ba054" executionId="9f48dbef-3bd8-44d4-b491-d089dcbce327" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fd09df1c-5071-cd3b-4139-4816ec2211ff" executionId="cacec29c-28ba-4694-b61f-494ed9031333" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="43999b08-b034-a494-ba9e-0f3cf3491be5" executionId="01c89ac9-2a1f-421c-ae3b-886584726464" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f73a4d48-a6f4-e375-d1e1-98f59c1fa6fd" executionId="d8b2dce7-bb8c-453b-af95-b57dad38a664" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9c2ee85d-9525-0bab-b8e1-eabb1e7336f3" executionId="b0faffeb-28b4-41ec-88ea-91a153357b55" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a640cbf9-e86b-86eb-cebd-47b69df84937" executionId="d955d8a9-3d5c-486f-830f-00b974a6213e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="bf59d2a4-0e47-6768-6f70-9e035edad7e5" executionId="20e7441e-4c48-4856-a0ee-9ed4cbdbce46" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="173968a7-993e-1b54-7cfb-67b74221dcb4" executionId="aa4f16e8-0bb7-4560-b3d1-dcf23620fc9e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="62da118e-15ea-2915-447e-70e57cc3dc10" executionId="2372abea-3f06-469e-a378-1b05d96f7a75" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="061f4ffe-6845-3191-5ac7-08a2b6a8857c" executionId="db6e363d-35c9-4acb-8306-a5770aab02c7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fbc3e182-1d91-60fe-d8f4-944c0784292d" executionId="cb4cef74-684c-44d7-8541-16d1c0c54686" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="79c554bb-030f-dc0d-9f56-9806c23e99af" executionId="e0ea919b-ccb9-4728-93d7-908fd9b8681f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1d110222-20f7-f040-7b5e-c6122c1e8a96" executionId="1544b484-f507-46d8-bd64-0e7bb830d0a0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ca7aebbb-ddea-6c13-6629-c4a92e7feaf2" executionId="63f27bde-b1d9-474f-9d3e-7f6e155cd80e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e4a2763b-83ba-711b-48c3-b9a2d1b1c1d8" executionId="4d184c29-17b2-4130-b7b1-fe1b04da1ca7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="acd7a671-204b-82da-6409-957c85a57022" executionId="1df8738f-d027-4446-8139-399ec66e5ce2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3ae72a3b-960e-02f3-4f6a-c3c125c03286" executionId="7d0b915f-4630-4f5b-9bb5-ee00670368a9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="66556560-cfaf-71b8-3fb8-31b435217a9f" executionId="1173ee35-26e1-4dfc-81b5-f247b18fbc6d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="82581c06-21f3-e989-4ae6-736808847433" executionId="3470a296-65bb-443a-9707-f13e6a8e2522" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="47617cda-c169-e6cd-5c2b-e832c11a038d" executionId="8a559f76-a62e-480e-b917-aef9bf68147a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5d08def4-7a0d-5c7b-f1ea-aa8309d08c77" executionId="4aa34c1f-7db3-4744-ac85-d7f27a99deaa" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="00f254be-9565-9283-e9b3-75f822a3aaac" executionId="2782be5c-5515-4902-b16d-0b6716120e4d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="bc85a1f4-af72-7ffc-2364-5a6dd6632a96" executionId="257d4774-154b-4241-b199-474bc45a23f4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="35d0aad0-0d9d-2b85-3996-70f14565ecbb" executionId="f1825eb7-3e15-415e-9f13-ce4f2cf17166" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b2317bfd-c648-55e9-a778-8391648ae1b4" executionId="e5f53ec3-6ec5-4c0d-afde-535717fee544" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2615e923-1a6c-3a3c-8101-5df4ccb7f803" executionId="45beab5d-2a56-4f73-b20d-59b7e0825eb0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="13d7b362-909b-5bc4-a516-e6c3fb19cc18" executionId="2c5cf270-b1e0-4844-ba0f-ba71e24515c2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="da8bef32-0d4d-8e3b-4b33-1eccc45cd957" executionId="5628291b-5351-498c-9d8f-a3e6d4cda72b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="51a41cf6-8bd9-4a3e-1e0e-6e0400646874" executionId="9a83bc73-7e8e-49c8-b615-624c9ffd25b9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9202cbf4-de3a-557d-3d29-e6c03d68ec37" executionId="7114e28c-d5d0-41e4-a8bd-0c32050ff9aa" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e5319687-77d9-8229-b3c8-518ae838c6a4" executionId="97347d55-396a-46b0-a73f-0f56ac77369a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8b782cd9-9753-10d3-f3c6-2527c4637f4d" executionId="1397ade8-ecb3-48c6-8f5d-58ac25a00d67" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="92c9b9b8-1c58-7202-0bc2-e5d22ee8eb6d" executionId="510ff08a-699f-4777-aab7-362a835db716" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="66" executed="66" passed="46" failed="20" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v4.0.1+0f7d528729 (64-bit .NET 10.0.13)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: Exam.Tests&#xD;
+[xUnit.net 00:00:00.12]   Discovered:  Exam.Tests&#xD;
+[xUnit.net 00:00:00.15]   Starting:    Exam.Tests&#xD;
+[xUnit.net 00:00:00.98]       Assert.Equal() Failure: Collections differ&#xD;
+[xUnit.net 00:00:00.98]       Expected: [···, "Đáp án B", "Đáp án C", "Đáp án D", "Đáp án đúng"]&#xD;
+[xUnit.net 00:00:00.98]       Actual:   [···, "Đáp án B", "Đáp án C", "Đáp án D", "Đáp án đúng", "Ô A2 trở xuống gợi ý chủ đề cũ; có thể gõ chủ đề m"···]&#xD;
+[xUnit.net 00:00:00.98]                                                                          ↑ (pos 8)&#xD;
+[xUnit.net 00:00:00.98]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.98]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\QuestionExcelImportTests.cs(23,0): at Exam.Tests.QuestionExcelImportTests.DownloadTemplateIsAnXlsxWithTheExpectedColumns()&#xD;
+[xUnit.net 00:00:00.98]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.98]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:04.74]       Exam.Core.BusinessException : Đợt thi chưa có bản chụp đề hợp lệ. Hãy báo giảng viên kiểm tra và kích hoạt lại đợt.&#xD;
+[xUnit.net 00:00:04.74]       Stack Trace:&#xD;
+[xUnit.net 00:00:04.74]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs(117,0): at Exam.Services.ExamService.&lt;&gt;c__DisplayClass14_0.&lt;&lt;StartAsync&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:04.74]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:04.74]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs(90,0): at Exam.Services.ExamService.&lt;&gt;c__DisplayClass13_0`1.&lt;&lt;Serial&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:04.74]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:04.74]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs(90,0): at Exam.Services.ExamService.&lt;&gt;c__DisplayClass13_0`1.&lt;&lt;Serial&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:04.74]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:04.74]            at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.&lt;&gt;c__DisplayClass30_0`2.&lt;&lt;ExecuteAsync&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:04.74]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:04.74]            at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:04.74]            at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:04.74]            at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:04.74]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs(90,0): at Exam.Services.ExamService.Serial[T](Func`1 work)&#xD;
+[xUnit.net 00:00:04.74]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs(112,0): at Exam.Tests.SqlExamTests.LecturerPublishesAndExportsOnlyOwnedSession()&#xD;
+[xUnit.net 00:00:04.74]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs(127,0): at Exam.Tests.SqlExamTests.LecturerPublishesAndExportsOnlyOwnedSession()&#xD;
+[xUnit.net 00:00:04.74]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs(127,0): at Exam.Tests.SqlExamTests.LecturerPublishesAndExportsOnlyOwnedSession()&#xD;
+[xUnit.net 00:00:04.74]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:07.74]       Exam.Core.BusinessException : Đợt thi chưa có bản chụp đề hợp lệ. Hãy báo giảng viên kiểm tra và kích hoạt lại đợt.&#xD;
+[xUnit.net 00:00:07.74]       Stack Trace:&#xD;
+[xUnit.net 00:00:07.74]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs(117,0): at Exam.Services.ExamService.&lt;&gt;c__DisplayClass14_0.&lt;&lt;StartAsync&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:07.74]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:07.74]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs(90,0): at Exam.Services.ExamService.&lt;&gt;c__DisplayClass13_0`1.&lt;&lt;Serial&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:07.74]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:07.74]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs(90,0): at Exam.Services.ExamService.&lt;&gt;c__DisplayClass13_0`1.&lt;&lt;Serial&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:07.74]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:07.74]            at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.&lt;&gt;c__DisplayClass30_0`2.&lt;&lt;ExecuteAsync&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:07.74]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:07.74]            at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:07.74]            at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:07.74]            at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:07.74]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs(90,0): at Exam.Services.ExamService.Serial[T](Func`1 work)&#xD;
+[xUnit.net 00:00:07.74]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs(415,0): at Exam.Tests.SqlExamTests.Start()&#xD;
+[xUnit.net 00:00:07.74]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs(415,0): at Exam.Tests.SqlExamTests.Start()&#xD;
+[xUnit.net 00:00:07.74]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs(486,0): at Exam.Tests.SqlExamTests.AnotherStudentCannotOpenOrChangeTheAttempt()&#xD;
+[xUnit.net 00:00:07.74]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:08.65]       Exam.Core.BusinessException : Đợt thi chưa có bản chụp đề hợp lệ. Hãy báo giảng viên kiểm tra và kích hoạt lại đợt.&#xD;
+[xUnit.net 00:00:08.65]       Stack Trace:&#xD;
+[xUnit.net 00:00:08.65]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs(117,0): at Exam.Services.ExamService.&lt;&gt;c__DisplayClass14_0.&lt;&lt;StartAsync&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:08.65]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:08.65]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs(90,0): at Exam.Services.ExamService.&lt;&gt;c__DisplayClass13_0`1.&lt;&lt;Serial&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:08.65]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:08.65]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs(90,0): at Exam.Services.ExamService.&lt;&gt;c__DisplayClass13_0`1.&lt;&lt;Serial&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:08.65]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:08.65]            at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.&lt;&gt;c__DisplayClass30_0`2.&lt;&lt;ExecuteAsync&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:08.66]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:08.66]            at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:08.66]            at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:08.66]            at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:08.66]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs(90,0): at Exam.Services.ExamService.Serial[T](Func`1 work)&#xD;
+[xUnit.net 00:00:08.66]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs(415,0): at Exam.Tests.SqlExamTests.Start()&#xD;
+[xUnit.net 00:00:08.66]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs(415,0): at Exam.Tests.SqlExamTests.Start()&#xD;
+[xUnit.net 00:00:08.66]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs(454,0): at Exam.Tests.SqlExamTests.ConcurrentSubmitCreatesExactlyOneResult()&#xD;
+[xUnit.net 00:00:08.66]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:09.51]       Exam.Core.BusinessException : Đợt thi chưa có bản chụp đề hợp lệ. Hãy báo giảng viên kiểm tra và kích hoạt lại đợt.&#xD;
+[xUnit.net 00:00:09.51]       Stack Trace:&#xD;
+[xUnit.net 00:00:09.51]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs(117,0): at Exam.Services.ExamService.&lt;&gt;c__DisplayClass14_0.&lt;&lt;StartAsync&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:09.51]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:09.51]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs(90,0): at Exam.Services.ExamService.&lt;&gt;c__DisplayClass13_0`1.&lt;&lt;Serial&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:09.51]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:09.51]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs(90,0): at Exam.Services.ExamService.&lt;&gt;c__DisplayClass13_0`1.&lt;&lt;Serial&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:09.51]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:09.51]            at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.&lt;&gt;c__DisplayClass30_0`2.&lt;&lt;ExecuteAsync&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:09.51]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:09.51]            at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:09.51]            at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:09.51]            at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:09.51]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs(90,0): at Exam.Services.ExamService.Serial[T](Func`1 work)&#xD;
+[xUnit.net 00:00:09.51]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs(415,0): at Exam.Tests.SqlExamTests.Start()&#xD;
+[xUnit.net 00:00:09.51]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs(415,0): at Exam.Tests.SqlExamTests.Start()&#xD;
+[xUnit.net 00:00:09.51]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs(578,0): at Exam.Tests.SqlExamTests.ExpiryWorksWithoutAnOpenBrowserAndRepeatedSubmissionDoesNotCreateAnotherResult()&#xD;
+[xUnit.net 00:00:09.51]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:10.09]       Assert.True() Failure&#xD;
+[xUnit.net 00:00:10.09]       Expected: True&#xD;
+[xUnit.net 00:00:10.09]       Actual:   False&#xD;
+[xUnit.net 00:00:10.09]       Stack Trace:&#xD;
+[xUnit.net 00:00:10.09]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\WebLecturerFlowTests.cs(47,0): at Exam.Tests.ClassRegistrationTests.WebLecturerWorkflowAndStudentClassNavigation()&#xD;
+[xUnit.net 00:00:10.09]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:10.45]       Exam.Core.BusinessException : Đợt thi chưa có bản chụp đề hợp lệ. Hãy báo giảng viên kiểm tra và kích hoạt lại đợt.&#xD;
+[xUnit.net 00:00:10.46]       Stack Trace:&#xD;
+[xUnit.net 00:00:10.46]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs(117,0): at Exam.Services.ExamService.&lt;&gt;c__DisplayClass14_0.&lt;&lt;StartAsync&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:10.46]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:10.46]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs(90,0): at Exam.Services.ExamService.&lt;&gt;c__DisplayClass13_0`1.&lt;&lt;Serial&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:10.46]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:10.46]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs(90,0): at Exam.Services.ExamService.&lt;&gt;c__DisplayClass13_0`1.&lt;&lt;Serial&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:10.46]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:10.46]            at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.&lt;&gt;c__DisplayClass30_0`2.&lt;&lt;ExecuteAsync&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:10.46]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:10.46]            at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:10.46]            at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:10.46]            at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:10.46]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs(90,0): at Exam.Services.ExamService.Serial[T](Func`1 work)&#xD;
+[xUnit.net 00:00:10.46]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs(415,0): at Exam.Tests.SqlExamTests.Start()&#xD;
+[xUnit.net 00:00:10.46]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs(415,0): at Exam.Tests.SqlExamTests.Start()&#xD;
+[xUnit.net 00:00:10.46]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs(592,0): at Exam.Tests.SqlExamTests.ExpiryCommitsHealthyAttemptsWhenOneResultCannotBeWritten()&#xD;
+[xUnit.net 00:00:10.46]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:11.48]       Exam.Core.BusinessException : Đợt thi chưa có bản chụp đề hợp lệ. Hãy báo giảng viên kiểm tra và kích hoạt lại đợt.&#xD;
+[xUnit.net 00:00:11.48]       Stack Trace:&#xD;
+[xUnit.net 00:00:11.48]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs(117,0): at Exam.Services.ExamService.&lt;&gt;c__DisplayClass14_0.&lt;&lt;StartAsync&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:11.48]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:11.48]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs(90,0): at Exam.Services.ExamService.&lt;&gt;c__DisplayClass13_0`1.&lt;&lt;Serial&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:11.48]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:11.48]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs(90,0): at Exam.Services.ExamService.&lt;&gt;c__DisplayClass13_0`1.&lt;&lt;Serial&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:11.48]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:11.48]            at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.&lt;&gt;c__DisplayClass30_0`2.&lt;&lt;ExecuteAsync&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:11.48]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:11.48]            at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:11.48]            at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:11.48]            at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:11.48]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs(90,0): at Exam.Services.ExamService.Serial[T](Func`1 work)&#xD;
+[xUnit.net 00:00:11.48]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs(415,0): at Exam.Tests.SqlExamTests.Start()&#xD;
+[xUnit.net 00:00:11.48]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs(415,0): at Exam.Tests.SqlExamTests.Start()&#xD;
+[xUnit.net 00:00:11.48]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs(496,0): at Exam.Tests.SqlExamTests.AnotherStudentCannotTriggerGradingOfAnExpiredAttempt()&#xD;
+[xUnit.net 00:00:11.48]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:12.06]       Exam.Core.BusinessException : Đề không còn đủ câu hỏi hoặc phương án hợp lệ. Hãy kiểm tra lại đề trước khi kích hoạt.&#xD;
+[xUnit.net 00:00:12.06]       Stack Trace:&#xD;
+[xUnit.net 00:00:12.06]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\LecturerSessionService.cs(175,0): at Exam.Services.LecturerSessionService.&lt;&gt;c__DisplayClass12_0.&lt;&lt;ChangeStateAsync&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:12.06]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:12.06]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\LecturerSessionService.cs(69,0): at Exam.Services.LecturerSessionService.&lt;&gt;c__DisplayClass10_0`1.&lt;&lt;WriteAsync&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:12.06]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:12.06]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\LecturerSessionService.cs(72,0): at Exam.Services.LecturerSessionService.&lt;&gt;c__DisplayClass10_0`1.&lt;&lt;WriteAsync&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:12.06]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:12.06]            at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:12.06]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\LecturerSessionFlowTests.cs(123,0): at Exam.Tests.ClassRegistrationTests.PostponementClearsTheRosterAndCancellationKeepsIt()&#xD;
+[xUnit.net 00:00:12.06]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:12.39]       Exam.Core.BusinessException : Đợt thi chưa có bản chụp đề hợp lệ. Hãy báo giảng viên kiểm tra và kích hoạt lại đợt.&#xD;
+[xUnit.net 00:00:12.40]       Stack Trace:&#xD;
+[xUnit.net 00:00:12.40]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs(117,0): at Exam.Services.ExamService.&lt;&gt;c__DisplayClass14_0.&lt;&lt;StartAsync&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:12.40]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:12.40]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs(90,0): at Exam.Services.ExamService.&lt;&gt;c__DisplayClass13_0`1.&lt;&lt;Serial&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:12.40]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:12.40]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs(90,0): at Exam.Services.ExamService.&lt;&gt;c__DisplayClass13_0`1.&lt;&lt;Serial&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:12.40]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:12.40]            at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.&lt;&gt;c__DisplayClass30_0`2.&lt;&lt;ExecuteAsync&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:12.40]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:12.40]            at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:12.40]            at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:12.40]            at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:12.40]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs(90,0): at Exam.Services.ExamService.Serial[T](Func`1 work)&#xD;
+[xUnit.net 00:00:12.40]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs(415,0): at Exam.Tests.SqlExamTests.Start()&#xD;
+[xUnit.net 00:00:12.40]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs(415,0): at Exam.Tests.SqlExamTests.Start()&#xD;
+[xUnit.net 00:00:12.40]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs(512,0): at Exam.Tests.SqlExamTests.AttemptPayloadNeverContainsCorrectAnswerFields()&#xD;
+[xUnit.net 00:00:12.40]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:15.70]       Exam.Core.BusinessException : Đợt thi chưa có bản chụp đề hợp lệ. Hãy báo giảng viên kiểm tra và kích hoạt lại đợt.&#xD;
+[xUnit.net 00:00:15.70]       Stack Trace:&#xD;
+[xUnit.net 00:00:15.70]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs(117,0): at Exam.Services.ExamService.&lt;&gt;c__DisplayClass14_0.&lt;&lt;StartAsync&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:15.70]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:15.70]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs(90,0): at Exam.Services.ExamService.&lt;&gt;c__DisplayClass13_0`1.&lt;&lt;Serial&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:15.70]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:15.70]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs(90,0): at Exam.Services.ExamService.&lt;&gt;c__DisplayClass13_0`1.&lt;&lt;Serial&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:15.70]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:15.70]            at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.&lt;&gt;c__DisplayClass30_0`2.&lt;&lt;ExecuteAsync&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:15.70]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:15.70]            at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:15.70]            at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:15.70]            at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:15.70]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs(90,0): at Exam.Services.ExamService.Serial[T](Func`1 work)&#xD;
+[xUnit.net 00:00:15.70]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs(415,0): at Exam.Tests.SqlExamTests.Start()&#xD;
+[xUnit.net 00:00:15.70]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs(415,0): at Exam.Tests.SqlExamTests.Start()&#xD;
+[xUnit.net 00:00:15.70]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs(646,0): at Exam.Tests.SqlExamTests.DatabaseItselfRejectsDuplicateAttemptsEvenWithoutCallingTheService()&#xD;
+[xUnit.net 00:00:15.70]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:16.92]       Exam.Core.BusinessException : Đợt thi chưa có bản chụp đề hợp lệ. Hãy báo giảng viên kiểm tra và kích hoạt lại đợt.&#xD;
+[xUnit.net 00:00:16.92]       Stack Trace:&#xD;
+[xUnit.net 00:00:16.92]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs(117,0): at Exam.Services.ExamService.&lt;&gt;c__DisplayClass14_0.&lt;&lt;StartAsync&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:16.92]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:16.92]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs(90,0): at Exam.Services.ExamService.&lt;&gt;c__DisplayClass13_0`1.&lt;&lt;Serial&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:16.92]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:16.92]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs(90,0): at Exam.Services.ExamService.&lt;&gt;c__DisplayClass13_0`1.&lt;&lt;Serial&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:16.92]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:16.92]            at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.&lt;&gt;c__DisplayClass30_0`2.&lt;&lt;ExecuteAsync&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:16.92]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:16.92]            at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:16.92]            at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:16.92]            at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:16.92]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs(90,0): at Exam.Services.ExamService.Serial[T](Func`1 work)&#xD;
+[xUnit.net 00:00:16.92]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs(415,0): at Exam.Tests.SqlExamTests.Start()&#xD;
+[xUnit.net 00:00:16.92]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs(415,0): at Exam.Tests.SqlExamTests.Start()&#xD;
+[xUnit.net 00:00:16.92]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs(534,0): at Exam.Tests.SqlExamTests.SnapshotAndGradingSurviveSourceChangesAndUnpublishedResultsStayHidden()&#xD;
+[xUnit.net 00:00:16.92]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:18.49]       Exam.Core.BusinessException : Đợt thi chưa có bản chụp đề hợp lệ. Hãy báo giảng viên kiểm tra và kích hoạt lại đợt.&#xD;
+[xUnit.net 00:00:18.49]       Stack Trace:&#xD;
+[xUnit.net 00:00:18.49]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs(117,0): at Exam.Services.ExamService.&lt;&gt;c__DisplayClass14_0.&lt;&lt;StartAsync&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:18.49]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:18.49]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs(90,0): at Exam.Services.ExamService.&lt;&gt;c__DisplayClass13_0`1.&lt;&lt;Serial&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:18.49]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:18.49]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs(90,0): at Exam.Services.ExamService.&lt;&gt;c__DisplayClass13_0`1.&lt;&lt;Serial&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:18.49]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:18.49]            at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:18.49]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs(90,0): at Exam.Services.ExamService.Serial[T](Func`1 work)&#xD;
+[xUnit.net 00:00:18.49]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\PersonalDeadlinePublicationTests.cs(35,0): at Exam.Tests.ClassRegistrationTests.PublicationImmediatelyShowsFinishedResultsAndAutomaticallyIncludesLaterSubmissions()&#xD;
+[xUnit.net 00:00:18.49]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:19.33]       Exam.Core.BusinessException : Đợt thi chưa có bản chụp đề hợp lệ. Hãy báo giảng viên kiểm tra và kích hoạt lại đợt.&#xD;
+[xUnit.net 00:00:19.33]       Stack Trace:&#xD;
+[xUnit.net 00:00:19.33]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs(117,0): at Exam.Services.ExamService.&lt;&gt;c__DisplayClass14_0.&lt;&lt;StartAsync&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:19.33]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:19.33]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs(90,0): at Exam.Services.ExamService.&lt;&gt;c__DisplayClass13_0`1.&lt;&lt;Serial&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:19.33]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:19.33]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs(90,0): at Exam.Services.ExamService.&lt;&gt;c__DisplayClass13_0`1.&lt;&lt;Serial&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:19.33]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:19.33]            at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.&lt;&gt;c__DisplayClass30_0`2.&lt;&lt;ExecuteAsync&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:19.33]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:19.33]            at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:19.33]            at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:19.33]            at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:19.33]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs(90,0): at Exam.Services.ExamService.Serial[T](Func`1 work)&#xD;
+[xUnit.net 00:00:19.33]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs(286,0): at Exam.Tests.SqlExamTests.CodeLookupRequiresClassAndDoesNotCreateAttempt()&#xD;
+[xUnit.net 00:00:19.33]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs(291,0): at Exam.Tests.SqlExamTests.CodeLookupRequiresClassAndDoesNotCreateAttempt()&#xD;
+[xUnit.net 00:00:19.33]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:21.20]       Exam.Core.BusinessException : Đợt thi chưa có bản chụp đề hợp lệ. Hãy báo giảng viên kiểm tra và kích hoạt lại đợt.&#xD;
+[xUnit.net 00:00:21.20]       Stack Trace:&#xD;
+[xUnit.net 00:00:21.20]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs(117,0): at Exam.Services.ExamService.&lt;&gt;c__DisplayClass14_0.&lt;&lt;StartAsync&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:21.20]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:21.20]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs(90,0): at Exam.Services.ExamService.&lt;&gt;c__DisplayClass13_0`1.&lt;&lt;Serial&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:21.20]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:21.20]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs(90,0): at Exam.Services.ExamService.&lt;&gt;c__DisplayClass13_0`1.&lt;&lt;Serial&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:21.20]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:21.20]            at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.&lt;&gt;c__DisplayClass30_0`2.&lt;&lt;ExecuteAsync&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:21.20]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:21.20]            at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:21.20]            at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:21.20]            at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:21.20]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs(90,0): at Exam.Services.ExamService.Serial[T](Func`1 work)&#xD;
+[xUnit.net 00:00:21.20]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs(415,0): at Exam.Tests.SqlExamTests.Start()&#xD;
+[xUnit.net 00:00:21.20]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs(415,0): at Exam.Tests.SqlExamTests.Start()&#xD;
+[xUnit.net 00:00:21.20]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs(656,0): at Exam.Tests.SqlExamTests.DatabaseItselfRejectsAnOptionOwnedByAnotherQuestion()&#xD;
+[xUnit.net 00:00:21.20]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:22.03]       Exam.Core.BusinessException : Đợt thi chưa có bản chụp đề hợp lệ. Hãy báo giảng viên kiểm tra và kích hoạt lại đợt.&#xD;
+[xUnit.net 00:00:22.03]       Stack Trace:&#xD;
+[xUnit.net 00:00:22.03]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs(117,0): at Exam.Services.ExamService.&lt;&gt;c__DisplayClass14_0.&lt;&lt;StartAsync&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:22.03]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:22.03]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs(90,0): at Exam.Services.ExamService.&lt;&gt;c__DisplayClass13_0`1.&lt;&lt;Serial&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:22.03]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:22.03]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs(90,0): at Exam.Services.ExamService.&lt;&gt;c__DisplayClass13_0`1.&lt;&lt;Serial&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:22.03]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:22.03]            at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.&lt;&gt;c__DisplayClass30_0`2.&lt;&lt;ExecuteAsync&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:22.03]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:22.03]            at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:22.03]            at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:22.03]            at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:22.03]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs(90,0): at Exam.Services.ExamService.Serial[T](Func`1 work)&#xD;
+[xUnit.net 00:00:22.03]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs(415,0): at Exam.Tests.SqlExamTests.Start()&#xD;
+[xUnit.net 00:00:22.03]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs(415,0): at Exam.Tests.SqlExamTests.Start()&#xD;
+[xUnit.net 00:00:22.03]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs(523,0): at Exam.Tests.SqlExamTests.AnOptionFromAnotherQuestionIsRejected()&#xD;
+[xUnit.net 00:00:22.03]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:22.90]       Exam.Core.BusinessException : Đợt thi chưa có bản chụp đề hợp lệ. Hãy báo giảng viên kiểm tra và kích hoạt lại đợt.&#xD;
+[xUnit.net 00:00:22.90]       Stack Trace:&#xD;
+[xUnit.net 00:00:22.90]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs(117,0): at Exam.Services.ExamService.&lt;&gt;c__DisplayClass14_0.&lt;&lt;StartAsync&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:22.90]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:22.90]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs(90,0): at Exam.Services.ExamService.&lt;&gt;c__DisplayClass13_0`1.&lt;&lt;Serial&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:22.90]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:22.90]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs(90,0): at Exam.Services.ExamService.&lt;&gt;c__DisplayClass13_0`1.&lt;&lt;Serial&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:22.90]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:22.90]            at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.&lt;&gt;c__DisplayClass30_0`2.&lt;&lt;ExecuteAsync&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:22.90]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:22.90]            at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:22.90]            at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:22.90]            at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:22.90]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs(90,0): at Exam.Services.ExamService.Serial[T](Func`1 work)&#xD;
+[xUnit.net 00:00:22.90]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs(424,0): at Exam.Tests.SqlExamTests.&lt;ConcurrentStartCreatesOneAttemptAndReturnsTheSameId&gt;g__StartSeparately|19_0()&#xD;
+[xUnit.net 00:00:22.90]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs(424,0): at Exam.Tests.SqlExamTests.&lt;ConcurrentStartCreatesOneAttemptAndReturnsTheSameId&gt;g__StartSeparately|19_0()&#xD;
+[xUnit.net 00:00:22.90]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs(426,0): at Exam.Tests.SqlExamTests.ConcurrentStartCreatesOneAttemptAndReturnsTheSameId()&#xD;
+[xUnit.net 00:00:22.90]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:25.04]       Exam.Core.BusinessException : Đợt thi chưa có bản chụp đề hợp lệ. Hãy báo giảng viên kiểm tra và kích hoạt lại đợt.&#xD;
+[xUnit.net 00:00:25.04]       Stack Trace:&#xD;
+[xUnit.net 00:00:25.04]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs(117,0): at Exam.Services.ExamService.&lt;&gt;c__DisplayClass14_0.&lt;&lt;StartAsync&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:25.04]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:25.04]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs(90,0): at Exam.Services.ExamService.&lt;&gt;c__DisplayClass13_0`1.&lt;&lt;Serial&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:25.04]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:25.04]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs(90,0): at Exam.Services.ExamService.&lt;&gt;c__DisplayClass13_0`1.&lt;&lt;Serial&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:25.04]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:25.04]            at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.&lt;&gt;c__DisplayClass30_0`2.&lt;&lt;ExecuteAsync&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:25.04]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:25.04]            at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:25.04]            at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:25.04]            at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:25.04]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs(90,0): at Exam.Services.ExamService.Serial[T](Func`1 work)&#xD;
+[xUnit.net 00:00:25.04]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs(415,0): at Exam.Tests.SqlExamTests.Start()&#xD;
+[xUnit.net 00:00:25.04]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs(415,0): at Exam.Tests.SqlExamTests.Start()&#xD;
+[xUnit.net 00:00:25.04]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\PersonalDeadlineTests.cs(38,0): at Exam.Tests.SqlExamTests.AdmissionClosingDoesNotShortenIndividualAttempts()&#xD;
+[xUnit.net 00:00:25.04]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:25.89]       Exam.Core.BusinessException : Đợt thi chưa có bản chụp đề hợp lệ. Hãy báo giảng viên kiểm tra và kích hoạt lại đợt.&#xD;
+[xUnit.net 00:00:25.89]       Stack Trace:&#xD;
+[xUnit.net 00:00:25.89]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs(117,0): at Exam.Services.ExamService.&lt;&gt;c__DisplayClass14_0.&lt;&lt;StartAsync&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:25.89]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:25.89]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs(90,0): at Exam.Services.ExamService.&lt;&gt;c__DisplayClass13_0`1.&lt;&lt;Serial&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:25.89]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:25.89]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs(90,0): at Exam.Services.ExamService.&lt;&gt;c__DisplayClass13_0`1.&lt;&lt;Serial&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:25.89]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:25.89]            at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.&lt;&gt;c__DisplayClass30_0`2.&lt;&lt;ExecuteAsync&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:25.89]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:25.89]            at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:25.89]            at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:25.89]            at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:25.89]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs(90,0): at Exam.Services.ExamService.Serial[T](Func`1 work)&#xD;
+[xUnit.net 00:00:25.89]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs(415,0): at Exam.Tests.SqlExamTests.Start()&#xD;
+[xUnit.net 00:00:25.89]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs(415,0): at Exam.Tests.SqlExamTests.Start()&#xD;
+[xUnit.net 00:00:25.89]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs(470,0): at Exam.Tests.SqlExamTests.SavingAtTheExactDeadlineIsRejected()&#xD;
+[xUnit.net 00:00:25.89]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:26.70]       Exam.Core.BusinessException : Đợt thi chưa có bản chụp đề hợp lệ. Hãy báo giảng viên kiểm tra và kích hoạt lại đợt.&#xD;
+[xUnit.net 00:00:26.70]       Stack Trace:&#xD;
+[xUnit.net 00:00:26.70]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs(117,0): at Exam.Services.ExamService.&lt;&gt;c__DisplayClass14_0.&lt;&lt;StartAsync&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:26.70]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:26.70]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs(90,0): at Exam.Services.ExamService.&lt;&gt;c__DisplayClass13_0`1.&lt;&lt;Serial&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:26.70]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:26.70]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs(90,0): at Exam.Services.ExamService.&lt;&gt;c__DisplayClass13_0`1.&lt;&lt;Serial&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:26.70]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:26.70]            at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.&lt;&gt;c__DisplayClass30_0`2.&lt;&lt;ExecuteAsync&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:26.70]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:26.70]            at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:26.70]            at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:26.70]            at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:26.70]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Services\ExamService.cs(90,0): at Exam.Services.ExamService.Serial[T](Func`1 work)&#xD;
+[xUnit.net 00:00:26.70]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs(415,0): at Exam.Tests.SqlExamTests.Start()&#xD;
+[xUnit.net 00:00:26.70]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs(415,0): at Exam.Tests.SqlExamTests.Start()&#xD;
+[xUnit.net 00:00:26.70]         D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\Exam.Tests\SqlExamTests.cs(435,0): at Exam.Tests.SqlExamTests.RepeatedStartKeepsTheOriginalAttemptAndDeadline()&#xD;
+[xUnit.net 00:00:26.70]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:26.70]   Finished:    Exam.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="LAPTOP-3ANAB9S6" outcome="Error" timestamp="2026-11-20T22:01:46.8261787+07:00">
+        <Text>[xUnit.net 00:00:00.97]     Exam.Tests.QuestionExcelImportTests.DownloadTemplateIsAnXlsxWithTheExpectedColumns [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3ANAB9S6" outcome="Error" timestamp="2026-11-20T22:01:50.5670752+07:00">
+        <Text>[xUnit.net 00:00:04.74]     Exam.Tests.SqlExamTests.LecturerPublishesAndExportsOnlyOwnedSession [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3ANAB9S6" outcome="Error" timestamp="2026-11-20T22:01:53.5688891+07:00">
+        <Text>[xUnit.net 00:00:07.74]     Exam.Tests.SqlExamTests.AnotherStudentCannotOpenOrChangeTheAttempt [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3ANAB9S6" outcome="Error" timestamp="2026-11-20T22:01:54.4837915+07:00">
+        <Text>[xUnit.net 00:00:08.65]     Exam.Tests.SqlExamTests.ConcurrentSubmitCreatesExactlyOneResult [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3ANAB9S6" outcome="Error" timestamp="2026-11-20T22:01:55.3429933+07:00">
+        <Text>[xUnit.net 00:00:09.51]     Exam.Tests.SqlExamTests.ExpiryWorksWithoutAnOpenBrowserAndRepeatedSubmissionDoesNotCreateAnotherResult [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3ANAB9S6" outcome="Error" timestamp="2026-11-20T22:01:55.9161707+07:00">
+        <Text>[xUnit.net 00:00:10.09]     Exam.Tests.ClassRegistrationTests.WebLecturerWorkflowAndStudentClassNavigation [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3ANAB9S6" outcome="Error" timestamp="2026-11-20T22:01:56.2845138+07:00">
+        <Text>[xUnit.net 00:00:10.45]     Exam.Tests.SqlExamTests.ExpiryCommitsHealthyAttemptsWhenOneResultCannotBeWritten [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3ANAB9S6" outcome="Error" timestamp="2026-11-20T22:01:57.3080426+07:00">
+        <Text>[xUnit.net 00:00:11.48]     Exam.Tests.SqlExamTests.AnotherStudentCannotTriggerGradingOfAnExpiredAttempt [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3ANAB9S6" outcome="Error" timestamp="2026-11-20T22:01:57.8858801+07:00">
+        <Text>[xUnit.net 00:00:12.06]     Exam.Tests.ClassRegistrationTests.PostponementClearsTheRosterAndCancellationKeepsIt [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3ANAB9S6" outcome="Error" timestamp="2026-11-20T22:01:58.2243960+07:00">
+        <Text>[xUnit.net 00:00:12.39]     Exam.Tests.SqlExamTests.AttemptPayloadNeverContainsCorrectAnswerFields [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3ANAB9S6" outcome="Error" timestamp="2026-11-20T22:02:01.5306248+07:00">
+        <Text>[xUnit.net 00:00:15.70]     Exam.Tests.SqlExamTests.DatabaseItselfRejectsDuplicateAttemptsEvenWithoutCallingTheService [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3ANAB9S6" outcome="Error" timestamp="2026-11-20T22:02:02.7452186+07:00">
+        <Text>[xUnit.net 00:00:16.92]     Exam.Tests.SqlExamTests.SnapshotAndGradingSurviveSourceChangesAndUnpublishedResultsStayHidden [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3ANAB9S6" outcome="Error" timestamp="2026-11-20T22:02:04.3227544+07:00">
+        <Text>[xUnit.net 00:00:18.49]     Exam.Tests.ClassRegistrationTests.PublicationImmediatelyShowsFinishedResultsAndAutomaticallyIncludesLaterSubmissions [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3ANAB9S6" outcome="Error" timestamp="2026-11-20T22:02:05.1636072+07:00">
+        <Text>[xUnit.net 00:00:19.33]     Exam.Tests.SqlExamTests.CodeLookupRequiresClassAndDoesNotCreateAttempt [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3ANAB9S6" outcome="Error" timestamp="2026-11-20T22:02:07.0298483+07:00">
+        <Text>[xUnit.net 00:00:21.20]     Exam.Tests.SqlExamTests.DatabaseItselfRejectsAnOptionOwnedByAnotherQuestion [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3ANAB9S6" outcome="Error" timestamp="2026-11-20T22:02:07.8589424+07:00">
+        <Text>[xUnit.net 00:00:22.03]     Exam.Tests.SqlExamTests.AnOptionFromAnotherQuestionIsRejected [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3ANAB9S6" outcome="Error" timestamp="2026-11-20T22:02:08.7307446+07:00">
+        <Text>[xUnit.net 00:00:22.90]     Exam.Tests.SqlExamTests.ConcurrentStartCreatesOneAttemptAndReturnsTheSameId [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3ANAB9S6" outcome="Error" timestamp="2026-11-20T22:02:10.8685984+07:00">
+        <Text>[xUnit.net 00:00:25.04]     Exam.Tests.SqlExamTests.AdmissionClosingDoesNotShortenIndividualAttempts [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3ANAB9S6" outcome="Error" timestamp="2026-11-20T22:02:11.7204618+07:00">
+        <Text>[xUnit.net 00:00:25.89]     Exam.Tests.SqlExamTests.SavingAtTheExactDeadlineIsRejected [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="LAPTOP-3ANAB9S6" outcome="Error" timestamp="2026-11-20T22:02:12.5278621+07:00">
+        <Text>[xUnit.net 00:00:26.70]     Exam.Tests.SqlExamTests.RepeatedStartKeepsTheOriginalAttemptAndDeadline [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>
