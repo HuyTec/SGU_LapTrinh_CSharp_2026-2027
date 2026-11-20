@@ -140,26 +140,10 @@ public sealed class LecturerSessionService(ExamDbContext db, TimeProvider clock)
         {
             if (session.Status != "Active" || session.HasOpened || Now >= session.OpensAt ||
                 await db.Attempts.AnyAsync(a => a.SessionId == id))
-<<<<<<< HEAD
                 throw new BusinessException("Chỉ hoãn đợt đã kích hoạt trước giờ mở lần đầu.", 409);
+            await db.SessionCandidates.Where(c => c.SessionId == id).ExecuteDeleteAsync();
+            session.ActivatedAt = null;
             session.Status = "Draft";
-=======
-                throw new BusinessException("Chỉ hoãn hoặc hủy đợt đã kích hoạt trước giờ mở lần đầu.", 409);
-            if (action == "postpone")
-            {
-                await db.SessionCandidates.Where(c => c.SessionId == id).ExecuteDeleteAsync();
-                session.ActivatedAt = null;
-                session.Status = "Draft";
-            }
-            else
-                session.Status = "Cancelled";
-<<<<<<< HEAD
-<<<<<<< HEAD
->>>>>>> 78a47af701ad19b4ed1748b980e33142f3bad6cd
-=======
->>>>>>> 78a47af701ad19b4ed1748b980e33142f3bad6cd
-=======
->>>>>>> 78a47af701ad19b4ed1748b980e33142f3bad6cd
             return true;
         }
         if (action != "activate")
