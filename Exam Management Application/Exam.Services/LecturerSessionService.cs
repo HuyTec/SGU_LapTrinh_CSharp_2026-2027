@@ -34,6 +34,7 @@ public sealed class LecturerSessionService(ExamDbContext db, TimeProvider clock)
 
     private async Task<ExamSession> LoadAsync(int lecturer, int id) => await Owned(lecturer)
         .Include(s => s.Exam).ThenInclude(p => p.Subject)
+        .Include(s => s.Exam).ThenInclude(p => p.Questions).ThenInclude(q => q.Question).ThenInclude(q => q.Options)
         .Include(s => s.Classes).ThenInclude(c => c.Class)
         .SingleOrDefaultAsync(s => s.Id == id) ?? throw new BusinessException("Không tìm thấy đợt thi trong phạm vi phụ trách.", 404);
 
@@ -140,6 +141,8 @@ public sealed class LecturerSessionService(ExamDbContext db, TimeProvider clock)
                 await db.Attempts.AnyAsync(a => a.SessionId == id))
                 throw new BusinessException("Chỉ hoãn đợt đã kích hoạt trước giờ mở lần đầu.", 409);
             await db.SessionCandidates.Where(c => c.SessionId == id).ExecuteDeleteAsync();
+            await db.SessionOptions.Where(o => o.Question.SessionId == id).ExecuteDeleteAsync();
+            await db.SessionQuestions.Where(q => q.SessionId == id).ExecuteDeleteAsync();
             session.ActivatedAt = null;
             session.Status = "Draft";
             return true;
@@ -177,8 +180,30 @@ public sealed class LecturerSessionService(ExamDbContext db, TimeProvider clock)
                                 join role in db.Roles on userRole.RoleId equals role.Id
                                 where user.IsActive && role.NormalizedName == "STUDENT"
                                 select studentId).Distinct().ToListAsync();
+        if (session.Exam.Questions.Count == 0 || session.Exam.Questions.Any(q => q.Question.Options.Count < 2 || q.Question.Options.Count(o => o.IsCorrect) != 1))
+            throw new BusinessException("Đề không còn đủ câu hỏi hoặc phương án hợp lệ. Hãy kiểm tra lại đề trước khi kích hoạt.", 409);
+        if (await db.SessionQuestions.AnyAsync(q => q.SessionId == id))
+            throw new BusinessException("Đợt nháp còn bản chụp đề cũ. Không thể kích hoạt để tránh thay đổi nội dung đã chốt.", 409);
+
         await db.SessionCandidates.Where(c => c.SessionId == id).ExecuteDeleteAsync();
         db.SessionCandidates.AddRange(studentIds.Select(studentId => new SessionCandidate { SessionId = id, StudentId = studentId }));
+        foreach (var examQuestion in session.Exam.Questions.OrderBy(q => q.Order))
+        {
+            var snapshotQuestion = new SessionQuestion
+            {
+                SourceQuestionId = examQuestion.QuestionId,
+                Text = examQuestion.Question.Text,
+                Order = examQuestion.Order,
+                Points = examQuestion.Points
+            };
+            snapshotQuestion.Options.AddRange(examQuestion.Question.Options.OrderBy(o => o.Order).Select(o => new SessionOption
+            {
+                Text = o.Text,
+                Order = o.Order,
+                IsCorrect = o.IsCorrect
+            }));
+            session.Questions.Add(snapshotQuestion);
+        }
         session.ActivatedAt = Now;
         session.AccessCode ??= Convert.ToHexString(RandomNumberGenerator.GetBytes(12));
         session.Status = "Active";

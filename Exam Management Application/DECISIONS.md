@@ -44,3 +44,7 @@ Web cho thí sinh và giảng viên đăng ký. Tài khoản giảng viên chờ
 ### Chốt danh sách thí sinh khi kích hoạt (20/11/2026)
 
 Khi kích hoạt đợt thi, hệ thống chụp danh sách thí sinh đang hoạt động (vai trò Thí sinh) của các lớp cùng môn được gán vào SessionCandidates và ghi ActivatedAt (BR12, BR13). Sau thời điểm này, thêm hay bớt thành viên lớp không đổi quyền vào thi của đợt. Hoãn về Nháp thì xóa danh sách và ActivatedAt; Hủy thì giữ nguyên danh sách để tra cứu. Migration SessionRosterSnapshot bổ sung danh sách cho các đợt đang Active từ trước. Tiêu chí "không sinh SessionCandidate" của DT03 trong bảng phân công được thay bằng quy tắc này.
+
+### Chốt nội dung đề khi kích hoạt (20/11/2026)
+
+Khi kích hoạt, cùng transaction với danh sách thí sinh, ghi nội dung câu hỏi, phương án, đáp án đúng, điểm và thứ tự vào `SessionQuestions`/`SessionOptions`. Khi thí sinh bắt đầu, tạo snapshot riêng của lượt từ snapshot cấp đợt rồi áp dụng cấu hình trộn. Hoãn về Nháp xóa snapshot cấp đợt để lần kích hoạt sau chụp lại nội dung mới; không cho kích hoạt nếu snapshot cũ còn sót.

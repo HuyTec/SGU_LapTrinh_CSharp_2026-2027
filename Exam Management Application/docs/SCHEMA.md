@@ -4,7 +4,7 @@ Published/PublishedAt ghi việc giảng viên bật công bố cho đợt đã 
 
 Quy tắc ngày 18/11/2026: ExamSessions.OpensAt/ClosesAt là khung giờ được tạo lượt mới. Attempts.Deadline = StartedAt + DurationMinutes, độc lập giờ đóng nhận lượt. Lượt cũ còn làm và bị cắt hạn bởi giờ đóng được điều chỉnh bằng migration PersonalAttemptDeadlines; bài đã có kết quả giữ dữ liệu lịch sử.
 
-Nguồn chính xác có thể dựng lại: `Exam.Data/ExamDbContext.cs`, `Exam.Data/Entities.cs`, `Exam.Data/Migrations` và `schema.sql`. Đây là mô hình triển khai của 17 thực thể nghiệp vụ trong mục 3.3, bổ sung Identity và phiên truy cập theo DECISIONS.md.
+Nguồn chính xác có thể dựng lại: `Exam.Data/ExamDbContext.cs`, `Exam.Data/Entities.cs`, `Exam.Data/Migrations` và `schema.sql`. Đây là mô hình triển khai của 19 thực thể nghiệp vụ trong mục 3.3, bổ sung Identity và phiên truy cập theo DECISIONS.md.
 
 ## Bảng và trách nhiệm
 
@@ -25,6 +25,8 @@ Nguồn chính xác có thể dựng lại: `Exam.Data/ExamDbContext.cs`, `Exam.
 | ClassStudents | PK(ClassId, StudentId); FK Classes và Users | Thành viên lớp |
 | SessionClasses | PK(SessionId, ClassId); FK ExamSessions và Classes | Liên kết đợt thi với lớp được gán |
 | SessionCandidates | Id; UQ(SessionId, StudentId); FK ExamSessions và Users | Danh sách thí sinh được chốt khi kích hoạt, cũng giữ các dòng lịch sử từ luồng cũ |
+| SessionQuestions | Id; FK SessionId/SourceQuestionId; UQ thứ tự trong đợt | Snapshot câu hỏi, điểm và thứ tự được tạo cùng lúc kích hoạt đợt |
+| SessionOptions | Id; FK SessionQuestionId; UQ thứ tự và tối đa một đáp án đúng | Snapshot nội dung, đáp án đúng và thứ tự phương án tại thời điểm kích hoạt |
 | Attempts | Id bigint; UQ(SessionId, StudentId); FK trực tiếp ExamSessions và Users | Bắt đầu, Deadline, trạng thái, SubmittedAt, EndReason |
 | AttemptQuestions | Id bigint; FK AttemptId và SourceQuestionId; UQ thứ tự trong lượt | Snapshot nội dung, điểm và thứ tự |
 | AttemptOptions | Id bigint; FK AttemptQuestionId; alternate key(AttemptQuestionId, Id) | Snapshot phương án, đáp án và thứ tự |
@@ -49,7 +51,7 @@ Migration `QuestionConcurrency` thêm `Questions.RowVersion` kiểu SQL Server r
 - 1NF: phương án, câu trong đề, vai trò và phân công là các dòng riêng, không lưu danh sách câu/đáp án trong một cột nghiệp vụ.
 - 2NF: thuộc tính phân công thuộc cả cặp giảng viên–môn hoặc đợt–thí sinh; không sao chép tên người/môn vào bảng liên kết.
 - 3NF: tên môn lấy từ Subjects, chủ đề lấy từ Topics, người dùng lấy từ Users. Các FK giữ nguồn dữ liệu chuẩn.
-- Snapshot mô tả sự kiện “nội dung thực tế đã giao”, không phải bản sao thay thế danh mục; chỉ ghi lúc bắt đầu và giữ nguyên. ExamResults mô tả sự kiện chấm, mỗi lượt có tối đa một kết quả.
+- Snapshot mô tả nội dung thực tế đã giao. `SessionQuestions`/`SessionOptions` chốt đề lúc kích hoạt; `AttemptQuestions`/`AttemptOptions` tạo bản riêng cho lượt lúc bắt đầu để giữ thứ tự trộn và đáp án lịch sử. Cả hai lớp snapshot đều độc lập với nội dung danh mục sau khi được tạo. `ExamResults` mô tả sự kiện chấm, mỗi lượt có tối đa một kết quả.
 
 Các giới hạn nhiều dòng như đúng một đáp án, trọng số dương, quyền môn, lịch giao nhau và điều kiện công bố được kiểm tra ở Exam.Services; các ràng buộc PK/FK/UQ/CHECK bảo vệ thêm tại SQL. Không khẳng định CHECK đơn lẻ có thể kiểm tra tổng điểm nhiều dòng.
 
@@ -61,9 +63,13 @@ Migration `StaffRegistrationApproval` thêm Users.RequestedRole (nvarchar(32), N
 
 Khi giảng viên kích hoạt, hệ thống ghi `ExamSessions.ActivatedAt` (UTC, `datetime2`, cho phép NULL) và chốt một dòng `SessionCandidates` cho mỗi tài khoản Student đang hoạt động trong các lớp đã chọn. Kích hoạt và ghi danh sách nằm trong cùng một giao dịch. Thêm hoặc gỡ thành viên lớp sau đó không đổi quyền dự thi. Hoãn về nháp xóa danh sách và đặt lại ActivatedAt = NULL. Hủy đợt giữ danh sách để đối chiếu.
 
+Cùng giao dịch kích hoạt tạo `SessionQuestions` và `SessionOptions` từ đề Ready: lưu nguồn câu hỏi, nội dung câu/phương án, đáp án đúng, điểm và thứ tự. Sửa ngân hàng câu hỏi sau kích hoạt không làm thay đổi nội dung của đợt. Khi bắt đầu, hệ thống tạo snapshot lượt từ bản chụp cấp đợt; thứ tự câu/phương án vẫn được trộn theo cấu hình đợt.
+
 Đợt đã chốt dùng danh sách này để xét lượt mới, theo dõi và xuất kết quả. Người chưa có lượt được ghi là chưa tham gia và để trống điểm. Theo dõi cũng giữ người đã có lượt dù không còn trong danh sách. Đợt chưa có ActivatedAt tiếp tục xét thành viên lớp hợp lệ theo quy tắc chuyển tiếp. Một danh sách cũ không kèm lớp đã gán không đủ để cấp lượt mới. Chủ sở hữu vẫn được tiếp tục lượt đã có theo quy tắc về thời hạn và công bố.
 
 Migration `20261119191316_SessionRosterSnapshot` bổ sung ActivatedAt và điền các cặp còn thiếu cho đợt Active dựa trên lớp hợp lệ tại thời điểm nâng cấp. Migration không suy đoán thành viên tại ngày kích hoạt ban đầu, giữ các dòng phân công đã có và chỉ ghi mốc chốt cho đợt Active có liên kết lớp. Đợt nháp, đợt hủy và đợt cũ chưa gán lớp không được chốt bởi migration.
+
+Migration `20261120143000_SessionExamSnapshot` tạo snapshot cấp đợt cho các đợt đang Active từ nội dung đề hiện có tại lúc nâng cấp. Đây là mốc tương thích khi triển khai, không thể phục hồi các lần sửa đề trong quá khứ. Từ migration này trở đi, đề và danh sách được chốt cùng transaction lúc kích hoạt; hoãn xóa cả hai snapshot để cho phép kích hoạt lại từ cấu hình nháp mới.
 
 ## Nâng cấp dữ liệu đợt thi (DT02)
 

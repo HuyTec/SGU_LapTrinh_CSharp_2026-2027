@@ -5,7 +5,7 @@ namespace Exam.Data;
 
 public class ExamDbContext(DbContextOptions<ExamDbContext> options) : IdentityDbContext<AppUser, AppRole, int>(options)
 {
-    public DbSet<AuthSession> AuthSessions => Set<AuthSession>(); public DbSet<Subject> Subjects => Set<Subject>(); public DbSet<LecturerSubject> LecturerSubjects => Set<LecturerSubject>(); public DbSet<Topic> Topics => Set<Topic>(); public DbSet<Question> Questions => Set<Question>(); public DbSet<AnswerOption> AnswerOptions => Set<AnswerOption>(); public DbSet<ExamPaper> Exams => Set<ExamPaper>(); public DbSet<ExamQuestion> ExamQuestions => Set<ExamQuestion>(); public DbSet<ExamSession> ExamSessions => Set<ExamSession>(); public DbSet<SessionCandidate> SessionCandidates => Set<SessionCandidate>(); public DbSet<Attempt> Attempts => Set<Attempt>(); public DbSet<AttemptQuestion> AttemptQuestions => Set<AttemptQuestion>(); public DbSet<AttemptOption> AttemptOptions => Set<AttemptOption>(); public DbSet<Response> Responses => Set<Response>(); public DbSet<ExamResult> ExamResults => Set<ExamResult>();
+    public DbSet<AuthSession> AuthSessions => Set<AuthSession>(); public DbSet<Subject> Subjects => Set<Subject>(); public DbSet<LecturerSubject> LecturerSubjects => Set<LecturerSubject>(); public DbSet<Topic> Topics => Set<Topic>(); public DbSet<Question> Questions => Set<Question>(); public DbSet<AnswerOption> AnswerOptions => Set<AnswerOption>(); public DbSet<ExamPaper> Exams => Set<ExamPaper>(); public DbSet<ExamQuestion> ExamQuestions => Set<ExamQuestion>(); public DbSet<ExamSession> ExamSessions => Set<ExamSession>(); public DbSet<SessionCandidate> SessionCandidates => Set<SessionCandidate>(); public DbSet<SessionQuestion> SessionQuestions => Set<SessionQuestion>(); public DbSet<SessionOption> SessionOptions => Set<SessionOption>(); public DbSet<Attempt> Attempts => Set<Attempt>(); public DbSet<AttemptQuestion> AttemptQuestions => Set<AttemptQuestion>(); public DbSet<AttemptOption> AttemptOptions => Set<AttemptOption>(); public DbSet<Response> Responses => Set<Response>(); public DbSet<ExamResult> ExamResults => Set<ExamResult>();
     protected override void OnModelCreating(ModelBuilder b)
     {
         base.OnModelCreating(b);
@@ -55,6 +55,15 @@ public class ExamDbContext(DbContextOptions<ExamDbContext> options) : IdentityDb
         b.Entity<AttemptQuestion>().HasIndex(x => new { x.AttemptId, x.Order }).IsUnique();
         b.Entity<AttemptOption>().HasIndex(x => new { x.AttemptQuestionId, x.Order }).IsUnique();
         b.Entity<SessionCandidate>().HasAlternateKey(x => new { x.SessionId, x.StudentId });
+        b.Entity<SessionQuestion>().ToTable("SessionQuestions", t => t.HasCheckConstraint("CK_SessionQuestion_Points", "[Points] > 0"));
+        b.Entity<SessionQuestion>().HasIndex(x => new { x.SessionId, x.Order }).IsUnique();
+        b.Entity<SessionQuestion>().HasOne(x => x.SourceQuestion).WithMany().HasForeignKey(x => x.SourceQuestionId).OnDelete(DeleteBehavior.Restrict);
+        b.Entity<SessionQuestion>().Property(x => x.Points).HasPrecision(8, 2);
+        b.Entity<ExamSession>().HasMany(x => x.Questions).WithOne(x => x.Session).HasForeignKey(x => x.SessionId).OnDelete(DeleteBehavior.Restrict);
+        b.Entity<SessionOption>().ToTable("SessionOptions");
+        b.Entity<SessionOption>().HasIndex(x => new { x.SessionQuestionId, x.Order }).IsUnique();
+        b.Entity<SessionOption>().HasIndex(x => x.SessionQuestionId).IsUnique().HasFilter("[IsCorrect] = 1");
+        b.Entity<SessionQuestion>().HasMany(x => x.Options).WithOne(x => x.Question).HasForeignKey(x => x.SessionQuestionId).OnDelete(DeleteBehavior.Restrict);
         b.Entity<ExamSession>().Property(x => x.AccessCode).HasMaxLength(32);
         b.Entity<ExamSession>().HasIndex(x => x.AccessCode).IsUnique();
         b.Entity<ExamClass>().ToTable("Classes");

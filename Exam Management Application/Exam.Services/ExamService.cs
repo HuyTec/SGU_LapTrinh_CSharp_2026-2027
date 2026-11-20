@@ -97,8 +97,8 @@ public class ExamService(ExamDbContext db, TimeProvider clock)
             return old.Id;
 
         var s = await AssignedSessions(student)
-            .Include(x => x.Exam).ThenInclude(x => x.Questions)
-            .ThenInclude(x => x.Question).ThenInclude(x => x.Options)
+            .Include(x => x.Exam)
+            .Include(x => x.Questions).ThenInclude(q => q.Options)
             .SingleOrDefaultAsync(x => x.Id == sessionId);
         if (s == null)
         {
@@ -113,6 +113,8 @@ public class ExamService(ExamDbContext db, TimeProvider clock)
             throw new BusinessException("Chưa đến giờ vào thi hoặc đã hết giờ nhận lượt mới.", 409);
         if (s.Exam.Status != "Ready")
             throw new BusinessException("Đề chưa sẵn sàng.", 409);
+        if (s.ActivatedAt == null || s.Questions.Count == 0)
+            throw new BusinessException("Đợt thi chưa có bản chụp đề hợp lệ. Hãy báo giảng viên kiểm tra và kích hoạt lại đợt.", 409);
         if (await db.Attempts.AnyAsync(a => a.StudentId == student && a.SessionId != sessionId &&
             a.Status == "InProgress" && a.Deadline > now))
             throw new BusinessException("Bạn đang làm một bài thi khác. Nộp bài đó trước khi bắt đầu lượt mới.", 409);
@@ -125,19 +127,19 @@ public class ExamService(ExamDbContext db, TimeProvider clock)
             StartedAt = now,
             Deadline = ExamRules.Deadline(now, s.DurationMinutes)
         };
-        var questions = s.Exam.Questions.OrderBy(q => q.Order).ToList();
+        var questions = s.Questions.OrderBy(q => q.Order).ToList();
         if (s.ShuffleQuestions)
             Random.Shared.Shuffle(System.Runtime.InteropServices.CollectionsMarshal.AsSpan(questions));
         foreach (var q in questions)
         {
             var aq = new AttemptQuestion
             {
-                SourceQuestionId = q.QuestionId,
-                Text = q.Question.Text,
+                SourceQuestionId = q.SourceQuestionId,
+                Text = q.Text,
                 Points = q.Points,
                 Order = a.Questions.Count + 1
             };
-            var opts = q.Question.Options.OrderBy(x => x.Order).ToList();
+            var opts = q.Options.OrderBy(x => x.Order).ToList();
             if (s.ShuffleOptions)
                 Random.Shared.Shuffle(System.Runtime.InteropServices.CollectionsMarshal.AsSpan(opts));
             foreach (var o in opts)
