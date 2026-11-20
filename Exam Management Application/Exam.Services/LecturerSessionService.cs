@@ -25,10 +25,11 @@ public sealed class LecturerSessionService(ExamDbContext db, TimeProvider clock)
         var now = Now;
         var rows = await Owned(lecturer).AsNoTracking().Include(s => s.Exam)
             .OrderByDescending(s => s.OpensAt).ThenByDescending(s => s.Id).ToListAsync();
-        return rows.Select(s => new LecturerSessionRow(s.Id, s.Title, s.Exam.Title, ExamService.SessionState(s, now),
-                s.Status == "Active" ? s.AccessCode : null, s.Status == "Draft" && !s.HasOpened,
+        var running = await ExamService.RunningSessionIdsAsync(db, rows.Select(s => s.Id), now);
+        return rows.Select(s => new LecturerSessionRow(s.Id, s.Title, s.Exam.Title, ExamService.SessionState(s, now, running.Contains(s.Id)),
+                ExamService.SessionState(s, now) is "Scheduled" or "Open" ? s.AccessCode : null, s.Status == "Draft" && !s.HasOpened,
                 s.Status == "Active" && !s.HasOpened && s.OpensAt > now))
-            .Where(s => s.State is not ("Cancelled" or "Closed"))
+            .Where(s => s.State != "Cancelled")
             .ToList();
     }
 

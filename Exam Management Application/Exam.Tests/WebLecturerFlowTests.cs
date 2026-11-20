@@ -225,6 +225,10 @@ public partial class ClassRegistrationTests
             Assert.Contains("Phần xem lại bài sẽ mở", resultPage);
             await PostForm(staff, $"/LecturerSessions/ChangeState/{session.Id}", "/LecturerSessions",
                 new() { ["command"] = "closeAdmissions" });
+            var closedList = await pupil.GetStringAsync("/Sessions");
+            Assert.Contains("data-status=\"Completed\"", closedList);
+            Assert.Contains($"/Attempts/Take/{ownAttempt.Id}", closedList);
+            Assert.Contains("HTTP Session", await staff.GetStringAsync("/LecturerSessions"));
             resultPage = WebUtility.HtmlDecode(await pupil.GetStringAsync($"/Attempts/Result/{ownAttempt.Id}"));
             Assert.Contains("Đáp án đã chọn:", resultPage);
             Assert.Contains("review-correct", resultPage);

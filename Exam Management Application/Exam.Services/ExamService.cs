@@ -11,7 +11,20 @@ public class ExamService(ExamDbContext db, TimeProvider clock)
         ? (s.AdmissionsClosedAt is DateTime closedAt && now >= closedAt || now >= s.ClosesAt
             ? "Closed" : now < s.OpensAt ? "Scheduled" : "Open")
         : s.Status;
-    SessionDto Dto(ExamSession s, long? attempt) => new(s.Id, s.Title, s.Exam.Subject.Name, s.OpensAt, s.ClosesAt, s.DurationMinutes, SessionState(s, Now), attempt, s.Published, s.ReviewPolicy);
+    // Admission closure does not end attempts that still have personal time remaining.
+    public static string SessionState(ExamSession s, DateTime now, bool hasRunningAttempts)
+        => SessionState(s, now) == "Closed" && !hasRunningAttempts ? "Completed" : SessionState(s, now);
+
+    internal static async Task<HashSet<int>> RunningSessionIdsAsync(ExamDbContext db, IEnumerable<int> sessionIds, DateTime now)
+    {
+        var ids = sessionIds.ToArray();
+        if (ids.Length == 0) return [];
+        return (await db.Attempts.Where(a => ids.Contains(a.SessionId)
+            && a.Status == "InProgress" && a.Deadline > now)
+            .Select(a => a.SessionId).Distinct().ToListAsync()).ToHashSet();
+    }
+
+    SessionDto Dto(ExamSession s, long? attempt, DateTime now, bool hasRunningAttempts) => new(s.Id, s.Title, s.Exam.Subject.Name, s.OpensAt, s.ClosesAt, s.DurationMinutes, SessionState(s, now, hasRunningAttempts), attempt, s.Published, s.ReviewPolicy);
     // Keep list, detail and new attempts on the same admission rule.
     IQueryable<ExamSession> AssignedSessions(int student) => StudentSessionAccess.Assigned(db, student);
 
@@ -65,8 +78,9 @@ public class ExamService(ExamDbContext db, TimeProvider clock)
             .Where(x => x.Status != "Draft" && x.Status != "Cancelled")
             .OrderByDescending(x => x.OpensAt).ToListAsync();
         var attempts = await db.Attempts.Where(x => x.StudentId == student).ToDictionaryAsync(x => x.SessionId, x => x.Id);
-        var rows = list.Select(s => Dto(s, attempts.TryGetValue(s.Id, out var a) ? a : null))
-            .Where(s => s.Status != "Closed")
+        var now = Now;
+        var running = await RunningSessionIdsAsync(db, list.Select(s => s.Id), now);
+        var rows = list.Select(s => Dto(s, attempts.TryGetValue(s.Id, out var a) ? a : null, now, running.Contains(s.Id)))
             .Where(s => (string.IsNullOrWhiteSpace(search) || (s.Title + " " + s.Subject).Contains(search, StringComparison.OrdinalIgnoreCase)) && (string.IsNullOrWhiteSpace(status) || s.Status == status))
             .ToList();
         return new(rows, search, status);
@@ -75,7 +89,9 @@ public class ExamService(ExamDbContext db, TimeProvider clock)
     {
         var s = await AssignedSessions(student).Include(x => x.Exam).ThenInclude(x => x.Subject).SingleOrDefaultAsync(x => x.Id == id && x.Status == "Active") ?? throw new BusinessException("Không tìm thấy đợt thi.", 404);
         var a = await db.Attempts.Where(x => x.SessionId == id && x.StudentId == student).Select(x => (long?)x.Id).SingleOrDefaultAsync();
-        return new(Dto(s, a), "Một lượt thi mỗi đợt. Đáp án chỉ được chấm khi đã được máy chủ xác nhận lưu. Hết giờ hệ thống tự kết thúc; tải lại trang không làm tăng thời gian.");
+        var now = Now;
+        var running = await RunningSessionIdsAsync(db, [id], now);
+        return new(Dto(s, a, now, running.Contains(id)), "Một lượt thi mỗi đợt. Đáp án chỉ được chấm khi đã được máy chủ xác nhận lưu. Hết giờ hệ thống tự kết thúc; tải lại trang không làm tăng thời gian.");
     }
     /// <summary>Retry a whole serializable transaction, clearing tracked state before every retry.</summary>
     async Task<T> Serial<T>(Func<Task<T>> work)

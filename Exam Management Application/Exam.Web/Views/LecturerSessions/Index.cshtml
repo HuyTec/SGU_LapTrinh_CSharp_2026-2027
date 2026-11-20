@@ -18,7 +18,7 @@ else
             {
                 <tr>
                     <td>@row.Title</td><td>@row.Paper</td>
-                    <td>@(row.State switch { "Draft" => "Nháp", "Scheduled" => "Sắp mở", "Open" => "Đang mở", "Closed" => "Đã đóng nhận thí sinh", "Cancelled" => "Đã hủy", _ => row.State })</td>
+                    <td>@(row.State switch { "Draft" => "Nháp", "Scheduled" => "Sắp mở", "Open" => "Đang nhận thí sinh", "Closed" => "Đã đóng nhận · Còn lượt đang làm", "Completed" => "Đã kết thúc", "Cancelled" => "Đã hủy", _ => row.State })</td>
                     <td>
                         @if (row.Code is not null)
                         {
