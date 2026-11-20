@@ -14,6 +14,7 @@ if (Encoding.UTF8.GetByteCount(key) < 32) throw new InvalidOperationException("J
 builder.Services.AddScoped<StudentClassService>();
 builder.Services.AddScoped<LecturerClassService>();
 builder.Services.AddScoped<LecturerSessionService>();
+builder.Services.AddScoped<QuestionExcelImportService>();
 builder.Services.AddDbContext<ExamDbContext>(o => o.UseSqlServer(connection, s => s.EnableRetryOnFailure()));
 builder.Services.AddIdentityCore<AppUser>(o => { o.Password.RequiredLength = 8; o.Lockout.MaxFailedAccessAttempts = 5; o.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(10); o.User.RequireUniqueEmail = false; }).AddRoles<AppRole>().AddEntityFrameworkStores<ExamDbContext>().AddDefaultTokenProviders();
 builder.Services.AddSingleton(TimeProvider.System);

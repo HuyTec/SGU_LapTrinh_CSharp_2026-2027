@@ -7,7 +7,13 @@
 }
 <div class="page-heading">
     <h1>@Model.Definition.Label</h1>
-    <a asp-action="EditMaterial" asp-route-resource="@resource" class="btn btn-primary">Thêm @(questions ? "câu hỏi" : "chủ đề")</a>
+    <div class="action-row">
+        @if (questions)
+        {
+            <a asp-action="ImportQuestions" class="btn btn-outline-primary">Nhập câu hỏi từ Excel</a>
+        }
+        <a asp-action="EditMaterial" asp-route-resource="@resource" class="btn btn-primary">Thêm @(questions ? "câu hỏi" : "chủ đề")</a>
+    </div>
 </div>
 <form asp-action="Materials" method="get" class="surface filter-bar mb-4" role="search">
     <input type="hidden" name="resource" value="@resource" />

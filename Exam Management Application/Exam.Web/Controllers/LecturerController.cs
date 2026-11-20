@@ -2,6 +2,7 @@ using System.Security.Claims;
 using System.Text.Json;
 using Exam.Core;
 using Exam.Services;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -9,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Exam.Web.Controllers;
 
 [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme, Roles = "Lecturer")]
-public class LecturerController(AdminService admin) : Controller
+public class LecturerController(AdminService admin, QuestionExcelImportService questionImport) : Controller
 {
     private const string Role = "Lecturer";
     private int UserId => int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
@@ -98,6 +99,48 @@ public class LecturerController(AdminService admin) : Controller
         return RedirectToAction(nameof(Materials), new { resource });
     }
 
+    [HttpGet]
+    public async Task<IActionResult> ImportQuestions()
+    {
+        var model = new QuestionImportEditor();
+        await PopulateImportSubjectsAsync(model);
+        return View(model);
+    }
+
+    [HttpPost, ValidateAntiForgeryToken, RequestSizeLimit(5 * 1024 * 1024)]
+    public async Task<IActionResult> ImportQuestions(QuestionImportEditor model, IFormFile? file, CancellationToken cancellationToken)
+    {
+        await PopulateImportSubjectsAsync(model);
+        if (file is null || file.Length == 0)
+            ModelState.AddModelError(nameof(file), "Chọn file .xlsx cần nhập.");
+        if (file is not null && !string.Equals(Path.GetExtension(file.FileName), ".xlsx", StringComparison.OrdinalIgnoreCase))
+            ModelState.AddModelError(nameof(file), "Chỉ hỗ trợ file Excel .xlsx.");
+        if (!ModelState.IsValid)
+            return View(model);
+        try
+        {
+            await using var stream = file!.OpenReadStream();
+            var count = await questionImport.ImportAsync(UserId, model.SubjectId, stream, file.Length, cancellationToken);
+            TempData["Success"] = $"Đã nhập {count} câu hỏi vào ngân hàng.";
+            return RedirectToAction(nameof(Materials), new { resource = "questions" });
+        }
+        catch (BusinessException ex) when (ex.Status is not (403 or 404))
+        {
+            ModelState.AddModelError("", ex.Message);
+            return View(model);
+        }
+    }
+
+    [HttpGet]
+    public IActionResult DownloadQuestionTemplate() => File(QuestionExcelImportService.CreateTemplate(),
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Mau-nhap-cau-hoi.xlsx");
+
+    private async Task PopulateImportSubjectsAsync(QuestionImportEditor model)
+    {
+        var definition = await GetResourceAsync("topics");
+        model.Subjects = definition.Fields.Single(field => field.Name == "subjectId").Choices ?? [];
+    }
+
     private static bool IsMaterial(string? resource) => resource is "topics" or "questions";
 
     private async Task<ResourceDto> GetResourceAsync(string key) =>
@@ -105,4 +148,11 @@ public class LecturerController(AdminService admin) : Controller
 
     public sealed record MaterialsPage(ResourceDto Definition, AdminPageDto Page, string? Search);
     public sealed record MaterialEditor(ResourceDto Definition, int? Id, IReadOnlyDictionary<string, string> Values);
+
+    public sealed class QuestionImportEditor
+    {
+        public int SubjectId { get; set; }
+        [Microsoft.AspNetCore.Mvc.ModelBinding.BindNever]
+        public IReadOnlyList<ChoiceDto> Subjects { get; set; } = [];
+    }
 }
