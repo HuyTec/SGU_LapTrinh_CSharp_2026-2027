@@ -40,3 +40,7 @@ Thêm đăng ký tài khoản với các thông tin đã có: tên đăng nhập
 ### Đăng ký giảng viên
 
 Web cho thí sinh và giảng viên đăng ký. Tài khoản giảng viên chờ quản trị viên duyệt trên Desktop trước khi đăng nhập Web. Tài khoản quản trị viên do quản trị viên hiện có cấp trên Desktop.
+
+### Chốt danh sách thí sinh khi kích hoạt (20/11/2026)
+
+Khi kích hoạt đợt thi, hệ thống chụp danh sách thí sinh đang hoạt động (vai trò Thí sinh) của các lớp cùng môn được gán vào SessionCandidates và ghi ActivatedAt (BR12, BR13). Sau thời điểm này, thêm hay bớt thành viên lớp không đổi quyền vào thi của đợt. Hoãn về Nháp thì xóa danh sách và ActivatedAt; Hủy thì giữ nguyên danh sách để tra cứu. Migration SessionRosterSnapshot bổ sung danh sách cho các đợt đang Active từ trước. Tiêu chí "không sinh SessionCandidate" của DT03 trong bảng phân công được thay bằng quy tắc này.

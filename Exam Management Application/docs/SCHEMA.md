@@ -12,14 +12,14 @@ Nguồn chính xác có thể dựng lại: `Exam.Data/ExamDbContext.cs`, `Exam.
 |---|---|---|
 | Users | UserID int; username chuẩn hóa duy nhất; StudentCode duy nhất khi khác null | Identity user, họ tên, trạng thái, mã thí sinh |
 | Roles | RoleID int; tên vai trò chuẩn hóa duy nhất | Student, Lecturer, Administrator |
-| UserRoles | PK(UserID, RoleID) | Một người có nhiều vai trò; chọn một vai trò hoạt động mỗi phiên Desktop |
+| UserRoles | PK(UserID, RoleID) | Một người có nhiều vai trò; Desktop chỉ cho Administrator đăng nhập; Web dùng vai trò Student hoặc Lecturer |
 | Subjects | Id int; Code duy nhất | Môn học, trạng thái hoạt động |
 | LecturerSubjects | Id; UQ(LecturerId, SubjectId), FK Users/Subjects | Phạm vi quản lý của giảng viên |
 | Topics | Id; UQ(SubjectId, Name), FK Subjects | Chủ đề theo môn |
 | Questions | Id; FK TopicId/CreatedBy | Nội dung, độ khó Easy/Medium/Hard, ngừng sử dụng |
 | AnswerOptions | Id; FK QuestionId; UQ vị trí, unique filtered IsCorrect | Các phương án và tối đa một đáp án đúng; service kiểm tra đủ phương án |
 | Exams | Id; FK SubjectId/CreatedBy | Đề Draft/Ready |
-| ExamQuestions | Id; FK ExamId/QuestionId; UQ câu và vị trí trong đề | Điểm từng câu > 0, tổng 10 khi xác nhận Ready |
+| ExamQuestions | Id; FK ExamId/QuestionId; UQ câu và vị trí trong đề | Điểm từng câu > 0 khi xác nhận Ready; điểm bài quy về thang 10 theo tỉ lệ trọng số (ExamRules.Score) |
 | ExamSessions | Id; FK ExamId/ManagedBy; UQ AccessCode khi khác NULL; CHECK lịch/thời lượng/trạng thái/chính sách | Nháp/kích hoạt/hủy; Open/Closed được tính từ giờ server; ActivatedAt lưu thời điểm chốt danh sách, PublishedAt lưu thời điểm công bố |
 | Classes | Id; FK SubjectId; UQ(SubjectId, Code) | Lớp theo môn và trạng thái hoạt động |
 | ClassStudents | PK(ClassId, StudentId); FK Classes và Users | Thành viên lớp |
@@ -51,7 +51,7 @@ Migration `QuestionConcurrency` thêm `Questions.RowVersion` kiểu SQL Server r
 - 3NF: tên môn lấy từ Subjects, chủ đề lấy từ Topics, người dùng lấy từ Users. Các FK giữ nguồn dữ liệu chuẩn.
 - Snapshot mô tả sự kiện “nội dung thực tế đã giao”, không phải bản sao thay thế danh mục; chỉ ghi lúc bắt đầu và giữ nguyên. ExamResults mô tả sự kiện chấm, mỗi lượt có tối đa một kết quả.
 
-Các giới hạn nhiều dòng như đúng một đáp án, tổng 10, quyền môn, lịch giao nhau và điều kiện công bố được kiểm tra ở Exam.Services; các ràng buộc PK/FK/UQ/CHECK bảo vệ thêm tại SQL. Không khẳng định CHECK đơn lẻ có thể kiểm tra tổng điểm nhiều dòng.
+Các giới hạn nhiều dòng như đúng một đáp án, trọng số dương, quyền môn, lịch giao nhau và điều kiện công bố được kiểm tra ở Exam.Services; các ràng buộc PK/FK/UQ/CHECK bảo vệ thêm tại SQL. Không khẳng định CHECK đơn lẻ có thể kiểm tra tổng điểm nhiều dòng.
 
 ## Đăng ký nhân sự chờ duyệt
 
