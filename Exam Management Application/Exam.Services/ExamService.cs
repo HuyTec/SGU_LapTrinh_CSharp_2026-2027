@@ -239,7 +239,13 @@ public class ExamService(ExamDbContext db, TimeProvider clock)
         await ExpireAttemptAsync(id, student);
         var a = await Own(student, id);
         var pub = a.Session.Published && a.Status == "Submitted" && a.Result != null;
-        var review = pub && a.Session.ReviewPolicy != "ScoreOnly";
+        // Scores may be published early, but question-level feedback can reveal
+        // answers to candidates who have not started or are still taking the exam.
+        var now = Now;
+        var review = pub && a.Session.ReviewPolicy != "ScoreOnly"
+            && a.Session.Status == "Active" && SessionState(a.Session, now) == "Closed"
+            && !await db.Attempts.AnyAsync(other => other.SessionId == a.SessionId
+                && other.Status == "InProgress" && other.Deadline > now);
         return new(a.Id, a.Session.Title, a.Status == "Submitted" && a.Result == null ? "PendingGrading" : a.Status, pub, pub ? a.Result!.Score : null, pub ? a.Result!.CorrectCount : null, a.Questions.Count, a.SubmittedAt, a.Session.ReviewPolicy, review ? a.Questions.OrderBy(q => q.Order).Select(q => new ReviewQuestionDto(q.Text, q.Options.SingleOrDefault(o => o.Id == q.Response?.SelectedOptionId)?.Text, a.Session.ReviewPolicy == "CorrectAnswers" ? q.Options.Single(o => o.IsCorrect).Text : null, q.Options.Any(o => o.Id == q.Response?.SelectedOptionId && o.IsCorrect), q.Points)).ToList() : []);
     }
     public async Task<HistoryVm> HistoryAsync(int student)

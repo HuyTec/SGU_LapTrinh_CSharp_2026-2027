@@ -38,7 +38,7 @@
                     <option value="ScoreOnly">Chỉ điểm</option>
                     <option value="CorrectAnswers" selected="@(current?["reviewPolicy"] is "CorrectAnswers")">Điểm, lựa chọn và đáp án đúng</option>
                 </select>
-                <p class="form-text">Các bài đã chấm được xem ngay. Những bài nộp sau tự hiển thị kết quả khi chấm xong.</p>
+                <p class="form-text">Điểm các bài đã chấm được xem ngay. Phần xem lại bài chỉ mở sau khi đóng nhận thí sinh và không còn lượt đang làm trong thời hạn.</p>
                 <button type="submit" class="btn btn-primary">Công bố ngay</button>
             </form>
         }
@@ -48,7 +48,7 @@
     @if (published)
     {
         var policyLabel = current?["reviewPolicy"] switch { "Answers" => "Điểm và lựa chọn đã trả lời", "CorrectAnswers" => "Điểm, lựa chọn và đáp án đúng", _ => "Chỉ điểm" };
-        <p class="muted">@policyLabel. Thí sinh xem kết quả của mình ngay sau khi bài được chấm xong.</p>
+        <p class="muted">@policyLabel. Điểm hiển thị khi bài được chấm xong; phần xem lại bài chỉ mở sau khi đóng nhận thí sinh và không còn lượt đang làm trong thời hạn.</p>
     }
     @if (Model.Rows.Count == 0)
     {

@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="d5a96172-f51a-4b4b-a103-eefea938ed90" name="HOANG PHUC@LAPTOP-3ANAB9S6 2026-11-20 22:08:12" runUser="LAPTOP-3ANAB9S6\HOANG PHUC" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-20T22:08:12.8248346+07:00" queuing="2026-11-20T22:08:12.8248355+07:00" start="2026-11-20T22:07:54.4969971+07:00" finish="2026-11-20T22:08:20.8199575+07:00" />
+  <TestSettings name="default" id="ede147fd-439b-46b0-9fdd-0fd45d591370">
+    <Deployment runDeploymentRoot="HOANG_PHUC_LAPTOP-3ANAB9S6_2026-11-20_22_08_12" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="16db72c4-eb31-4a09-8f54-a5f3b00bbf78" testId="e2352b2e-2af7-2bc6-7098-858e46d10589" testName="Exam.Tests.ClassRegistrationTests.PublicationShowsScoresButWithholdsAnswersUntilAdmissionsClose" computerName="LAPTOP-3ANAB9S6" duration="00:00:00.4542990" startTime="2026-11-20T22:08:16.9619280+07:00" endTime="2026-11-20T22:08:18.8994379+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="16db72c4-eb31-4a09-8f54-a5f3b00bbf78" />
+    <UnitTestResult executionId="7ab81a86-66a3-493a-a325-9cae36bb8cb7" testId="94a75f5e-1e68-e7cd-1a8e-d04f921f4961" testName="Exam.Tests.ClassRegistrationTests.PublicationOpensCorrectAnswersAfterEarlyClosureAndTheLastSubmission" computerName="LAPTOP-3ANAB9S6" duration="00:00:00.4106616" startTime="2026-11-20T22:08:14.8552867+07:00" endTime="2026-11-20T22:08:16.9605074+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7ab81a86-66a3-493a-a325-9cae36bb8cb7" />
+    <UnitTestResult executionId="9e320ed3-354b-41bb-b50c-1bde909b8f30" testId="a1ba9095-3a9d-3e53-d330-439556cfd67b" testName="Exam.Tests.ClassRegistrationTests.PublicationWithholdsCorrectAnswersWhileAnotherCandidateIsWorking" computerName="LAPTOP-3ANAB9S6" duration="00:00:00.4907755" startTime="2026-11-20T22:08:12.7725169+07:00" endTime="2026-11-20T22:08:14.8542146+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9e320ed3-354b-41bb-b50c-1bde909b8f30" />
+    <UnitTestResult executionId="e1d3c2b1-37ac-4c3f-949d-2e1c8d284c4d" testId="35d8582a-93c3-fc18-2e13-6296f2bb0d15" testName="Exam.Tests.ClassRegistrationTests.PublicationKeepsScoreOnlyPrivateAfterEarlyAdmissionClosure" computerName="LAPTOP-3ANAB9S6" duration="00:00:00.4580765" startTime="2026-11-20T22:08:18.9002715+07:00" endTime="2026-11-20T22:08:20.6468812+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e1d3c2b1-37ac-4c3f-949d-2e1c8d284c4d" />
+    <UnitTestResult executionId="1595b5f8-107b-46e9-9a48-331d72627026" testId="3c26b008-a266-515e-bde5-930049bb7820" testName="Exam.Tests.ClassRegistrationTests.PublicationOpensReviewAtTheLastDeadlineWithoutWaitingForTheWorker" computerName="LAPTOP-3ANAB9S6" duration="00:00:03.3435749" startTime="2026-11-20T22:07:59.8447521+07:00" endTime="2026-11-20T22:08:12.7284564+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1595b5f8-107b-46e9-9a48-331d72627026" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="Exam.Tests.ClassRegistrationTests.PublicationShowsScoresButWithholdsAnswersUntilAdmissionsClose" storage="d:\sgu_laptrinh_csharp_2026-2027\exam management application\artifacts\publication-test\exam.tests.dll" id="e2352b2e-2af7-2bc6-7098-858e46d10589">
+      <Execution id="16db72c4-eb31-4a09-8f54-a5f3b00bbf78" />
+      <TestMethod codeBase="D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\artifacts\publication-test\Exam.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Exam.Tests.ClassRegistrationTests" name="PublicationShowsScoresButWithholdsAnswersUntilAdmissionsClose" />
+    </UnitTest>
+    <UnitTest name="Exam.Tests.ClassRegistrationTests.PublicationOpensCorrectAnswersAfterEarlyClosureAndTheLastSubmission" storage="d:\sgu_laptrinh_csharp_2026-2027\exam management application\artifacts\publication-test\exam.tests.dll" id="94a75f5e-1e68-e7cd-1a8e-d04f921f4961">
+      <Execution id="7ab81a86-66a3-493a-a325-9cae36bb8cb7" />
+      <TestMethod codeBase="D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\artifacts\publication-test\Exam.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Exam.Tests.ClassRegistrationTests" name="PublicationOpensCorrectAnswersAfterEarlyClosureAndTheLastSubmission" />
+    </UnitTest>
+    <UnitTest name="Exam.Tests.ClassRegistrationTests.PublicationOpensReviewAtTheLastDeadlineWithoutWaitingForTheWorker" storage="d:\sgu_laptrinh_csharp_2026-2027\exam management application\artifacts\publication-test\exam.tests.dll" id="3c26b008-a266-515e-bde5-930049bb7820">
+      <Execution id="1595b5f8-107b-46e9-9a48-331d72627026" />
+      <TestMethod codeBase="D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\artifacts\publication-test\Exam.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Exam.Tests.ClassRegistrationTests" name="PublicationOpensReviewAtTheLastDeadlineWithoutWaitingForTheWorker" />
+    </UnitTest>
+    <UnitTest name="Exam.Tests.ClassRegistrationTests.PublicationWithholdsCorrectAnswersWhileAnotherCandidateIsWorking" storage="d:\sgu_laptrinh_csharp_2026-2027\exam management application\artifacts\publication-test\exam.tests.dll" id="a1ba9095-3a9d-3e53-d330-439556cfd67b">
+      <Execution id="9e320ed3-354b-41bb-b50c-1bde909b8f30" />
+      <TestMethod codeBase="D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\artifacts\publication-test\Exam.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Exam.Tests.ClassRegistrationTests" name="PublicationWithholdsCorrectAnswersWhileAnotherCandidateIsWorking" />
+    </UnitTest>
+    <UnitTest name="Exam.Tests.ClassRegistrationTests.PublicationKeepsScoreOnlyPrivateAfterEarlyAdmissionClosure" storage="d:\sgu_laptrinh_csharp_2026-2027\exam management application\artifacts\publication-test\exam.tests.dll" id="35d8582a-93c3-fc18-2e13-6296f2bb0d15">
+      <Execution id="e1d3c2b1-37ac-4c3f-949d-2e1c8d284c4d" />
+      <TestMethod codeBase="D:\SGU_LapTrinh_CSharp_2026-2027\Exam Management Application\artifacts\publication-test\Exam.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Exam.Tests.ClassRegistrationTests" name="PublicationKeepsScoreOnlyPrivateAfterEarlyAdmissionClosure" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="e2352b2e-2af7-2bc6-7098-858e46d10589" executionId="16db72c4-eb31-4a09-8f54-a5f3b00bbf78" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="94a75f5e-1e68-e7cd-1a8e-d04f921f4961" executionId="7ab81a86-66a3-493a-a325-9cae36bb8cb7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a1ba9095-3a9d-3e53-d330-439556cfd67b" executionId="9e320ed3-354b-41bb-b50c-1bde909b8f30" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="35d8582a-93c3-fc18-2e13-6296f2bb0d15" executionId="e1d3c2b1-37ac-4c3f-949d-2e1c8d284c4d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3c26b008-a266-515e-bde5-930049bb7820" executionId="1595b5f8-107b-46e9-9a48-331d72627026" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="5" executed="5" passed="5" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.01] xUnit.net VSTest Adapter v4.0.1+0f7d528729 (64-bit .NET 10.0.13)&#xD;
+[xUnit.net 00:00:01.45]   Discovering: Exam.Tests&#xD;
+[xUnit.net 00:00:01.64]   Discovered:  Exam.Tests&#xD;
+[xUnit.net 00:00:01.71]   Starting:    Exam.Tests&#xD;
+[xUnit.net 00:00:22.62]   Finished:    Exam.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>
