@@ -154,6 +154,9 @@ public sealed class LecturerSessionService(ExamDbContext db, TimeProvider clock)
             else
                 session.Status = "Cancelled";
 <<<<<<< HEAD
+<<<<<<< HEAD
+>>>>>>> 78a47af701ad19b4ed1748b980e33142f3bad6cd
+=======
 >>>>>>> 78a47af701ad19b4ed1748b980e33142f3bad6cd
 =======
 >>>>>>> 78a47af701ad19b4ed1748b980e33142f3bad6cd

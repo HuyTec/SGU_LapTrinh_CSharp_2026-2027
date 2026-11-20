@@ -190,8 +190,11 @@ public class ExamSession
     }
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     public DateTime? AdmissionsClosedAt { get; set; }
 =======
+=======
+>>>>>>> 78a47af701ad19b4ed1748b980e33142f3bad6cd
 =======
 >>>>>>> 78a47af701ad19b4ed1748b980e33142f3bad6cd
     public DateTime? ActivatedAt
@@ -199,6 +202,9 @@ public class ExamSession
         get; set;
     }
 <<<<<<< HEAD
+<<<<<<< HEAD
+>>>>>>> 78a47af701ad19b4ed1748b980e33142f3bad6cd
+=======
 >>>>>>> 78a47af701ad19b4ed1748b980e33142f3bad6cd
 =======
 >>>>>>> 78a47af701ad19b4ed1748b980e33142f3bad6cd
