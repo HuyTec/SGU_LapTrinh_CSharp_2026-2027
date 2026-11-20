@@ -85,8 +85,9 @@ public partial class ClassRegistrationTests
             Title = "Following", OpensAt = clock.GetUtcNow().UtcDateTime.AddMinutes(10),
             ClosesAt = clock.GetUtcNow().UtcDateTime.AddMinutes(15), ClassIds = [second.Id]
         });
-        Assert.Equal(409, (await Assert.ThrowsAsync<BusinessException>(
-            () => service.ChangeStateAsync(teacher.Id, following, "activate"))).Status);
+        await service.ChangeStateAsync(teacher.Id, following, "activate");
+        Assert.Equal(2, await Db.ExamSessions.CountAsync(s => s.Status == "Active"));
+        Assert.Equal(2, await Db.SessionCandidates.CountAsync(c => c.StudentId == eligible.Id));
 
         await Db.Set<ClassStudent>().Where(m => m.ClassId == second.Id && m.StudentId == eligible.Id).ExecuteDeleteAsync();
         Db.Set<ClassStudent>().Add(new() { ClassId = second.Id, StudentId = firstOnly.Id });
@@ -99,12 +100,24 @@ public partial class ClassRegistrationTests
     }
 
     [SqlFact]
-    public async Task PostponementClearsTheRosterAndCancellationKeepsIt()
+    public async Task PostponingClosedAdmissionsReopensThemAndCancellationKeepsItsRoster()
     {
         var teacher = new AppUser { UserName = "withdraw-teacher", FullName = "Teacher" };
         var student = new AppUser { UserName = "withdraw-student", FullName = "Student" };
         var subject = new Subject { Code = "WITHDRAW", Name = "Subject" };
-        var paper = new ExamPaper { Creator = teacher, Subject = subject, Title = "Paper", Status = "Ready" };
+        var question = new Question
+        {
+            Creator = teacher,
+            Topic = new Topic { Subject = subject, Name = "Topic" },
+            Text = "Question",
+            Difficulty = "Medium",
+            Options = [new() { Text = "Correct", IsCorrect = true, Order = 1 }, new() { Text = "Incorrect", Order = 2 }]
+        };
+        var paper = new ExamPaper
+        {
+            Creator = teacher, Subject = subject, Title = "Paper", Status = "Ready",
+            Questions = [new() { Question = question, Points = 10m, Order = 1 }]
+        };
         Db.AddRange(paper, student);
         await Db.SaveChangesAsync();
         var role = await Db.Roles.SingleAsync(r => r.NormalizedName == "STUDENT");
@@ -121,22 +134,55 @@ public partial class ClassRegistrationTests
 
         await service.ChangeStateAsync(teacher.Id, id, "activate");
         Assert.True(await Db.SessionCandidates.AnyAsync(c => c.SessionId == id));
+        await service.ChangeStateAsync(teacher.Id, id, "closeAdmissions");
+        Assert.Equal(now, (await Db.ExamSessions.SingleAsync(s => s.Id == id)).AdmissionsClosedAt);
+        var firstSnapshot = await Db.SessionQuestions.Where(q => q.SessionId == id).Select(q => q.Id).SingleAsync();
+        Assert.Equal(2, await Db.SessionOptions.CountAsync(o => o.Question.SessionId == id));
         await service.ChangeStateAsync(teacher.Id, id, "postpone");
         var draft = await Db.ExamSessions.SingleAsync(s => s.Id == id);
         Assert.Equal("Draft", draft.Status);
         Assert.Null(draft.ActivatedAt);
+        Assert.Null(draft.AdmissionsClosedAt);
         Assert.False(await Db.SessionCandidates.AnyAsync(c => c.SessionId == id));
+        Assert.False(await Db.SessionQuestions.AnyAsync(q => q.SessionId == id));
+        Assert.False(await Db.SessionOptions.AnyAsync(o => o.Question.SessionId == id));
 
         await service.ChangeStateAsync(teacher.Id, id, "activate");
-        await service.ChangeStateAsync(teacher.Id, id, "cancel");
-        var cancelled = await Db.ExamSessions.SingleAsync(s => s.Id == id);
+        var nextSnapshot = await Db.SessionQuestions.Where(q => q.SessionId == id).Select(q => q.Id).SingleAsync();
+        Assert.NotEqual(firstSnapshot, nextSnapshot);
+        var reactivated = await Db.ExamSessions.SingleAsync(s => s.Id == id);
+        Assert.Equal("Active", reactivated.Status);
+        Assert.Null(reactivated.AdmissionsClosedAt);
+        Assert.True(await Db.SessionCandidates.AnyAsync(c => c.SessionId == id && c.StudentId == student.Id));
+        clock.Set(now.AddMinutes(10));
+        Assert.True(await new ExamService(Db, clock).StartAsync(student.Id, id) > 0);
+
+        var cancelId = await service.SaveAsync(teacher.Id, null,
+            new SessionDraft("Cancel session", paper.Id, now.AddHours(1), now.AddHours(2), 20,
+                false, false, "ScoreOnly", [chosen.Id]));
+        await service.ChangeStateAsync(teacher.Id, cancelId, "activate");
+        var cancelSnapshot = await Db.SessionQuestions.Where(q => q.SessionId == cancelId).Select(q => q.Id).SingleAsync();
+        await service.ChangeStateAsync(teacher.Id, cancelId, "cancel");
+        var cancelled = await Db.ExamSessions.SingleAsync(s => s.Id == cancelId);
         Assert.Equal("Cancelled", cancelled.Status);
-        Assert.Equal(now, cancelled.ActivatedAt);
-        Assert.Equal(student.Id, (await Db.SessionCandidates.SingleAsync(c => c.SessionId == id)).StudentId);
+        Assert.Equal(now.AddMinutes(10), cancelled.ActivatedAt);
+        Assert.Equal(student.Id, (await Db.SessionCandidates.SingleAsync(c => c.SessionId == cancelId)).StudentId);
+        Assert.Equal(cancelSnapshot, (await Db.SessionQuestions.SingleAsync(q => q.SessionId == cancelId)).Id);
+
+        var apiId = await service.SaveAsync(teacher.Id, null,
+            new SessionDraft("API postpone", paper.Id, now.AddHours(3), now.AddHours(4), 20,
+                false, false, "ScoreOnly", [chosen.Id]));
+        await service.ChangeStateAsync(teacher.Id, apiId, "activate");
+        await service.ChangeStateAsync(teacher.Id, apiId, "closeAdmissions");
+        var admin = new AdminService(Db, provider.GetRequiredService<UserManager<AppUser>>(), clock);
+        await admin.ActionAsync(teacher.Id, "Lecturer", "sessions", apiId, "postpone");
+        Assert.Null((await Db.ExamSessions.SingleAsync(s => s.Id == apiId)).AdmissionsClosedAt);
     }
 
     private sealed class SessionTestClock(DateTimeOffset now) : TimeProvider
     {
-        public override DateTimeOffset GetUtcNow() => now;
+        private DateTimeOffset current = now;
+        public override DateTimeOffset GetUtcNow() => current;
+        public void Set(DateTimeOffset value) => current = value;
     }
 }

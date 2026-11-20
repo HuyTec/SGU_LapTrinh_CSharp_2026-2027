@@ -17,8 +17,6 @@ public partial class SqlExamTests
         await using (var setup = NewContext())
         {
             var session = await setup.ExamSessions.SingleAsync();
-            session.ClosesAt = origin.UtcDateTime.AddMinutes(5);
-            session.DurationMinutes = 20;
             var classId = await setup.Set<SessionClass>().Select(c => c.ClassId).SingleAsync();
             var third = new AppUser { UserName = "late-new", FullName = "Late new" };
             setup.Users.Add(third);
@@ -26,12 +24,17 @@ public partial class SqlExamTests
             thirdStudent = third.Id;
             setup.AddRange(new ClassStudent { ClassId = classId, StudentId = otherStudentId },
                 new ClassStudent { ClassId = classId, StudentId = third.Id });
-            var following = new ExamSession { ExamId = session.ExamId, ManagedBy = session.ManagedBy, Title = "Following",
-                Status = "Active", OpensAt = origin.UtcDateTime, ClosesAt = origin.UtcDateTime.AddMinutes(15),
-                DurationMinutes = 20, Classes = [new() { ClassId = classId }] };
-            setup.Add(following);
+            var role = await setup.Roles.SingleAsync(r => r.NormalizedName == "STUDENT");
+            setup.UserRoles.Add(new() { UserId = third.Id, RoleId = role.Id });
             await setup.SaveChangesAsync();
-            followingSession = following.Id;
+            var sessions = new LecturerSessionService(setup, clock);
+            var draft = new SessionDraft("Personal deadlines", session.ExamId, origin.UtcDateTime,
+                origin.UtcDateTime.AddMinutes(5), 20, false, false, "ScoreOnly", [classId]);
+            sessionId = await sessions.SaveAsync(session.ManagedBy, null, draft);
+            await sessions.ChangeStateAsync(session.ManagedBy, sessionId, "activate");
+            followingSession = await sessions.SaveAsync(session.ManagedBy, null,
+                draft with { Title = "Following", ClosesAt = origin.UtcDateTime.AddMinutes(15) });
+            await sessions.ChangeStateAsync(session.ManagedBy, followingSession, "activate");
         }
 
         clock.Set(origin.AddMinutes(4));

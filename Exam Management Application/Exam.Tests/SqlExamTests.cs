@@ -3,6 +3,7 @@ using System.Text.Json;
 using Exam.Core;
 using Exam.Data;
 using Exam.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -57,7 +58,7 @@ public partial class SqlExamTests : IAsyncLifetime
         };
         var session = new ExamSession
         {
-            Exam = exam, Manager = officer, Title = "Đợt kiểm thử", Status = "Active",
+            Exam = exam, Manager = officer, Title = "Đợt kiểm thử",
             OpensAt = clock.GetUtcNow().UtcDateTime.AddMinutes(-10),
             ClosesAt = clock.GetUtcNow().UtcDateTime.AddMinutes(30), DurationMinutes = 20,
             ShuffleQuestions = true, ShuffleOptions = true
@@ -74,6 +75,18 @@ public partial class SqlExamTests : IAsyncLifetime
             }
         });
         await db.SaveChangesAsync();
+        var studentRole = new AppRole { Name = "Student", NormalizedName = "STUDENT" };
+        var lecturerRole = new AppRole { Name = "Lecturer", NormalizedName = "LECTURER" };
+        db.Roles.AddRange(studentRole, lecturerRole);
+        db.LecturerSubjects.Add(new LecturerSubject { LecturerId = officer.Id, SubjectId = subject.Id });
+        await db.SaveChangesAsync();
+        db.UserRoles.AddRange(
+            new IdentityUserRole<int> { RoleId = studentRole.Id, UserId = student.Id },
+            new IdentityUserRole<int> { RoleId = studentRole.Id, UserId = other.Id },
+            new IdentityUserRole<int> { RoleId = lecturerRole.Id, UserId = officer.Id },
+            new IdentityUserRole<int> { RoleId = lecturerRole.Id, UserId = teacher.Id });
+        await db.SaveChangesAsync();
+        await new LecturerSessionService(db, clock).ChangeStateAsync(officer.Id, session.Id, "activate");
         sessionId = session.Id;
         studentId = student.Id;
         otherStudentId = other.Id;
@@ -93,13 +106,6 @@ public partial class SqlExamTests : IAsyncLifetime
         var db = scope.ServiceProvider.GetRequiredService<ExamDbContext>();
         var users = scope.ServiceProvider.GetRequiredService<Microsoft.AspNetCore.Identity.UserManager<AppUser>>();
         var session = await db.ExamSessions.Include(x => x.Exam).SingleAsync();
-        db.LecturerSubjects.Add(new LecturerSubject { SubjectId = session.Exam.SubjectId, LecturerId = session.ManagedBy });
-        await db.SaveChangesAsync();
-        var roles = scope.ServiceProvider.GetRequiredService<Microsoft.AspNetCore.Identity.RoleManager<AppRole>>();
-        var studentRole = new AppRole { Name = "Student" };
-        Assert.True((await roles.CreateAsync(studentRole)).Succeeded);
-        db.UserRoles.Add(new Microsoft.AspNetCore.Identity.IdentityUserRole<int> { UserId = studentId, RoleId = studentRole.Id });
-        await db.SaveChangesAsync();
         var manager = session.ManagedBy;
         var admin = new AdminService(db, users, clock);
         var exporter = new ExportService(admin);
@@ -135,11 +141,6 @@ public partial class SqlExamTests : IAsyncLifetime
         var paper = await db.Exams.SingleAsync();
         var classId = await db.Set<ExamClass>().Select(c => c.Id).SingleAsync();
         db.LecturerSubjects.Add(new LecturerSubject { LecturerId = lecturer, SubjectId = paper.SubjectId });
-        var studentRole = new AppRole { Name = "Student", NormalizedName = "STUDENT" };
-        db.Roles.Add(studentRole);
-        await db.SaveChangesAsync();
-        db.UserRoles.AddRange(new() { RoleId = studentRole.Id, UserId = studentId },
-            new() { RoleId = studentRole.Id, UserId = otherStudentId });
         await db.SaveChangesAsync();
 
         var service = new LecturerSessionService(db, clock);
@@ -147,16 +148,14 @@ public partial class SqlExamTests : IAsyncLifetime
         var draft = new SessionDraft("Thi theo lớp", paper.Id, now.AddMinutes(1), now.AddMinutes(31), 20,
             true, false, "ScoreOnly", [classId]);
         var id = await service.SaveAsync(lecturer, null, draft);
-        var overlap = await Assert.ThrowsAsync<BusinessException>(() => service.ChangeStateAsync(lecturer, id, "activate"));
-        Assert.Equal(409, overlap.Status);
         var hidden = await Assert.ThrowsAsync<BusinessException>(() => service.EditorAsync(otherStudentId, id));
         Assert.Equal(404, hidden.Status);
 
-        await service.SaveAsync(lecturer, id, draft with { OpensAt = now.AddMinutes(50), ClosesAt = now.AddMinutes(80) });
+        await service.SaveAsync(lecturer, id, draft with { OpensAt = now.AddMinutes(2), ClosesAt = now.AddMinutes(32) });
         db.SessionCandidates.Add(new SessionCandidate { SessionId = id, StudentId = otherStudentId });
         await db.SaveChangesAsync();
         await service.ChangeStateAsync(lecturer, id, "activate");
-        var activated = (await service.ListAsync(lecturer)).Single();
+        var activated = (await service.ListAsync(lecturer)).Single(s => s.Id == id);
         Assert.False(string.IsNullOrEmpty(activated.Code));
         Assert.False(activated.CanEdit);
         Assert.True(activated.CanWithdraw);
@@ -169,9 +168,45 @@ public partial class SqlExamTests : IAsyncLifetime
         var student = new ExamService(db, clock);
         Assert.Equal(id, await student.FindSessionByCodeAsync(studentId, activated.Code));
         await Assert.ThrowsAsync<BusinessException>(() => student.FindSessionByCodeAsync(otherStudentId, activated.Code));
-        clock.Set(clock.GetUtcNow().AddMinutes(50));
+        clock.Set(clock.GetUtcNow().AddMinutes(2));
         Assert.Equal(403, (await Assert.ThrowsAsync<BusinessException>(() => student.StartAsync(otherStudentId, id))).Status);
         Assert.True(await student.StartAsync(studentId, id) > 0);
+    }
+
+    [SqlFact]
+    public async Task PaperTotalCannotExceedTenWhenSavedOrMarkedReady()
+    {
+        await using var db = NewContext();
+        var teacher = await db.Users.SingleAsync(u => u.UserName == "teacher");
+        var paper = await db.Exams.Include(e => e.Questions).SingleAsync();
+        db.LecturerSubjects.Add(new() { LecturerId = teacher.Id, SubjectId = paper.SubjectId });
+        await db.SaveChangesAsync();
+        var questionIds = paper.Questions.Select(q => q.QuestionId).ToArray();
+        var services = new ServiceCollection();
+        services.AddLogging();
+        services.AddSingleton(db);
+        services.AddIdentityCore<AppUser>().AddRoles<AppRole>().AddEntityFrameworkStores<ExamDbContext>();
+        await using var provider = services.BuildServiceProvider();
+        var users = provider.GetRequiredService<Microsoft.AspNetCore.Identity.UserManager<AppUser>>();
+        var admin = new AdminService(db, users, clock);
+        AdminSaveRequest Request(decimal points) => new(new()
+        {
+            ["subjectId"] = JsonSerializer.SerializeToElement(paper.SubjectId),
+            ["title"] = JsonSerializer.SerializeToElement("Score limit"),
+            ["questionIds"] = JsonSerializer.SerializeToElement(questionIds),
+            ["questionPoints"] = JsonSerializer.SerializeToElement(questionIds.ToDictionary(id => id, _ => points))
+        });
+        var error = await Assert.ThrowsAsync<BusinessException>(() =>
+            admin.SaveAsync(teacher.Id, "Lecturer", "exams", null, Request(5.01m)));
+        Assert.Contains("10", error.Message);
+        var id = await admin.SaveAsync(teacher.Id, "Lecturer", "exams", null, Request(5m));
+        await admin.ActionAsync(teacher.Id, "Lecturer", "exams", id, "ready");
+        Assert.Equal("Ready", (await db.Exams.SingleAsync(e => e.Id == id)).Status);
+        await admin.ActionAsync(teacher.Id, "Lecturer", "exams", id, "draft");
+        await db.ExamQuestions.Where(q => q.ExamId == id).ExecuteUpdateAsync(q => q.SetProperty(x => x.Points, 6m));
+        var readyError = await Assert.ThrowsAsync<BusinessException>(() =>
+            admin.ActionAsync(teacher.Id, "Lecturer", "exams", id, "ready"));
+        Assert.Contains("10", readyError.Message);
     }
 
     public async Task DisposeAsync()
@@ -271,6 +306,7 @@ public partial class SqlExamTests : IAsyncLifetime
         await using (var legacy = NewContext())
         {
             await legacy.GetService<IMigrator>().MigrateAsync(previousMigration);
+            await legacy.SessionCandidates.ExecuteDeleteAsync();
             var rosterOnly = new AppUser { UserName = "roster-only", FullName = "Thí sinh chưa bắt đầu" };
             legacy.Users.Add(rosterOnly);
             await legacy.SaveChangesAsync();
@@ -564,7 +600,15 @@ public partial class SqlExamTests : IAsyncLifetime
                 .Select(x => x.ClassId).SingleAsync();
             setup.Set<ClassStudent>().Add(new ClassStudent { ClassId = classId, StudentId = otherStudentId });
             await setup.SaveChangesAsync();
-            healthyId = await service.StartAsync(otherStudentId, sessionId);
+            // The active roster is immutable. Admit the second candidate through
+            // a new session activated after their class membership was added.
+            var original = await setup.ExamSessions.SingleAsync(s => s.Id == sessionId);
+            var sessions = new LecturerSessionService(setup, clock);
+            var healthySession = await sessions.SaveAsync(original.ManagedBy, null,
+                new SessionDraft("Healthy grading batch", original.ExamId, original.OpensAt,
+                    original.ClosesAt, original.DurationMinutes, false, false, "ScoreOnly", [classId]));
+            await sessions.ChangeStateAsync(original.ManagedBy, healthySession, "activate");
+            healthyId = await service.StartAsync(otherStudentId, healthySession);
             var answers = await setup.AttemptOptions.Where(x => x.Question.AttemptId == failingId && x.IsCorrect)
                 .Select(x => new { QuestionId = x.AttemptQuestionId, OptionId = x.Id }).ToListAsync();
             Assert.NotEmpty(answers);

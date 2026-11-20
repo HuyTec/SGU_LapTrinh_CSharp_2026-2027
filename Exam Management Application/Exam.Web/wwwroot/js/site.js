@@ -1,5 +1,5 @@
 (() => {
-    const labels = { Draft: 'Nháp', Active: 'Đã kích hoạt', Scheduled: 'Chưa đến giờ', Open: 'Đang mở', Closed: 'Hết giờ vào thi', Cancelled: 'Đã hủy', Postponed: 'Đã hoãn' };
+    const labels = { Draft: 'Nháp', Active: 'Đã kích hoạt', Scheduled: 'Chưa đến giờ', Open: 'Đang nhận thí sinh', Closed: 'Đã đóng nhận · Còn lượt đang làm', Completed: 'Đã kết thúc', Cancelled: 'Đã hủy', Postponed: 'Đã hoãn' };
     document.querySelectorAll('.status-tag[data-status], option[data-status]').forEach(el => { el.textContent = labels[el.dataset.status] || el.dataset.status; });
     document.querySelectorAll('time[data-local-time]').forEach(el => {
         const raw = el.dataset.localTime;

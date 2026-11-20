@@ -681,6 +681,79 @@ namespace Exam.Data.Migrations
                     b.ToTable("SessionCandidates");
                 });
 
+            modelBuilder.Entity("Exam.Data.SessionOption", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("IsCorrect")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SessionQuestionId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SessionQuestionId")
+                        .IsUnique()
+                        .HasFilter("[IsCorrect] = 1");
+
+                    b.HasIndex("SessionQuestionId", "Order")
+                        .IsUnique();
+
+                    b.ToTable("SessionOptions");
+                });
+
+            modelBuilder.Entity("Exam.Data.SessionQuestion", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Order")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Points")
+                        .HasPrecision(8, 2)
+                        .HasColumnType("decimal(8,2)");
+
+                    b.Property<int>("SessionId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SourceQuestionId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SessionId", "Order")
+                        .IsUnique();
+
+                    b.HasIndex("SourceQuestionId");
+
+                    b.ToTable("SessionQuestions", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_SessionQuestion_Points", "[Points] > 0");
+                        });
+                });
+
             modelBuilder.Entity("Exam.Data.SessionClass", b =>
                 {
                     b.Property<int>("SessionId")
@@ -1104,6 +1177,36 @@ namespace Exam.Data.Migrations
                     b.Navigation("Student");
                 });
 
+            modelBuilder.Entity("Exam.Data.SessionOption", b =>
+                {
+                    b.HasOne("Exam.Data.SessionQuestion", "Question")
+                        .WithMany("Options")
+                        .HasForeignKey("SessionQuestionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Question");
+                });
+
+            modelBuilder.Entity("Exam.Data.SessionQuestion", b =>
+                {
+                    b.HasOne("Exam.Data.ExamSession", "Session")
+                        .WithMany("Questions")
+                        .HasForeignKey("SessionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Exam.Data.Question", "SourceQuestion")
+                        .WithMany()
+                        .HasForeignKey("SourceQuestionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Session");
+
+                    b.Navigation("SourceQuestion");
+                });
+
             modelBuilder.Entity("Exam.Data.SessionClass", b =>
                 {
                     b.HasOne("Exam.Data.ExamClass", "Class")
@@ -1212,6 +1315,13 @@ namespace Exam.Data.Migrations
                     b.Navigation("Candidates");
 
                     b.Navigation("Classes");
+
+                    b.Navigation("Questions");
+                });
+
+            modelBuilder.Entity("Exam.Data.SessionQuestion", b =>
+                {
+                    b.Navigation("Options");
                 });
 
             modelBuilder.Entity("Exam.Data.Question", b =>

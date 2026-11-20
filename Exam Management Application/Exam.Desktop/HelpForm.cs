@@ -39,7 +39,7 @@ public sealed partial class HelpForm : Form
             "Administrator" => """
                 QUẢN TRỊ TÀI KHOẢN
 
-                1. Mở “Tài khoản / thí sinh”. Với tài khoản đã chờ duyệt từ trước, kiểm tra thông tin và cột “Vai trò đăng ký”, chọn đúng dòng rồi bấm “Duyệt đăng ký”.
+                1. Mở “Người dùng & phân quyền”, chọn Giảng viên hoặc Sinh viên. Chọn một tài khoản để khóa, mở khóa hoặc đổi mật khẩu / vai trò bằng các nút trên thanh thao tác.
 
                 Bạn cũng có thể chọn Thêm để tạo trực tiếp tài khoản: điền tài khoản, họ tên, mật khẩu và chọn vai trò. Tài khoản thí sinh cần mã thí sinh.
 

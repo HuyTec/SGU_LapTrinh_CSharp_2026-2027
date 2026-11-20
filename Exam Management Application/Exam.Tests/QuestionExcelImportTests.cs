@@ -18,8 +18,30 @@ public sealed class QuestionExcelImportTests
         using var sheetStream = sheet!.Open();
         var document = XDocument.Load(sheetStream);
         XNamespace ns = "http://schemas.openxmlformats.org/spreadsheetml/2006/main";
-        var headers = document.Descendants(ns + "row").First().Elements(ns + "c")
+        var headerCells = document.Descendants(ns + "row").First().Elements(ns + "c").Take(8).ToArray();
+        Assert.Equal(Enumerable.Range(0, 8).Select(i => $"{(char)('A' + i)}1"),
+            headerCells.Select(cell => (string?)cell.Attribute("r")));
+        var headers = headerCells
             .Select(cell => cell.Element(ns + "is")?.Element(ns + "t")?.Value).ToArray();
         Assert.Equal(new[] { "Chủ đề", "Nội dung", "Độ khó", "Đáp án A", "Đáp án B", "Đáp án C", "Đáp án D", "Đáp án đúng" }, headers);
+    }
+
+    [Fact]
+    public void SubjectTemplateIncludesTopicChoicesAndDropdownValidation()
+    {
+        using var input = new MemoryStream(QuestionExcelImportService.CreateTemplate(["Lập trình C#", "Mảng"]));
+        using var archive = new ZipArchive(input, ZipArchiveMode.Read);
+        var sheet = archive.GetEntry("xl/worksheets/sheet1.xml");
+        Assert.NotNull(sheet);
+        using var sheetStream = sheet!.Open();
+        var document = XDocument.Load(sheetStream);
+        XNamespace ns = "http://schemas.openxmlformats.org/spreadsheetml/2006/main";
+        Assert.Equal("DanhSachChuDe", document.Descendants(ns + "formula1").Single().Value);
+
+        var topics = archive.GetEntry("xl/worksheets/sheet2.xml");
+        Assert.NotNull(topics);
+        using var topicsStream = topics!.Open();
+        var topicDocument = XDocument.Load(topicsStream);
+        Assert.Equal(new[] { "Lập trình C#", "Mảng" }, topicDocument.Descendants(ns + "t").Select(x => x.Value));
     }
 }

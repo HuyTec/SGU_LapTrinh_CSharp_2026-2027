@@ -28,7 +28,7 @@
         <input asp-for="SubjectId" type="hidden" />
         <label asp-for="Title" class="form-label">Tên đề</label>
         <input asp-for="Title" class="form-control mb-3" readonly="@ready" required maxlength="2000" />
-        <p class="muted">Trọng số phải dương. Hệ thống quy đổi kết quả về thang 10 khi chấm.</p>
+        <p class="muted">Điểm mỗi câu phải dương. Tổng điểm các câu được chọn không được vượt quá 10. Hệ thống quy đổi kết quả về thang 10 khi chấm.</p>
         @if (Model.Questions.Count == 0) { <p>Môn này chưa có câu hỏi đang hoạt động.</p> }
         <div class="table-responsive">
             <table class="table align-middle">
@@ -43,7 +43,7 @@
                             <input asp-for="Questions[i].Selected" class="form-check-input" aria-label="Chọn câu @question.Id" disabled="@ready" />
                         </td>
                         <td><div class="question-markdown">@question.Text</div></td>
-                        <td><input asp-for="Questions[i].Points" type="number" class="form-control" step="0.01" max="999999.99" aria-label="Trọng số câu @question.Id" readonly="@ready" /></td>
+                        <td><input asp-for="Questions[i].Points" type="number" class="form-control" step="0.01" max="10" aria-label="Trọng số câu @question.Id" readonly="@ready" /></td>
                     </tr>
                 }
                 </tbody>

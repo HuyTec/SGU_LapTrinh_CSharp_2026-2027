@@ -11,16 +11,22 @@ public class ExamService(ExamDbContext db, TimeProvider clock)
         ? (s.AdmissionsClosedAt is DateTime closedAt && now >= closedAt || now >= s.ClosesAt
             ? "Closed" : now < s.OpensAt ? "Scheduled" : "Open")
         : s.Status;
-    SessionDto Dto(ExamSession s, long? attempt) => new(s.Id, s.Title, s.Exam.Subject.Name, s.OpensAt, s.ClosesAt, s.DurationMinutes, SessionState(s, Now), attempt, s.Published, s.ReviewPolicy);
+    // Admission closure does not end attempts that still have personal time remaining.
+    public static string SessionState(ExamSession s, DateTime now, bool hasRunningAttempts)
+        => SessionState(s, now) == "Closed" && !hasRunningAttempts ? "Completed" : SessionState(s, now);
+
+    internal static async Task<HashSet<int>> RunningSessionIdsAsync(ExamDbContext db, IEnumerable<int> sessionIds, DateTime now)
+    {
+        var ids = sessionIds.ToArray();
+        if (ids.Length == 0) return [];
+        return (await db.Attempts.Where(a => ids.Contains(a.SessionId)
+            && a.Status == "InProgress" && a.Deadline > now)
+            .Select(a => a.SessionId).Distinct().ToListAsync()).ToHashSet();
+    }
+
+    SessionDto Dto(ExamSession s, long? attempt, DateTime now, bool hasRunningAttempts) => new(s.Id, s.Title, s.Exam.Subject.Name, s.OpensAt, s.ClosesAt, s.DurationMinutes, SessionState(s, now, hasRunningAttempts), attempt, s.Published, s.ReviewPolicy);
     // Keep list, detail and new attempts on the same admission rule.
-    IQueryable<ExamSession> AssignedSessions(int student) =>
-        db.ExamSessions.Where(session =>
-            db.Attempts.Any(a => a.SessionId == session.Id && a.StudentId == student) ||
-            (session.ActivatedAt != null && session.Classes.Any() &&
-                session.Candidates.Any(candidate => candidate.StudentId == student)) ||
-            (session.ActivatedAt == null && session.Classes.Any(link => link.Class.IsActive &&
-                link.Class.SubjectId == session.Exam.SubjectId &&
-                link.Class.Students.Any(member => member.StudentId == student))));
+    IQueryable<ExamSession> AssignedSessions(int student) => StudentSessionAccess.Assigned(db, student);
 
     public sealed record StudentClassRow(int Id, string Code, string Subject, bool Active,
         IReadOnlyList<string> Lecturers, IReadOnlyList<SessionDto> Sessions);
@@ -68,16 +74,24 @@ public class ExamService(ExamDbContext db, TimeProvider clock)
 
     public async Task<SessionListVm> SessionsAsync(int student, string? search = null, string? status = null)
     {
-        var list = await AssignedSessions(student).Include(x => x.Exam).ThenInclude(x => x.Subject).Where(x => x.Status != "Draft").OrderByDescending(x => x.OpensAt).ToListAsync();
+        var list = await AssignedSessions(student).Include(x => x.Exam).ThenInclude(x => x.Subject)
+            .Where(x => x.Status != "Draft" && x.Status != "Cancelled")
+            .OrderByDescending(x => x.OpensAt).ToListAsync();
         var attempts = await db.Attempts.Where(x => x.StudentId == student).ToDictionaryAsync(x => x.SessionId, x => x.Id);
-        var rows = list.Select(s => Dto(s, attempts.TryGetValue(s.Id, out var a) ? a : null)).Where(s => (string.IsNullOrWhiteSpace(search) || (s.Title + " " + s.Subject).Contains(search, StringComparison.OrdinalIgnoreCase)) && (string.IsNullOrWhiteSpace(status) || s.Status == status)).ToList();
+        var now = Now;
+        var running = await RunningSessionIdsAsync(db, list.Select(s => s.Id), now);
+        var rows = list.Select(s => Dto(s, attempts.TryGetValue(s.Id, out var a) ? a : null, now, running.Contains(s.Id)))
+            .Where(s => (string.IsNullOrWhiteSpace(search) || (s.Title + " " + s.Subject).Contains(search, StringComparison.OrdinalIgnoreCase)) && (string.IsNullOrWhiteSpace(status) || s.Status == status))
+            .ToList();
         return new(rows, search, status);
     }
     public async Task<SessionDetailVm> DetailAsync(int student, int id)
     {
-        var s = await AssignedSessions(student).Include(x => x.Exam).ThenInclude(x => x.Subject).SingleOrDefaultAsync(x => x.Id == id && x.Status != "Draft") ?? throw new BusinessException("Không tìm thấy đợt thi.", 404);
+        var s = await AssignedSessions(student).Include(x => x.Exam).ThenInclude(x => x.Subject).SingleOrDefaultAsync(x => x.Id == id && x.Status == "Active") ?? throw new BusinessException("Không tìm thấy đợt thi.", 404);
         var a = await db.Attempts.Where(x => x.SessionId == id && x.StudentId == student).Select(x => (long?)x.Id).SingleOrDefaultAsync();
-        return new(Dto(s, a), "Một lượt thi mỗi đợt. Đáp án chỉ được chấm khi đã được máy chủ xác nhận lưu. Hết giờ hệ thống tự kết thúc; tải lại trang không làm tăng thời gian.");
+        var now = Now;
+        var running = await RunningSessionIdsAsync(db, [id], now);
+        return new(Dto(s, a, now, running.Contains(id)), "Một lượt thi mỗi đợt. Đáp án chỉ được chấm khi đã được máy chủ xác nhận lưu. Hết giờ hệ thống tự kết thúc; tải lại trang không làm tăng thời gian.");
     }
     /// <summary>Retry a whole serializable transaction, clearing tracked state before every retry.</summary>
     async Task<T> Serial<T>(Func<Task<T>> work)
@@ -92,8 +106,8 @@ public class ExamService(ExamDbContext db, TimeProvider clock)
             return old.Id;
 
         var s = await AssignedSessions(student)
-            .Include(x => x.Exam).ThenInclude(x => x.Questions)
-            .ThenInclude(x => x.Question).ThenInclude(x => x.Options)
+            .Include(x => x.Exam)
+            .Include(x => x.Questions).ThenInclude(q => q.Options)
             .SingleOrDefaultAsync(x => x.Id == sessionId);
         if (s == null)
         {
@@ -108,6 +122,8 @@ public class ExamService(ExamDbContext db, TimeProvider clock)
             throw new BusinessException("Chưa đến giờ vào thi hoặc đã hết giờ nhận lượt mới.", 409);
         if (s.Exam.Status != "Ready")
             throw new BusinessException("Đề chưa sẵn sàng.", 409);
+        if (s.ActivatedAt == null || s.Questions.Count == 0)
+            throw new BusinessException("Đợt thi chưa có bản chụp đề hợp lệ. Hãy báo giảng viên kiểm tra và kích hoạt lại đợt.", 409);
         if (await db.Attempts.AnyAsync(a => a.StudentId == student && a.SessionId != sessionId &&
             a.Status == "InProgress" && a.Deadline > now))
             throw new BusinessException("Bạn đang làm một bài thi khác. Nộp bài đó trước khi bắt đầu lượt mới.", 409);
@@ -120,19 +136,19 @@ public class ExamService(ExamDbContext db, TimeProvider clock)
             StartedAt = now,
             Deadline = ExamRules.Deadline(now, s.DurationMinutes)
         };
-        var questions = s.Exam.Questions.OrderBy(q => q.Order).ToList();
+        var questions = s.Questions.OrderBy(q => q.Order).ToList();
         if (s.ShuffleQuestions)
             Random.Shared.Shuffle(System.Runtime.InteropServices.CollectionsMarshal.AsSpan(questions));
         foreach (var q in questions)
         {
             var aq = new AttemptQuestion
             {
-                SourceQuestionId = q.QuestionId,
-                Text = q.Question.Text,
+                SourceQuestionId = q.SourceQuestionId,
+                Text = q.Text,
                 Points = q.Points,
                 Order = a.Questions.Count + 1
             };
-            var opts = q.Question.Options.OrderBy(x => x.Order).ToList();
+            var opts = q.Options.OrderBy(x => x.Order).ToList();
             if (s.ShuffleOptions)
                 Random.Shared.Shuffle(System.Runtime.InteropServices.CollectionsMarshal.AsSpan(opts));
             foreach (var o in opts)
@@ -232,7 +248,13 @@ public class ExamService(ExamDbContext db, TimeProvider clock)
         await ExpireAttemptAsync(id, student);
         var a = await Own(student, id);
         var pub = a.Session.Published && a.Status == "Submitted" && a.Result != null;
-        var review = pub && a.Session.ReviewPolicy != "ScoreOnly";
+        // Scores may be published early, but question-level feedback can reveal
+        // answers to candidates who have not started or are still taking the exam.
+        var now = Now;
+        var review = pub && a.Session.ReviewPolicy != "ScoreOnly"
+            && a.Session.Status == "Active" && SessionState(a.Session, now) == "Closed"
+            && !await db.Attempts.AnyAsync(other => other.SessionId == a.SessionId
+                && other.Status == "InProgress" && other.Deadline > now);
         return new(a.Id, a.Session.Title, a.Status == "Submitted" && a.Result == null ? "PendingGrading" : a.Status, pub, pub ? a.Result!.Score : null, pub ? a.Result!.CorrectCount : null, a.Questions.Count, a.SubmittedAt, a.Session.ReviewPolicy, review ? a.Questions.OrderBy(q => q.Order).Select(q => new ReviewQuestionDto(q.Text, q.Options.SingleOrDefault(o => o.Id == q.Response?.SelectedOptionId)?.Text, a.Session.ReviewPolicy == "CorrectAnswers" ? q.Options.Single(o => o.IsCorrect).Text : null, q.Options.Any(o => o.Id == q.Response?.SelectedOptionId && o.IsCorrect), q.Points)).ToList() : []);
     }
     public async Task<HistoryVm> HistoryAsync(int student)

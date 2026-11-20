@@ -25,13 +25,17 @@ public sealed class LecturerSessionService(ExamDbContext db, TimeProvider clock)
         var now = Now;
         var rows = await Owned(lecturer).AsNoTracking().Include(s => s.Exam)
             .OrderByDescending(s => s.OpensAt).ThenByDescending(s => s.Id).ToListAsync();
-        return rows.Select(s => new LecturerSessionRow(s.Id, s.Title, s.Exam.Title, ExamService.SessionState(s, now),
-            s.Status == "Active" ? s.AccessCode : null, s.Status == "Draft" && !s.HasOpened,
-            s.Status == "Active" && !s.HasOpened && s.OpensAt > now)).ToList();
+        var running = await ExamService.RunningSessionIdsAsync(db, rows.Select(s => s.Id), now);
+        return rows.Select(s => new LecturerSessionRow(s.Id, s.Title, s.Exam.Title, ExamService.SessionState(s, now, running.Contains(s.Id)),
+                ExamService.SessionState(s, now) is "Scheduled" or "Open" ? s.AccessCode : null, s.Status == "Draft" && !s.HasOpened,
+                s.Status == "Active" && !s.HasOpened && s.OpensAt > now))
+            .Where(s => s.State != "Cancelled")
+            .ToList();
     }
 
     private async Task<ExamSession> LoadAsync(int lecturer, int id) => await Owned(lecturer)
         .Include(s => s.Exam).ThenInclude(p => p.Subject)
+        .Include(s => s.Exam).ThenInclude(p => p.Questions).ThenInclude(q => q.Question).ThenInclude(q => q.Options)
         .Include(s => s.Classes).ThenInclude(c => c.Class)
         .SingleOrDefaultAsync(s => s.Id == id) ?? throw new BusinessException("Không tìm thấy đợt thi trong phạm vi phụ trách.", 404);
 
@@ -126,9 +130,9 @@ public sealed class LecturerSessionService(ExamDbContext db, TimeProvider clock)
         }
         if (action == "cancel")
         {
-            if (session.Status != "Active" || session.HasOpened ||
+            if (session.Status != "Active" || session.HasOpened || Now >= session.OpensAt ||
                 await db.Attempts.AnyAsync(a => a.SessionId == id))
-                throw new BusinessException("Không thể hủy đợt vì đã có thí sinh bắt đầu làm bài.", 409);
+                throw new BusinessException("Chỉ hủy đợt trước giờ mở và khi chưa có thí sinh bắt đầu làm bài.", 409);
             session.Status = "Cancelled";
             return true;
         }
@@ -138,7 +142,10 @@ public sealed class LecturerSessionService(ExamDbContext db, TimeProvider clock)
                 await db.Attempts.AnyAsync(a => a.SessionId == id))
                 throw new BusinessException("Chỉ hoãn đợt đã kích hoạt trước giờ mở lần đầu.", 409);
             await db.SessionCandidates.Where(c => c.SessionId == id).ExecuteDeleteAsync();
+            await db.SessionOptions.Where(o => o.Question.SessionId == id).ExecuteDeleteAsync();
+            await db.SessionQuestions.Where(q => q.SessionId == id).ExecuteDeleteAsync();
             session.ActivatedAt = null;
+            session.AdmissionsClosedAt = null;
             session.Status = "Draft";
             return true;
         }
@@ -147,6 +154,8 @@ public sealed class LecturerSessionService(ExamDbContext db, TimeProvider clock)
         EnsureDraft(session);
         if (session.Exam.Status != "Ready")
             throw new BusinessException("Đề thi chưa sẵn sàng. Xác nhận đề sẵn sàng trước khi kích hoạt đợt.");
+        if (session.Exam.Questions.Sum(q => q.Points) > 10m)
+            throw new BusinessException("Đề thi vượt quá 10 điểm. Chỉnh lại điểm của đề trước khi kích hoạt đợt thi.");
         if (!session.Exam.Subject.IsActive)
             throw new BusinessException("Môn học đã ngừng hoạt động. Liên hệ quản trị viên để kiểm tra môn.");
         if (session.ClosesAt <= Now)
@@ -158,23 +167,36 @@ public sealed class LecturerSessionService(ExamDbContext db, TimeProvider clock)
             throw new BusinessException("Có lớp đã ngừng hoạt động hoặc khác môn với đề. Sửa lại các lớp đã chọn trước khi kích hoạt.");
         var classIds = session.Classes.Select(c => c.ClassId).ToArray();
         var members = db.Set<ClassStudent>().Where(m => classIds.Contains(m.ClassId)).Select(m => m.StudentId);
-        var overlap = await db.ExamSessions.AnyAsync(other => other.Id != id && other.Status == "Active" &&
-            other.OpensAt < session.ClosesAt.AddMinutes(session.DurationMinutes) &&
-            session.OpensAt < other.ClosesAt.AddMinutes(other.DurationMinutes) &&
-            (other.Classes.Any(c => c.Class.IsActive && (classIds.Contains(c.ClassId) ||
-                c.Class.Students.Any(m => members.Contains(m.StudentId)))) ||
-             db.Attempts.Any(a => a.SessionId == other.Id && a.Status == "InProgress" && members.Contains(a.StudentId))));
-        if (overlap)
-            throw new BusinessException("Lớp hoặc thí sinh có thời gian làm bài trùng với đợt khác. Lịch được kiểm tra đến giờ đóng nhận lượt cộng thời lượng làm bài.", 409);
-
         var studentIds = await (from studentId in members
                                 join user in db.Users on studentId equals user.Id
                                 join userRole in db.UserRoles on user.Id equals userRole.UserId
                                 join role in db.Roles on userRole.RoleId equals role.Id
                                 where user.IsActive && role.NormalizedName == "STUDENT"
                                 select studentId).Distinct().ToListAsync();
+        if (session.Exam.Questions.Count == 0 || session.Exam.Questions.Any(q => q.Question.Options.Count < 2 || q.Question.Options.Count(o => o.IsCorrect) != 1))
+            throw new BusinessException("Đề không còn đủ câu hỏi hoặc phương án hợp lệ. Hãy kiểm tra lại đề trước khi kích hoạt.", 409);
+        if (await db.SessionQuestions.AnyAsync(q => q.SessionId == id))
+            throw new BusinessException("Đợt nháp còn bản chụp đề cũ. Không thể kích hoạt để tránh thay đổi nội dung đã chốt.", 409);
+
         await db.SessionCandidates.Where(c => c.SessionId == id).ExecuteDeleteAsync();
         db.SessionCandidates.AddRange(studentIds.Select(studentId => new SessionCandidate { SessionId = id, StudentId = studentId }));
+        foreach (var examQuestion in session.Exam.Questions.OrderBy(q => q.Order))
+        {
+            var snapshotQuestion = new SessionQuestion
+            {
+                SourceQuestionId = examQuestion.QuestionId,
+                Text = examQuestion.Question.Text,
+                Order = examQuestion.Order,
+                Points = examQuestion.Points
+            };
+            snapshotQuestion.Options.AddRange(examQuestion.Question.Options.OrderBy(o => o.Order).Select(o => new SessionOption
+            {
+                Text = o.Text,
+                Order = o.Order,
+                IsCorrect = o.IsCorrect
+            }));
+            session.Questions.Add(snapshotQuestion);
+        }
         session.ActivatedAt = Now;
         session.AccessCode ??= Convert.ToHexString(RandomNumberGenerator.GetBytes(12));
         session.Status = "Active";

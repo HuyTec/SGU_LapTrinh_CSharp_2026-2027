@@ -119,16 +119,18 @@ partial class MainForm
         // brand
         // 
         brand.ColumnCount = 1;
-        brand.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
+        brand.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
         brand.Controls.Add(brandName, 0, 0);
         brand.Controls.Add(brandSubtitle, 0, 1);
+        brand.AutoSize = true;
+        brand.AutoSizeMode = AutoSizeMode.GrowAndShrink;
         brand.Dock = DockStyle.Top;
         brand.Location = new Point(0, 0);
         brand.Name = "brand";
         brand.Padding = new Padding(24, 24, 12, 20);
         brand.RowCount = 2;
-        brand.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-        brand.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+        brand.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+        brand.RowStyles.Add(new RowStyle(SizeType.AutoSize));
         brand.Size = new Size(238, 120);
         brand.TabIndex = 2;
         // 
@@ -142,6 +144,7 @@ partial class MainForm
         brandName.Size = new Size(139, 20);
         brandName.TabIndex = 0;
         brandName.Text = "Exam";
+        brandName.Margin = new Padding(3, 0, 3, 6);
         brandName.Click += brandName_Click;
         // 
         // brandSubtitle

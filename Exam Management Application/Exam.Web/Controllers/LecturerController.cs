@@ -132,8 +132,12 @@ public class LecturerController(AdminService admin, QuestionExcelImportService q
     }
 
     [HttpGet]
-    public IActionResult DownloadQuestionTemplate() => File(QuestionExcelImportService.CreateTemplate(),
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Mau-nhap-cau-hoi.xlsx");
+    public async Task<IActionResult> DownloadQuestionTemplate(int subjectId, CancellationToken cancellationToken)
+    {
+        var topics = await questionImport.GetActiveTopicNamesAsync(UserId, subjectId, cancellationToken);
+        return File(QuestionExcelImportService.CreateTemplate(topics),
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"Mau-nhap-cau-hoi-mon-{subjectId}.xlsx");
+    }
 
     private async Task PopulateImportSubjectsAsync(QuestionImportEditor model)
     {

@@ -159,19 +159,23 @@ public partial class ResourceView : UserControl, IWorkspaceView, IResourceView
         delete.Visible = definition.CanDelete;
         emptyAction.Visible = definition.CanCreate;
         foreach (Control old in resourceActions.Controls.Cast<Control>().ToArray()) old.Dispose();
+        foreach (var old in selectedActions.Where(button => button.Parent == primaryActions).ToArray())
+            old.Dispose();
         selectedActions.Clear();
         void Action(string label, string action, bool danger = false)
         {
             var button = Button(label, danger ? UiButtonKind.Danger : UiButtonKind.Secondary);
             button.Tag = action;
             button.Click += async (_, _) => await presenter.ActionAsync(action, label, danger);
-            resourceActions.Controls.Add(button); selectedActions.Add(button);
+            var actions = resourceKey == "users" ? primaryActions : resourceActions;
+            actions.Controls.Add(button);
+            selectedActions.Add(button);
         }
         if (resourceKey == "users")
         {
-            Action("Duyệt đăng ký", "approve"); Action("Khóa tài khoản", "lock"); Action("Mở khóa", "unlock");
+            Action("Khóa tài khoản", "lock"); Action("Mở khóa", "unlock");
             var password = Button("Mật khẩu / vai trò"); password.Click += async (_, _) => await presenter.EditSelectedAsync();
-            resourceActions.Controls.Add(password); selectedActions.Add(password);
+            primaryActions.Controls.Add(password); selectedActions.Add(password);
             var import = Button("Nhập CSV sinh viên"); import.Tag = "studentImport";
             import.Visible = accountRole == "Student";
             import.Click += async (_, _) => await presenter.ImportAsync(); resourceActions.Controls.Add(import);
@@ -370,7 +374,6 @@ public partial class ResourceView : UserControl, IWorkspaceView, IResourceView
         foreach (var button in selectedActions)
         {
             var action = button.Tag?.ToString();
-            if (action == "approve") button.Enabled = !busy && !string.IsNullOrEmpty(row.GetValueOrDefault("requestedRole")?.ToString());
             if (action is "ready" or "activate") button.Enabled = !busy && state == "Draft";
             if (action == "draft") button.Enabled = !busy && state == "Ready";
             if (action is "postpone" or "cancel") button.Enabled = !busy && state is "Draft" or "Scheduled";

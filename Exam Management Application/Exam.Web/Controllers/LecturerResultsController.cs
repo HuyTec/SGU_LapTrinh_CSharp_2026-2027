@@ -28,7 +28,7 @@ public sealed class LecturerResultsController(AdminService admin, ExportService 
         try
         {
             await admin.ActionAsync(UserId, Role, "sessions", id, "publish", reviewPolicy);
-            TempData["Success"] = "Đã bật công bố. Mỗi thí sinh xem kết quả ngay khi bài của mình được chấm xong.";
+            TempData["Success"] = "Đã bật công bố điểm cho các bài đã chấm. Phần xem lại bài chỉ mở sau khi đóng nhận thí sinh và không còn lượt đang làm trong thời hạn.";
         }
         catch (BusinessException ex) when (ex.Status == 400 || ex.Status == 409)
         {

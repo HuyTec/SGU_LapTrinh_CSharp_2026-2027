@@ -41,9 +41,8 @@ public partial class ClassRegistrationTests
         var root = new DirectoryInfo(AppContext.BaseDirectory);
         while (root is not null && !File.Exists(Path.Combine(root.FullName, "Exam Management Application.slnx"))) root = root.Parent;
         Assert.NotNull(root);
-        var configuration = new DirectoryInfo(AppContext.BaseDirectory).Parent!.Name;
         var webRoot = Path.Combine(root.FullName, "Exam.Web");
-        var dll = Path.Combine(webRoot, "bin", configuration, "net10.0", "Exam.Web.dll");
+        var dll = typeof(global::Program).Assembly.Location;
         Assert.True(File.Exists(dll));
         using var listener = new TcpListener(IPAddress.Loopback, 0);
         listener.Start();
@@ -230,6 +229,17 @@ public partial class ClassRegistrationTests
             }
             var resultPage = WebUtility.HtmlDecode(await pupil.GetStringAsync($"/Attempts/Result/{ownAttempt.Id}"));
             Assert.Contains("Điểm bài thi", resultPage);
+            Assert.DoesNotContain("Đáp án đã chọn:", resultPage);
+            Assert.DoesNotContain("review-correct", resultPage);
+            Assert.DoesNotContain("Đáp án đúng:", resultPage);
+            Assert.Contains("Phần xem lại bài sẽ mở", resultPage);
+            await PostForm(staff, $"/LecturerSessions/ChangeState/{session.Id}", "/LecturerSessions",
+                new() { ["command"] = "closeAdmissions" });
+            var closedList = await pupil.GetStringAsync("/Sessions");
+            Assert.Contains("data-status=\"Completed\"", closedList);
+            Assert.Contains($"/Attempts/Take/{ownAttempt.Id}", closedList);
+            Assert.Contains("HTTP Session", await staff.GetStringAsync("/LecturerSessions"));
+            resultPage = WebUtility.HtmlDecode(await pupil.GetStringAsync($"/Attempts/Result/{ownAttempt.Id}"));
             Assert.Contains("Đáp án đã chọn:", resultPage);
             Assert.Contains("review-correct", resultPage);
             Assert.DoesNotContain("Đáp án đúng:", resultPage);

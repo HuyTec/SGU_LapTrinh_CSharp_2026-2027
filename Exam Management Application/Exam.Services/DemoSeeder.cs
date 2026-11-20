@@ -29,7 +29,11 @@ public static class DemoSeeder
             await users.AddToRoleAsync(u, role);
         }
         if (await db.Subjects.AnyAsync())
+        {
+            await EnsureSessionSnapshotsAsync(db);
+            await EnsureActivationDraftAsync(db);
             return;
+        }
         var lecturer = (await users.FindByNameAsync("lecturer"))!;
         var lecturer2 = (await users.FindByNameAsync("lecturer2"))!;
         var subject = new Subject { Code = "CSHARP", Name = "Lập trình C#" };
@@ -75,9 +79,100 @@ public static class DemoSeeder
             demoClass.Students.Add(new() { StudentId = (await users.FindByNameAsync(name))!.Id });
         session.AccessCode = Convert.ToHexString(System.Security.Cryptography.RandomNumberGenerator.GetBytes(8));
         session.Classes.Add(new() { Class = demoClass });
+        session.ActivatedAt = DateTime.UtcNow;
+        session.Candidates.AddRange(demoClass.Students.Select(x => new SessionCandidate { StudentId = x.StudentId }));
+        session.Questions.AddRange(paper.Questions.OrderBy(x => x.Order).Select(x => new SessionQuestion
+        {
+            SourceQuestionId = x.QuestionId,
+            Text = x.Question.Text,
+            Order = x.Order,
+            Points = x.Points,
+            Options = x.Question.Options.OrderBy(o => o.Order).Select(o => new SessionOption
+            {
+                Text = o.Text,
+                Order = o.Order,
+                IsCorrect = o.IsCorrect
+            }).ToList()
+        }));
         db.ExamSessions.Add(session);
         await db.SaveChangesAsync();
+        await EnsureActivationDraftAsync(db, paper.Id, demoClass.Id);
         Console.WriteLine($"Mã vào thi demo: {session.AccessCode}");
+    }
+
+    private static async Task EnsureSessionSnapshotsAsync(ExamDbContext db)
+    {
+        var session = await db.ExamSessions
+            .Include(s => s.Exam).ThenInclude(e => e.Questions).ThenInclude(q => q.Question).ThenInclude(q => q.Options)
+            .Include(s => s.Questions)
+            .Include(s => s.Candidates)
+            .Include(s => s.Classes).ThenInclude(c => c.Class).ThenInclude(c => c.Students)
+            .SingleOrDefaultAsync(s => s.Title == "Thi thử C#" && s.Status == "Active");
+        if (session is null)
+            return;
+
+        var questionIds = session.Questions.Select(q => q.SourceQuestionId).ToHashSet();
+        foreach (var source in session.Exam.Questions.OrderBy(q => q.Order).Where(q => !questionIds.Contains(q.QuestionId)))
+            session.Questions.Add(new SessionQuestion
+            {
+                SourceQuestionId = source.QuestionId,
+                Text = source.Question.Text,
+                Order = source.Order,
+                Points = source.Points,
+                Options = source.Question.Options.OrderBy(o => o.Order).Select(o => new SessionOption
+                {
+                    Text = o.Text,
+                    Order = o.Order,
+                    IsCorrect = o.IsCorrect
+                }).ToList()
+            });
+
+        var candidateIds = session.Candidates.Select(c => c.StudentId).ToHashSet();
+        foreach (var studentId in session.Classes.SelectMany(c => c.Class.Students).Select(c => c.StudentId).Distinct().Where(id => !candidateIds.Contains(id)))
+            session.Candidates.Add(new SessionCandidate { StudentId = studentId });
+        session.ActivatedAt ??= DateTime.UtcNow;
+        await db.SaveChangesAsync();
+    }
+
+    private static async Task EnsureActivationDraftAsync(ExamDbContext db, int? paperId = null, int? classId = null)
+    {
+        if (await db.ExamSessions.AnyAsync(s => s.Title == "Kiểm thử kích hoạt chụp đề"))
+            return;
+        var paper = paperId is int pId
+            ? await db.Exams.SingleOrDefaultAsync(p => p.Id == pId)
+            : await db.Exams.Where(p => p.Status == "Ready" && p.Subject.Code == "CSHARP").OrderByDescending(p => p.Id).FirstOrDefaultAsync();
+        var demoClass = classId is int cId
+            ? await db.Set<ExamClass>().SingleOrDefaultAsync(c => c.Id == cId)
+            : await db.Set<ExamClass>().SingleOrDefaultAsync(c => c.Code == "DEMO-TS01");
+        if (paper is null || demoClass is null || !demoClass.IsActive)
+            return;
+
+        var studentIds = await db.Users.Where(u => u.UserName == "student" || u.UserName == "student2")
+            .Select(u => u.Id).ToListAsync();
+        var existingIds = await db.Set<ClassStudent>().Where(m => m.ClassId == demoClass.Id && studentIds.Contains(m.StudentId))
+            .Select(m => m.StudentId).ToListAsync();
+        db.Set<ClassStudent>().AddRange(studentIds.Except(existingIds).Select(id => new ClassStudent { ClassId = demoClass.Id, StudentId = id }));
+
+        var latestClose = await db.ExamSessions.Where(s => s.Status == "Active" && s.Classes.Any(c => c.ClassId == demoClass.Id))
+            .MaxAsync(s => (DateTime?)s.ClosesAt);
+        var opensAt = DateTime.UtcNow.AddDays(8);
+        if (latestClose is DateTime activeClose && activeClose.AddDays(1) > opensAt)
+            opensAt = activeClose.AddDays(1);
+        db.ExamSessions.Add(new ExamSession
+        {
+            ExamId = paper.Id,
+            ManagedBy = paper.CreatedBy,
+            Title = "Kiểm thử kích hoạt chụp đề",
+            OpensAt = opensAt,
+            ClosesAt = opensAt.AddDays(1),
+            DurationMinutes = 30,
+            Status = "Draft",
+            ShuffleQuestions = true,
+            ShuffleOptions = true,
+            ReviewPolicy = "CorrectAnswers",
+            Classes = [new SessionClass { ClassId = demoClass.Id }]
+        });
+        await db.SaveChangesAsync();
     }
 }
 

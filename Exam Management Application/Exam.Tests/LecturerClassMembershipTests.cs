@@ -43,7 +43,7 @@ public partial class ClassRegistrationTests
     }
 
     [SqlFact]
-    public async Task LecturerEnrollmentRejectsOverlappingActivatedSessionsAndRemovalPreservesAttempts()
+    public async Task LecturerEnrollmentAllowsOverlappingActivatedSessionsAndRemovalPreservesAttempts()
     {
         var data = await PrepareManagedClassAsync();
         var item = await Db.Set<ExamClass>().SingleAsync();
@@ -69,12 +69,8 @@ public partial class ClassRegistrationTests
         Db.AddRange(existing, target);
         await Db.SaveChangesAsync();
         var service = new LecturerClassService(Db);
-        Assert.Equal(409, (await Assert.ThrowsAsync<BusinessException>(() => service.AddAsync(data.Teacher, data.Class, "MEMBER01"))).Status);
-        Assert.False(await Db.Set<ClassStudent>().AnyAsync(m => m.ClassId == data.Class && m.StudentId == data.Student));
-        // Once the conflicting session is cancelled, adding is allowed.
-        Db.ChangeTracker.Clear();
-        await Db.ExamSessions.Where(s => s.Id == existing.Id).ExecuteUpdateAsync(s => s.SetProperty(x => x.Status, "Cancelled"));
         await service.AddAsync(data.Teacher, data.Class, "MEMBER01");
+        Assert.True(await Db.Set<ClassStudent>().AnyAsync(m => m.ClassId == data.Class && m.StudentId == data.Student));
         var attempt = new Attempt
         {
             SessionId = target.Id, StudentId = data.Student, StartedAt = now,

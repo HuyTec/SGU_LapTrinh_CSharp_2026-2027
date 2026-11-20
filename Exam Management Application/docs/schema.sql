@@ -993,3 +993,71 @@ END;
 COMMIT;
 GO
 
+BEGIN TRANSACTION;
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20261120143000_SessionExamSnapshot'
+)
+BEGIN
+    CREATE TABLE [SessionQuestions] (
+        [Id] int NOT NULL IDENTITY,
+        [SessionId] int NOT NULL,
+        [SourceQuestionId] int NOT NULL,
+        [Text] nvarchar(2000) NOT NULL,
+        [Order] int NOT NULL,
+        [Points] decimal(8,2) NOT NULL,
+        CONSTRAINT [PK_SessionQuestions] PRIMARY KEY ([Id]),
+        CONSTRAINT [CK_SessionQuestion_Points] CHECK ([Points] > 0),
+        CONSTRAINT [FK_SessionQuestions_ExamSessions_SessionId] FOREIGN KEY ([SessionId]) REFERENCES [ExamSessions] ([Id]) ON DELETE NO ACTION,
+        CONSTRAINT [FK_SessionQuestions_Questions_SourceQuestionId] FOREIGN KEY ([SourceQuestionId]) REFERENCES [Questions] ([Id]) ON DELETE NO ACTION
+    );
+
+    CREATE TABLE [SessionOptions] (
+        [Id] int NOT NULL IDENTITY,
+        [SessionQuestionId] int NOT NULL,
+        [Text] nvarchar(2000) NOT NULL,
+        [Order] int NOT NULL,
+        [IsCorrect] bit NOT NULL,
+        CONSTRAINT [PK_SessionOptions] PRIMARY KEY ([Id]),
+        CONSTRAINT [FK_SessionOptions_SessionQuestions_SessionQuestionId] FOREIGN KEY ([SessionQuestionId]) REFERENCES [SessionQuestions] ([Id]) ON DELETE NO ACTION
+    );
+
+    CREATE UNIQUE INDEX [IX_SessionQuestions_SessionId_Order] ON [SessionQuestions] ([SessionId], [Order]);
+    CREATE INDEX [IX_SessionQuestions_SourceQuestionId] ON [SessionQuestions] ([SourceQuestionId]);
+    CREATE UNIQUE INDEX [IX_SessionOptions_SessionQuestionId_Order] ON [SessionOptions] ([SessionQuestionId], [Order]);
+    CREATE UNIQUE INDEX [IX_SessionOptions_SessionQuestionId] ON [SessionOptions] ([SessionQuestionId]) WHERE [IsCorrect] = 1;
+
+    INSERT INTO [SessionQuestions] ([SessionId], [SourceQuestionId], [Text], [Order], [Points])
+    SELECT s.[Id], eq.[QuestionId], q.[Text], eq.[Order], eq.[Points]
+    FROM [ExamSessions] s
+    JOIN [ExamQuestions] eq ON eq.[ExamId] = s.[ExamId]
+    JOIN [Questions] q ON q.[Id] = eq.[QuestionId]
+    WHERE s.[Status] = N'Active'
+      AND s.[ActivatedAt] IS NOT NULL
+      AND NOT EXISTS (
+          SELECT 1 FROM [SessionQuestions] sq
+          WHERE sq.[SessionId] = s.[Id] AND sq.[SourceQuestionId] = eq.[QuestionId]);
+
+    INSERT INTO [SessionOptions] ([SessionQuestionId], [Text], [Order], [IsCorrect])
+    SELECT sq.[Id], ao.[Text], ao.[Order], ao.[IsCorrect]
+    FROM [SessionQuestions] sq
+    JOIN [ExamSessions] s ON s.[Id] = sq.[SessionId]
+    JOIN [AnswerOptions] ao ON ao.[QuestionId] = sq.[SourceQuestionId]
+    WHERE s.[Status] = N'Active'
+      AND NOT EXISTS (
+          SELECT 1 FROM [SessionOptions] so
+          WHERE so.[SessionQuestionId] = sq.[Id] AND so.[Order] = ao.[Order]);
+END;
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20261120143000_SessionExamSnapshot'
+)
+BEGIN
+    INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+    VALUES (N'20261120143000_SessionExamSnapshot', N'10.0.13');
+END;
+
+COMMIT;
+GO
+

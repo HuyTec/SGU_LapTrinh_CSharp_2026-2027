@@ -37,7 +37,6 @@
 {
     var current = Model.Sessions.SingleOrDefault(s => Equals(s["id"], id));
     var published = current?["published"] is true;
-    var canPublish = current?["status"] is "Scheduled" or "Open" or "Closed";
     <div class="surface mb-3">
         <h2 class="h5">Thống kê cả đợt</h2>
         <dl class="row g-3 mb-0">
@@ -47,12 +46,14 @@
             <div class="col-6 col-lg-3"><dt>Đã kết thúc</dt><dd class="h4 mb-0">@Model.Statistics.Finished</dd></div>
         </dl>
     </div>
+    var canPublish = current?["status"] is "Scheduled" or "Open" or "Closed" or "Completed";
     var sessionState = current?["status"] switch
     {
         "Draft" => "Nháp",
         "Scheduled" => "Sắp mở",
-        "Open" => "Đang mở",
-        "Closed" => "Đã đóng nhận thí sinh",
+        "Open" => "Đang nhận thí sinh",
+        "Closed" => "Đã đóng nhận · Còn lượt đang làm",
+        "Completed" => "Đã kết thúc",
         "Cancelled" => "Đã hủy",
         _ => "Không xác định"
     };
@@ -68,7 +69,7 @@
                     <option value="ScoreOnly">Chỉ điểm</option>
                     <option value="CorrectAnswers" selected="@(current?["reviewPolicy"] is "CorrectAnswers")">Điểm, lựa chọn và đáp án đúng</option>
                 </select>
-                <p class="form-text">Các bài đã chấm được xem ngay. Những bài nộp sau tự hiển thị kết quả khi chấm xong.</p>
+                <p class="form-text">Điểm các bài đã chấm được xem ngay. Phần xem lại bài chỉ mở sau khi đóng nhận thí sinh và không còn lượt đang làm trong thời hạn.</p>
                 <button type="submit" class="btn btn-primary">Công bố ngay</button>
             </form>
         }
@@ -78,7 +79,7 @@
     @if (published)
     {
         var policyLabel = current?["reviewPolicy"] switch { "Answers" => "Điểm và lựa chọn đã trả lời", "CorrectAnswers" => "Điểm, lựa chọn và đáp án đúng", _ => "Chỉ điểm" };
-        <p class="muted">@policyLabel. Thí sinh xem kết quả của mình ngay sau khi bài được chấm xong.</p>
+        <p class="muted">@policyLabel. Điểm hiển thị khi bài được chấm xong; phần xem lại bài chỉ mở sau khi đóng nhận thí sinh và không còn lượt đang làm trong thời hạn.</p>
     }
     @if (Model.Rows.Count == 0)
     {

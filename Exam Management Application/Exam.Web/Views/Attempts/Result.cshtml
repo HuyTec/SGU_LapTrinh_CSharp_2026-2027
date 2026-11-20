@@ -1,7 +1,7 @@
 @model ResultVm
 @{ ViewData["Title"] = "Kết quả bài thi"; }
 <a class="back-link" asp-action="History">Về lịch sử thi</a>
-<div class="page-heading"><div><p class="uc-label">UC-08</p><h1>@Model.Title</h1><p class="muted">Kết quả bài thi</p></div></div>
+<div class="page-heading"><div><h1>@Model.Title</h1><p class="muted">Kết quả bài thi</p></div></div>
 <section class="surface mb-4">
 @if(Model.Status=="InProgress")
 {<h2>Bài thi đang làm</h2><p>Bạn chưa kết thúc lượt thi này.</p><a class="btn btn-primary" asp-action="Take" asp-route-id="@Model.AttemptId">Tiếp tục làm bài</a>}
@@ -15,6 +15,10 @@ else
 {<h2>Điểm bài thi</h2><p class="result-score">@Model.Score.Value.ToString("0.##") <span>/ 10</span></p><p>@Model.CorrectCount / @Model.QuestionCount câu đúng</p>}
 @if(Model.SubmittedAt is DateTime submitted){<p class="small muted mb-0">Kết thúc lúc <time data-local-time="@DateTime.SpecifyKind(submitted, DateTimeKind.Utc).ToString("O")">@submitted.ToString("dd/MM/yyyy HH:mm") UTC</time></p>}
 </section>
+@if(Model.Published && Model.ReviewPolicy != "ScoreOnly" && Model.Questions.Count == 0)
+{
+    <p class="notice" role="status">Điểm đã được công bố. Phần xem lại bài sẽ mở sau khi đợt thi đóng nhận thí sinh và không còn lượt đang làm trong thời hạn.</p>
+}
 @if(Model.Published && Model.Questions.Count>0)
 {
     <section aria-labelledby="review-heading">

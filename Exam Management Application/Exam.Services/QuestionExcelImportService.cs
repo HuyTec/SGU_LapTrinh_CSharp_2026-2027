@@ -1,4 +1,5 @@
 using System.IO.Compression;
+using System.Data;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
@@ -17,8 +18,19 @@ public sealed class QuestionExcelImportService(ExamDbContext db)
     private const int MaxQuestions = 500;
     private static readonly string[] Headers = ["Chủ đề", "Nội dung", "Độ khó", "Đáp án A", "Đáp án B", "Đáp án C", "Đáp án D", "Đáp án đúng"];
 
-    public static byte[] CreateTemplate()
+    public async Task<IReadOnlyList<string>> GetActiveTopicNamesAsync(int lecturerId, int subjectId, CancellationToken cancellationToken = default)
     {
+        var assigned = await db.LecturerSubjects.AnyAsync(x => x.LecturerId == lecturerId && x.SubjectId == subjectId
+            && x.Subject.IsActive, cancellationToken);
+        if (!assigned)
+            throw new BusinessException("Môn học không nằm trong phạm vi được phân công.", 403);
+        return await db.Topics.Where(x => x.SubjectId == subjectId && x.IsActive)
+            .OrderBy(x => x.Name).Select(x => x.Name).ToListAsync(cancellationToken);
+    }
+
+    public static byte[] CreateTemplate(IReadOnlyList<string>? topicNames = null)
+    {
+        topicNames ??= [];
         using var memory = new MemoryStream();
         using (var archive = new ZipArchive(memory, ZipArchiveMode.Create, true))
         {
@@ -29,6 +41,7 @@ public sealed class QuestionExcelImportService(ExamDbContext db)
                   <Default Extension="xml" ContentType="application/xml"/>
                   <Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>
                   <Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>
+                  <Override PartName="/xl/worksheets/sheet2.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>
                 </Types>
                 """);
             AddXml(archive, "_rels/.rels", """
@@ -40,19 +53,30 @@ public sealed class QuestionExcelImportService(ExamDbContext db)
             AddXml(archive, "xl/workbook.xml", """
                 <?xml version="1.0" encoding="UTF-8"?>
                 <workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
-                  <sheets><sheet name="CauHoi" sheetId="1" r:id="rId1"/></sheets>
+                  <sheets><sheet name="CauHoi" sheetId="1" r:id="rId1"/><sheet name="ChuDeMonHoc" sheetId="2" r:id="rId2"/></sheets>
+                  <definedNames><definedName name="DanhSachChuDe">'ChuDeMonHoc'!$A$1:$A${Math.Max(1, topicNames.Count)}</definedName></definedNames>
                 </workbook>
                 """);
             AddXml(archive, "xl/_rels/workbook.xml.rels", """
                 <?xml version="1.0" encoding="UTF-8"?>
                 <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
                   <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/>
+                  <Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet2.xml"/>
                 </Relationships>
                 """);
             var cells = string.Join("", Headers.Select((header, index) => $"<c r=\"{Column(index + 1)}1\" t=\"inlineStr\"><is><t>{XmlEscape(header)}</t></is></c>"));
+            var note = "<row r=\"2\"><c r=\"J2\" t=\"inlineStr\"><is><t>Ô A2 trở xuống gợi ý chủ đề cũ; có thể gõ chủ đề mới, hệ thống sẽ tự thêm vào môn đã chọn.</t></is></c></row>";
+            var topicValidation = topicNames.Count == 0 ? "" : "<dataValidations count=\"1\"><dataValidation type=\"list\" allowBlank=\"0\" showErrorMessage=\"0\" sqref=\"A2:A501\"><formula1>DanhSachChuDe</formula1></dataValidation></dataValidations>";
             AddXml(archive, "xl/worksheets/sheet1.xml", $"""
                 <?xml version="1.0" encoding="UTF-8"?>
-                <worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetData><row r="1">{cells}</row></sheetData></worksheet>
+                <worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetData><row r="1">{cells}</row>{note}</sheetData>{topicValidation}</worksheet>
+                """);
+            var topicRows = topicNames.Count == 0
+                ? "<row r=\"1\"><c r=\"A1\" t=\"inlineStr\"><is><t>Chủ đề hiện có trong môn đã chọn</t></is></c></row>"
+                : string.Concat(topicNames.Select((name, index) => $"<row r=\"{index + 1}\"><c r=\"A{index + 1}\" t=\"inlineStr\"><is><t>{XmlEscape(name)}</t></is></c></row>"));
+            AddXml(archive, "xl/worksheets/sheet2.xml", $"""
+                <?xml version="1.0" encoding="UTF-8"?>
+                <worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetData>{topicRows}</sheetData></worksheet>
                 """);
         }
         return memory.ToArray();
@@ -74,18 +98,14 @@ public sealed class QuestionExcelImportService(ExamDbContext db)
         if (!assigned)
             throw new BusinessException("Môn học không nằm trong phạm vi được phân công.", 403);
 
-        var topicNames = rows.Select(x => x.Topic).Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
-        var topics = await db.Topics.Where(x => x.SubjectId == subjectId && x.IsActive && topicNames.Contains(x.Name))
-            .ToDictionaryAsync(x => x.Name, StringComparer.OrdinalIgnoreCase, cancellationToken);
-        var errors = rows.Select((row, i) => (row, line: i + 2))
-            .Where(x => !topics.ContainsKey(x.row.Topic))
-            .Select(x => $"Dòng {x.line}: chủ đề ‘{x.row.Topic}’ không tồn tại hoặc không hoạt động trong môn đã chọn.")
-            .ToList();
+        var errors = new List<string>();
 
         var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         for (var i = 0; i < rows.Count; i++)
         {
             var row = rows[i];
+            if (row.Topic.Trim().Length is 0 or > 150)
+                errors.Add($"Dòng {i + 2}: chủ đề phải có độ dài từ 1 đến 150 ký tự.");
             if (row.Text.Trim().Length is 0 or > 2000 || row.OptionA.Trim().Length is 0 or > 2000 || row.OptionB.Trim().Length is 0 or > 2000 ||
                 row.OptionC.Trim().Length is 0 or > 2000 || row.OptionD.Trim().Length is 0 or > 2000)
                 errors.Add($"Dòng {i + 2}: nội dung câu hỏi và 4 đáp án phải có độ dài từ 1 đến 2000 ký tự.");
@@ -105,12 +125,30 @@ public sealed class QuestionExcelImportService(ExamDbContext db)
         return await db.Database.CreateExecutionStrategy().ExecuteAsync(async () =>
         {
             db.ChangeTracker.Clear();
-            await using var transaction = await db.Database.BeginTransactionAsync(cancellationToken);
+            await using var transaction = await db.Database.BeginTransactionAsync(IsolationLevel.Serializable, cancellationToken);
+            var topics = await db.Topics.Where(x => x.SubjectId == subjectId).ToListAsync(cancellationToken);
+            var topicsByName = topics.GroupBy(x => x.Name.Trim(), StringComparer.OrdinalIgnoreCase)
+                .ToDictionary(group => group.Key, group => group.First(), StringComparer.OrdinalIgnoreCase);
+            var importedTopicNames = rows.Select(x => x.Topic.Trim()).Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
+            foreach (var topicName in importedTopicNames)
+            {
+                if (!topicsByName.TryGetValue(topicName, out var topic))
+                {
+                    topic = new Topic { SubjectId = subjectId, Name = topicName, IsActive = true };
+                    db.Topics.Add(topic);
+                    topicsByName.Add(topicName, topic);
+                }
+                else if (!topic.IsActive)
+                {
+                    topic.IsActive = true;
+                }
+            }
+            await db.SaveChangesAsync(cancellationToken);
             foreach (var row in rows)
             {
                 var question = new Question
                 {
-                    TopicId = topics[row.Topic].Id,
+                    TopicId = topicsByName[row.Topic.Trim()].Id,
                     CreatedBy = lecturerId,
                     Text = row.Text.Trim(),
                     Difficulty = row.Difficulty,

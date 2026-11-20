@@ -44,3 +44,11 @@ Web cho thí sinh và giảng viên đăng ký. Tài khoản giảng viên chờ
 ### Chốt danh sách thí sinh khi kích hoạt (20/11/2026)
 
 Khi kích hoạt đợt thi, hệ thống chụp danh sách thí sinh đang hoạt động (vai trò Thí sinh) của các lớp cùng môn được gán vào SessionCandidates và ghi ActivatedAt (BR12, BR13). Sau thời điểm này, thêm hay bớt thành viên lớp không đổi quyền vào thi của đợt. Hoãn về Nháp thì xóa danh sách và ActivatedAt; Hủy thì giữ nguyên danh sách để tra cứu. Migration SessionRosterSnapshot bổ sung danh sách cho các đợt đang Active từ trước. Tiêu chí "không sinh SessionCandidate" của DT03 trong bảng phân công được thay bằng quy tắc này.
+
+### Chốt nội dung đề khi kích hoạt (20/11/2026)
+
+Khi kích hoạt, cùng transaction với danh sách thí sinh, ghi nội dung câu hỏi, phương án, đáp án đúng, điểm và thứ tự vào `SessionQuestions`/`SessionOptions`. Khi thí sinh bắt đầu, tạo snapshot riêng của lượt từ snapshot cấp đợt rồi áp dụng cấu hình trộn. Hoãn về Nháp xóa snapshot cấp đợt để lần kích hoạt sau chụp lại nội dung mới; không cho kích hoạt nếu snapshot cũ còn sót.
+
+Ngày 20/11/2026, chủ dự án cho phép kích hoạt nhiều đợt thi trùng thời gian, kể cả cùng lớp và cùng thí sinh. Bỏ kiểm tra trùng lịch khi kích hoạt đợt, thêm thí sinh và bật lại lớp. Quyết định này thay quy tắc kiểm tra trùng lịch ngày 18/11/2026. Mỗi đợt vẫn có lịch nhận lượt và danh sách thí sinh riêng; một thí sinh chỉ được làm một bài tại một thời điểm.
+
+Ngày 20/11/2026, tổng điểm các câu được chọn trong một đề thi không được vượt quá 10. Kiểm tra khi lưu đề, xác nhận sẵn sàng và kích hoạt đợt thi để áp dụng cả đề cũ. Đề tạo theo ma trận được phân bổ tổng 10 điểm, chính xác đến 0,01; kết quả vẫn quy đổi về thang 10 theo quy tắc chấm hiện hành.

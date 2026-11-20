@@ -214,6 +214,7 @@ public class ExamSession
         get; set;
     }
     public List<SessionCandidate> Candidates { get; set; } = [];
+    public List<SessionQuestion> Questions { get; set; } = [];
 }
 public class SessionCandidate
 {
@@ -230,6 +231,27 @@ public class SessionCandidate
         get; set;
     }
     public AppUser Student { get; set; } = null!;
+}
+public class SessionQuestion
+{
+    public int Id { get; set; }
+    public int SessionId { get; set; }
+    public ExamSession Session { get; set; } = null!;
+    public int SourceQuestionId { get; set; }
+    public Question SourceQuestion { get; set; } = null!;
+    public string Text { get; set; } = "";
+    public int Order { get; set; }
+    public decimal Points { get; set; }
+    public List<SessionOption> Options { get; set; } = [];
+}
+public class SessionOption
+{
+    public int Id { get; set; }
+    public int SessionQuestionId { get; set; }
+    public SessionQuestion Question { get; set; } = null!;
+    public string Text { get; set; } = "";
+    public int Order { get; set; }
+    public bool IsCorrect { get; set; }
 }
 public class Attempt
 {
