@@ -13,9 +13,11 @@ public class ExamService(ExamDbContext db, TimeProvider clock)
     IQueryable<ExamSession> AssignedSessions(int student) =>
         db.ExamSessions.Where(session =>
             db.Attempts.Any(a => a.SessionId == session.Id && a.StudentId == student) ||
-            session.Classes.Any(link => link.Class.IsActive &&
+            (session.ActivatedAt != null && session.Classes.Any() &&
+                session.Candidates.Any(candidate => candidate.StudentId == student)) ||
+            (session.ActivatedAt == null && session.Classes.Any(link => link.Class.IsActive &&
                 link.Class.SubjectId == session.Exam.SubjectId &&
-                link.Class.Students.Any(member => member.StudentId == student)));
+                link.Class.Students.Any(member => member.StudentId == student))));
 
     public sealed record StudentClassRow(int Id, string Code, string Subject, bool Active,
         IReadOnlyList<string> Lecturers, IReadOnlyList<SessionDto> Sessions);

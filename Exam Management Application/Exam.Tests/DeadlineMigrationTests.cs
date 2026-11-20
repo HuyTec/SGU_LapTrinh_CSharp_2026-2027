@@ -11,7 +11,6 @@ public partial class ClassRegistrationTests
     [SqlFact]
     public async Task DeadlineMigrationExtendsOnlyUnfinishedAttemptsClippedByAdmissionClose()
     {
-        await Db.GetService<IMigrator>().MigrateAsync("20261117160000_RetireExamOfficer");
         var now = new DateTime(2026, 11, 18, 7, 0, 0, DateTimeKind.Utc);
         var teacher = new AppUser { UserName = "deadline-teacher", FullName = "Teacher" };
         var first = new AppUser { UserName = "deadline-first", FullName = "First" };
@@ -30,6 +29,7 @@ public partial class ClassRegistrationTests
             Result = new() { Score = 0, CorrectCount = 0, GradedAt = now.AddMinutes(1) } };
         Db.AddRange(running, ended);
         await Db.SaveChangesAsync();
+        await Db.GetService<IMigrator>().MigrateAsync("20261117160000_RetireExamOfficer");
         await Db.Database.MigrateAsync();
         Db.ChangeTracker.Clear();
         Assert.Equal(now.AddMinutes(20), (await Db.Attempts.SingleAsync(a => a.Id == running.Id)).Deadline);

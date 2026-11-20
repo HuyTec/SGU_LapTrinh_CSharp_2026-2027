@@ -11,7 +11,7 @@ Nguồn chính xác có thể dựng lại: `Exam.Data/ExamDbContext.cs`, `Exam.
 | Bảng | Khóa / liên kết quan trọng | Nội dung |
 |---|---|---|
 | Users | UserID int; username chuẩn hóa duy nhất; StudentCode duy nhất khi khác null | Identity user, họ tên, trạng thái, mã thí sinh |
-| Roles | RoleID int; tên vai trò chuẩn hóa duy nhất | Student, Lecturer, ExamOfficer, Administrator |
+| Roles | RoleID int; tên vai trò chuẩn hóa duy nhất | Student, Lecturer, Administrator |
 | UserRoles | PK(UserID, RoleID) | Một người có nhiều vai trò; chọn một vai trò hoạt động mỗi phiên Desktop |
 | Subjects | Id int; Code duy nhất | Môn học, trạng thái hoạt động |
 | LecturerSubjects | Id; UQ(LecturerId, SubjectId), FK Users/Subjects | Phạm vi quản lý của giảng viên |
@@ -20,11 +20,11 @@ Nguồn chính xác có thể dựng lại: `Exam.Data/ExamDbContext.cs`, `Exam.
 | AnswerOptions | Id; FK QuestionId; UQ vị trí, unique filtered IsCorrect | Các phương án và tối đa một đáp án đúng; service kiểm tra đủ phương án |
 | Exams | Id; FK SubjectId/CreatedBy | Đề Draft/Ready |
 | ExamQuestions | Id; FK ExamId/QuestionId; UQ câu và vị trí trong đề | Điểm từng câu > 0, tổng 10 khi xác nhận Ready |
-| ExamSessions | Id; FK ExamId/ManagedBy; UQ AccessCode khi khác NULL; CHECK lịch/thời lượng/trạng thái/chính sách | Nháp/kích hoạt/hủy; Open/Closed được tính từ giờ server; PublishedAt lưu thời điểm công bố |
+| ExamSessions | Id; FK ExamId/ManagedBy; UQ AccessCode khi khác NULL; CHECK lịch/thời lượng/trạng thái/chính sách | Nháp/kích hoạt/hủy; Open/Closed được tính từ giờ server; ActivatedAt lưu thời điểm chốt danh sách, PublishedAt lưu thời điểm công bố |
 | Classes | Id; FK SubjectId; UQ(SubjectId, Code) | Lớp theo môn và trạng thái hoạt động |
 | ClassStudents | PK(ClassId, StudentId); FK Classes và Users | Thành viên lớp |
 | SessionClasses | PK(SessionId, ClassId); FK ExamSessions và Classes | Liên kết đợt thi với lớp được gán |
-| SessionCandidates | Id; alternate key(SessionId, StudentId); FK ExamSessions và Users | Danh sách phân công theo luồng cũ, giữ để đối chiếu |
+| SessionCandidates | Id; UQ(SessionId, StudentId); FK ExamSessions và Users | Danh sách thí sinh được chốt khi kích hoạt, cũng giữ các dòng lịch sử từ luồng cũ |
 | Attempts | Id bigint; UQ(SessionId, StudentId); FK trực tiếp ExamSessions và Users | Bắt đầu, Deadline, trạng thái, SubmittedAt, EndReason |
 | AttemptQuestions | Id bigint; FK AttemptId và SourceQuestionId; UQ thứ tự trong lượt | Snapshot nội dung, điểm và thứ tự |
 | AttemptOptions | Id bigint; FK AttemptQuestionId; alternate key(AttemptQuestionId, Id) | Snapshot phương án, đáp án và thứ tự |
@@ -55,7 +55,15 @@ Các giới hạn nhiều dòng như đúng một đáp án, tổng 10, quyền 
 
 ## Đăng ký nhân sự chờ duyệt
 
-Migration `StaffRegistrationApproval` thêm Users.RequestedRole (nvarchar(32), NULL). Tài khoản nhân sự tự đăng ký có IsActive=false, RequestedRole là Lecturer/ExamOfficer/Administrator và chưa có dòng UserRoles. Quản trị viên duyệt trong giao dịch để cấp vai trò, kích hoạt và xóa RequestedRole. Tài khoản cũ giữ NULL; không đổi mật khẩu hay quyền sẵn có. Đây là yêu cầu cấp quyền chờ xử lý, không phải bảng người dùng khác hoặc một vai trò đang có hiệu lực.
+Migration `StaffRegistrationApproval` thêm Users.RequestedRole (nvarchar(32), NULL). Tài khoản chờ duyệt có IsActive=false và chưa có dòng UserRoles. Quản trị viên duyệt trong giao dịch để cấp vai trò, kích hoạt và xóa RequestedRole. Migration `RetireExamOfficer` chuyển vai trò và yêu cầu duyệt ExamOfficer cũ sang Lecturer. RequestedRole ghi yêu cầu cấp quyền, chưa phải quyền đang có hiệu lực.
+
+## Chốt danh sách khi kích hoạt (BR12, BR13)
+
+Khi giảng viên kích hoạt, hệ thống ghi `ExamSessions.ActivatedAt` (UTC, `datetime2`, cho phép NULL) và chốt một dòng `SessionCandidates` cho mỗi tài khoản Student đang hoạt động trong các lớp đã chọn. Kích hoạt và ghi danh sách nằm trong cùng một giao dịch. Thêm hoặc gỡ thành viên lớp sau đó không đổi quyền dự thi. Hoãn về nháp xóa danh sách và đặt lại ActivatedAt = NULL. Hủy đợt giữ danh sách để đối chiếu.
+
+Đợt đã chốt dùng danh sách này để xét lượt mới, theo dõi và xuất kết quả. Người chưa có lượt được ghi là chưa tham gia và để trống điểm. Theo dõi cũng giữ người đã có lượt dù không còn trong danh sách. Đợt chưa có ActivatedAt tiếp tục xét thành viên lớp hợp lệ theo quy tắc chuyển tiếp. Một danh sách cũ không kèm lớp đã gán không đủ để cấp lượt mới. Chủ sở hữu vẫn được tiếp tục lượt đã có theo quy tắc về thời hạn và công bố.
+
+Migration `20261119191316_SessionRosterSnapshot` bổ sung ActivatedAt và điền các cặp còn thiếu cho đợt Active dựa trên lớp hợp lệ tại thời điểm nâng cấp. Migration không suy đoán thành viên tại ngày kích hoạt ban đầu, giữ các dòng phân công đã có và chỉ ghi mốc chốt cho đợt Active có liên kết lớp. Đợt nháp, đợt hủy và đợt cũ chưa gán lớp không được chốt bởi migration.
 
 ## Nâng cấp dữ liệu đợt thi (DT02)
 

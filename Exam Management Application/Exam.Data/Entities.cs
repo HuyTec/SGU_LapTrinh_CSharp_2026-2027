@@ -188,6 +188,10 @@ public class ExamSession
     {
         get; set;
     }
+    public DateTime? ActivatedAt
+    {
+        get; set;
+    }
     public int DurationMinutes { get; set; } = 30; public string Status { get; set; } = "Draft"; public bool ShuffleQuestions
     {
         get; set;

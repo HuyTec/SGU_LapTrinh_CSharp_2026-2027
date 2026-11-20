@@ -843,3 +843,153 @@ END;
 COMMIT;
 GO
 
+BEGIN TRANSACTION;
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20261117160000_RetireExamOfficer'
+)
+BEGIN
+    DECLARE @old int = (SELECT RoleID FROM Roles WHERE NormalizedName = N'EXAMOFFICER');
+    IF @old IS NOT NULL OR EXISTS (SELECT 1 FROM Users WHERE RequestedRole = N'ExamOfficer')
+    BEGIN
+        IF NOT EXISTS (SELECT 1 FROM Roles WHERE NormalizedName = N'LECTURER')
+            INSERT Roles (Name, NormalizedName, ConcurrencyStamp) VALUES (N'Lecturer', N'LECTURER', CONVERT(nvarchar(36), NEWID()));
+        DECLARE @lecturer int = (SELECT RoleID FROM Roles WHERE NormalizedName = N'LECTURER');
+        UPDATE AuthSessions SET Revoked = 1
+        WHERE UserId IN (SELECT UserID FROM UserRoles WHERE RoleID = @old);
+        INSERT UserRoles (UserID, RoleID)
+        SELECT old.UserID, @lecturer FROM UserRoles old
+        WHERE old.RoleID = @old AND NOT EXISTS
+            (SELECT 1 FROM UserRoles currentRole WHERE currentRole.UserID = old.UserID AND currentRole.RoleID = @lecturer);
+        INSERT LecturerSubjects (LecturerId, SubjectId)
+        SELECT DISTINCT s.ManagedBy, e.SubjectId FROM ExamSessions s JOIN Exams e ON e.Id = s.ExamId
+        WHERE EXISTS (SELECT 1 FROM UserRoles ur WHERE ur.UserID = s.ManagedBy AND ur.RoleID = @old)
+          AND NOT EXISTS (SELECT 1 FROM LecturerSubjects ls WHERE ls.LecturerId = s.ManagedBy AND ls.SubjectId = e.SubjectId);
+        UPDATE Users SET RequestedRole = N'Lecturer' WHERE RequestedRole = N'ExamOfficer';
+        DELETE FROM UserRoles WHERE RoleID = @old;
+        DELETE FROM AspNetRoleClaims WHERE RoleId = @old;
+        DELETE FROM Roles WHERE RoleID = @old;
+    END
+END;
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20261117160000_RetireExamOfficer'
+)
+BEGIN
+    INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+    VALUES (N'20261117160000_RetireExamOfficer', N'10.0.13');
+END;
+
+COMMIT;
+GO
+
+BEGIN TRANSACTION;
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20261118120000_PersonalAttemptDeadlines'
+)
+BEGIN
+    UPDATE a SET Deadline = DATEADD(minute, s.DurationMinutes, a.StartedAt)
+    FROM Attempts a JOIN ExamSessions s ON s.Id = a.SessionId
+    WHERE a.Status = N'InProgress' AND a.Deadline = s.ClosesAt
+      AND a.StartedAt < s.ClosesAt
+      AND a.Deadline < DATEADD(minute, s.DurationMinutes, a.StartedAt)
+      AND NOT EXISTS (SELECT 1 FROM ExamResults r WHERE r.AttemptId = a.Id);
+END;
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20261118120000_PersonalAttemptDeadlines'
+)
+BEGIN
+    INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+    VALUES (N'20261118120000_PersonalAttemptDeadlines', N'10.0.13');
+END;
+
+COMMIT;
+GO
+
+BEGIN TRANSACTION;
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20261118130000_ClassNames'
+)
+BEGIN
+    ALTER TABLE [Classes] ADD [Name] nvarchar(150) NOT NULL DEFAULT N'';
+END;
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20261118130000_ClassNames'
+)
+BEGIN
+    EXEC(N'UPDATE [Classes] SET [Name] = [Code] WHERE LEN([Name]) = 0');
+END;
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20261118130000_ClassNames'
+)
+BEGIN
+    INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+    VALUES (N'20261118130000_ClassNames', N'10.0.13');
+END;
+
+COMMIT;
+GO
+
+BEGIN TRANSACTION;
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20261119191316_SessionRosterSnapshot'
+)
+BEGIN
+    ALTER TABLE [ExamSessions] ADD [ActivatedAt] datetime2 NULL;
+END;
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20261119191316_SessionRosterSnapshot'
+)
+BEGIN
+    EXEC(N'
+    INSERT INTO [SessionCandidates] ([SessionId], [StudentId])
+    SELECT DISTINCT s.[Id], cs.[StudentId]
+    FROM [ExamSessions] s
+    JOIN [Exams] e ON e.[Id] = s.[ExamId]
+    JOIN [SessionClasses] sc ON sc.[SessionId] = s.[Id]
+    JOIN [Classes] c ON c.[Id] = sc.[ClassId] AND c.[SubjectId] = e.[SubjectId]
+    JOIN [ClassStudents] cs ON cs.[ClassId] = c.[Id]
+    JOIN [Users] u ON u.[UserID] = cs.[StudentId]
+    JOIN [UserRoles] ur ON ur.[UserID] = u.[UserID]
+    JOIN [Roles] r ON r.[RoleID] = ur.[RoleID]
+    WHERE s.[Status] = N''Active''
+      AND s.[ActivatedAt] IS NULL
+      AND c.[IsActive] = 1
+      AND u.[IsActive] = 1
+      AND r.[NormalizedName] = N''STUDENT''
+      AND NOT EXISTS (
+          SELECT 1 FROM [SessionCandidates] existing
+          WHERE existing.[SessionId] = s.[Id] AND existing.[StudentId] = cs.[StudentId]);
+
+    UPDATE s SET [ActivatedAt] = SYSUTCDATETIME()
+    FROM [ExamSessions] s
+    WHERE s.[Status] = N''Active''
+      AND s.[ActivatedAt] IS NULL
+      AND EXISTS (SELECT 1 FROM [SessionClasses] sc WHERE sc.[SessionId] = s.[Id]);
+    ');
+END;
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20261119191316_SessionRosterSnapshot'
+)
+BEGIN
+    INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+    VALUES (N'20261119191316_SessionRosterSnapshot', N'10.0.13');
+END;
+
+COMMIT;
+GO
+
