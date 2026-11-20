@@ -64,12 +64,12 @@ public sealed class QuestionExcelImportService(ExamDbContext db)
                   <Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet2.xml"/>
                 </Relationships>
                 """);
-            var cells = string.Join("", Headers.Select((header, index) => $"<c r=\"{Column(index + 1)}1\" t=\"inlineStr\"><is><t>{XmlEscape(header)}</t></is></c>"))
-                + "<c r=\"J1\" t=\"inlineStr\"><is><t>Ô A2 trở xuống gợi ý chủ đề cũ; có thể gõ chủ đề mới, hệ thống sẽ tự thêm vào môn đã chọn.</t></is></c>";
+            var cells = string.Join("", Headers.Select((header, index) => $"<c r=\"{Column(index + 1)}1\" t=\"inlineStr\"><is><t>{XmlEscape(header)}</t></is></c>"));
+            var note = "<row r=\"2\"><c r=\"J2\" t=\"inlineStr\"><is><t>Ô A2 trở xuống gợi ý chủ đề cũ; có thể gõ chủ đề mới, hệ thống sẽ tự thêm vào môn đã chọn.</t></is></c></row>";
             var topicValidation = topicNames.Count == 0 ? "" : "<dataValidations count=\"1\"><dataValidation type=\"list\" allowBlank=\"0\" showErrorMessage=\"0\" sqref=\"A2:A501\"><formula1>DanhSachChuDe</formula1></dataValidation></dataValidations>";
             AddXml(archive, "xl/worksheets/sheet1.xml", $"""
                 <?xml version="1.0" encoding="UTF-8"?>
-                <worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetData><row r="1">{cells}</row></sheetData>{topicValidation}</worksheet>
+                <worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetData><row r="1">{cells}</row>{note}</sheetData>{topicValidation}</worksheet>
                 """);
             var topicRows = topicNames.Count == 0
                 ? "<row r=\"1\"><c r=\"A1\" t=\"inlineStr\"><is><t>Chủ đề hiện có trong môn đã chọn</t></is></c></row>"

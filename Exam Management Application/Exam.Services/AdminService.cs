@@ -639,6 +639,8 @@ public class AdminService(ExamDbContext db, UserManager<AppUser> users, TimeProv
                 case "cancel":
                     if (s.HasOpened || Now >= s.OpensAt || await db.Attempts.AnyAsync(a => a.SessionId == id))
                         throw new BusinessException("Chỉ hoãn/hủy trước lần mở đầu.");
+                    if (action == "postpone")
+                        s.AdmissionsClosedAt = null;
                     s.Status = action == "cancel" ? "Cancelled" : "Draft";
                     break;
                 case "publish":

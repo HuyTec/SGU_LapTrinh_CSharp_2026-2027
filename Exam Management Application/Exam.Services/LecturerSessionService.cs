@@ -144,6 +144,7 @@ public sealed class LecturerSessionService(ExamDbContext db, TimeProvider clock)
             await db.SessionOptions.Where(o => o.Question.SessionId == id).ExecuteDeleteAsync();
             await db.SessionQuestions.Where(q => q.SessionId == id).ExecuteDeleteAsync();
             session.ActivatedAt = null;
+            session.AdmissionsClosedAt = null;
             session.Status = "Draft";
             return true;
         }

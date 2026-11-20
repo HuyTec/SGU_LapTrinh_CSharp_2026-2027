@@ -100,12 +100,24 @@ public partial class ClassRegistrationTests
     }
 
     [SqlFact]
-    public async Task PostponementClearsTheRosterAndCancellationKeepsIt()
+    public async Task PostponingClosedAdmissionsReopensThemAndCancellationKeepsItsRoster()
     {
         var teacher = new AppUser { UserName = "withdraw-teacher", FullName = "Teacher" };
         var student = new AppUser { UserName = "withdraw-student", FullName = "Student" };
         var subject = new Subject { Code = "WITHDRAW", Name = "Subject" };
-        var paper = new ExamPaper { Creator = teacher, Subject = subject, Title = "Paper", Status = "Ready" };
+        var question = new Question
+        {
+            Creator = teacher,
+            Topic = new Topic { Subject = subject, Name = "Topic" },
+            Text = "Question",
+            Difficulty = "Medium",
+            Options = [new() { Text = "Correct", IsCorrect = true, Order = 1 }, new() { Text = "Incorrect", Order = 2 }]
+        };
+        var paper = new ExamPaper
+        {
+            Creator = teacher, Subject = subject, Title = "Paper", Status = "Ready",
+            Questions = [new() { Question = question, Points = 10m, Order = 1 }]
+        };
         Db.AddRange(paper, student);
         await Db.SaveChangesAsync();
         var role = await Db.Roles.SingleAsync(r => r.NormalizedName == "STUDENT");
@@ -122,22 +134,47 @@ public partial class ClassRegistrationTests
 
         await service.ChangeStateAsync(teacher.Id, id, "activate");
         Assert.True(await Db.SessionCandidates.AnyAsync(c => c.SessionId == id));
+        await service.ChangeStateAsync(teacher.Id, id, "closeAdmissions");
+        Assert.Equal(now, (await Db.ExamSessions.SingleAsync(s => s.Id == id)).AdmissionsClosedAt);
         await service.ChangeStateAsync(teacher.Id, id, "postpone");
         var draft = await Db.ExamSessions.SingleAsync(s => s.Id == id);
         Assert.Equal("Draft", draft.Status);
         Assert.Null(draft.ActivatedAt);
+        Assert.Null(draft.AdmissionsClosedAt);
         Assert.False(await Db.SessionCandidates.AnyAsync(c => c.SessionId == id));
 
         await service.ChangeStateAsync(teacher.Id, id, "activate");
-        await service.ChangeStateAsync(teacher.Id, id, "cancel");
-        var cancelled = await Db.ExamSessions.SingleAsync(s => s.Id == id);
+        var reactivated = await Db.ExamSessions.SingleAsync(s => s.Id == id);
+        Assert.Equal("Active", reactivated.Status);
+        Assert.Null(reactivated.AdmissionsClosedAt);
+        Assert.True(await Db.SessionCandidates.AnyAsync(c => c.SessionId == id && c.StudentId == student.Id));
+        clock.Set(now.AddMinutes(10));
+        Assert.True(await new ExamService(Db, clock).StartAsync(student.Id, id) > 0);
+
+        var cancelId = await service.SaveAsync(teacher.Id, null,
+            new SessionDraft("Cancel session", paper.Id, now.AddHours(1), now.AddHours(2), 20,
+                false, false, "ScoreOnly", [chosen.Id]));
+        await service.ChangeStateAsync(teacher.Id, cancelId, "activate");
+        await service.ChangeStateAsync(teacher.Id, cancelId, "cancel");
+        var cancelled = await Db.ExamSessions.SingleAsync(s => s.Id == cancelId);
         Assert.Equal("Cancelled", cancelled.Status);
-        Assert.Equal(now, cancelled.ActivatedAt);
-        Assert.Equal(student.Id, (await Db.SessionCandidates.SingleAsync(c => c.SessionId == id)).StudentId);
+        Assert.Equal(now.AddMinutes(10), cancelled.ActivatedAt);
+        Assert.Equal(student.Id, (await Db.SessionCandidates.SingleAsync(c => c.SessionId == cancelId)).StudentId);
+
+        var apiId = await service.SaveAsync(teacher.Id, null,
+            new SessionDraft("API postpone", paper.Id, now.AddHours(3), now.AddHours(4), 20,
+                false, false, "ScoreOnly", [chosen.Id]));
+        await service.ChangeStateAsync(teacher.Id, apiId, "activate");
+        await service.ChangeStateAsync(teacher.Id, apiId, "closeAdmissions");
+        var admin = new AdminService(Db, provider.GetRequiredService<UserManager<AppUser>>(), clock);
+        await admin.ActionAsync(teacher.Id, "Lecturer", "sessions", apiId, "postpone");
+        Assert.Null((await Db.ExamSessions.SingleAsync(s => s.Id == apiId)).AdmissionsClosedAt);
     }
 
     private sealed class SessionTestClock(DateTimeOffset now) : TimeProvider
     {
-        public override DateTimeOffset GetUtcNow() => now;
+        private DateTimeOffset current = now;
+        public override DateTimeOffset GetUtcNow() => current;
+        public void Set(DateTimeOffset value) => current = value;
     }
 }
