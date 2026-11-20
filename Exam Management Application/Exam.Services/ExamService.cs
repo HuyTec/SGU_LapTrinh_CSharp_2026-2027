@@ -7,7 +7,10 @@ namespace Exam.Services;
 public class ExamService(ExamDbContext db, TimeProvider clock)
 {
     DateTime Now => clock.GetUtcNow().UtcDateTime;
-    public static string SessionState(ExamSession s, DateTime now) => s.Status == "Active" ? (now < s.OpensAt ? "Scheduled" : now >= s.ClosesAt ? "Closed" : "Open") : s.Status;
+    public static string SessionState(ExamSession s, DateTime now) => s.Status == "Active"
+        ? (s.AdmissionsClosedAt is DateTime closedAt && now >= closedAt || now >= s.ClosesAt
+            ? "Closed" : now < s.OpensAt ? "Scheduled" : "Open")
+        : s.Status;
     SessionDto Dto(ExamSession s, long? attempt) => new(s.Id, s.Title, s.Exam.Subject.Name, s.OpensAt, s.ClosesAt, s.DurationMinutes, SessionState(s, Now), attempt, s.Published, s.ReviewPolicy);
     // Keep list, detail and new attempts on the same admission rule.
     IQueryable<ExamSession> AssignedSessions(int student) =>
@@ -55,7 +58,7 @@ public class ExamService(ExamDbContext db, TimeProvider clock)
 
         var session = await AssignedSessions(student)
             .Where(x => x.AccessCode == normalized &&
-                (x.Status == "Active" || db.Attempts.Any(a => a.SessionId == x.Id && a.StudentId == student)))
+                ((x.Status == "Active" && x.AdmissionsClosedAt == null) || db.Attempts.Any(a => a.SessionId == x.Id && a.StudentId == student)))
             .Select(x => (int?)x.Id).SingleOrDefaultAsync();
         if (session == null)
             throw new BusinessException("Không tìm thấy đợt thi theo mã này.", 404);
@@ -100,7 +103,8 @@ public class ExamService(ExamDbContext db, TimeProvider clock)
         }
 
         var now = Now;
-        if (s.Status != "Active" || now < s.OpensAt || now >= s.ClosesAt)
+        if (s.Status != "Active" || now < s.OpensAt || now >= s.ClosesAt ||
+            s.AdmissionsClosedAt is DateTime admissionsClosedAt && now >= admissionsClosedAt)
             throw new BusinessException("Chưa đến giờ vào thi hoặc đã hết giờ nhận lượt mới.", 409);
         if (s.Exam.Status != "Ready")
             throw new BusinessException("Đề chưa sẵn sàng.", 409);

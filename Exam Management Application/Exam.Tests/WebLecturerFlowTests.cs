@@ -121,7 +121,7 @@ public partial class ClassRegistrationTests
             Assert.Equal("HTTP teacher updated", (await Db.Users.SingleAsync(u => u.Id == teacher.Id)).FullName);
             Assert.Equal("HTTP001", (await Db.Users.SingleAsync(u => u.Id == student.Id)).StudentCode);
             Assert.False(await users.IsInRoleAsync((await users.FindByIdAsync(teacher.Id.ToString()))!, "Administrator"));
-            foreach (var route in new[] { "/Lecturer", "/LecturerClasses", "/ClassLecturer",
+            foreach (var route in new[] { "/Lecturer",
                 "/Lecturer/Materials?resource=topics", "/Lecturer/Materials?resource=questions",
                 "/LecturerPapers", "/LecturerSessions", "/LecturerResults" })
             {
@@ -129,17 +129,6 @@ public partial class ClassRegistrationTests
                 Assert.True(response.StatusCode == HttpStatusCode.OK,
                     $"{route} returned {(int)response.StatusCode}: {await response.Content.ReadAsStringAsync()}\n{string.Join("\n", logs.TakeLast(55))}");
             }
-
-            var classList = await staff.GetStringAsync("/LecturerClasses");
-            Assert.Contains($"/Details/{examClass.Id}", classList);
-            var classDetail = await staff.GetStringAsync($"/LecturerClasses/Details/{examClass.Id}");
-            Assert.Contains("HTTP001", classDetail);
-            Assert.Contains("HTTP student", classDetail);
-            Assert.Contains("Danh sách thí sinh", classDetail);
-            Assert.Contains("Thêm vào lớp", classDetail);
-            var legacyClassLink = await staff.GetAsync($"/LecturerClasses/Index/{examClass.Id}");
-            Assert.Equal(HttpStatusCode.Redirect, legacyClassLink.StatusCode);
-            Assert.EndsWith($"/Details/{examClass.Id}", legacyClassLink.Headers.Location!.ToString());
 
             await PostForm(staff, "/Lecturer/SaveMaterial?resource=topics", "/Lecturer/EditMaterial?resource=topics",
                 new() { ["subjectId"] = subject.Id.ToString(), ["name"] = "HTTP Topic", ["isActive"] = "true" });

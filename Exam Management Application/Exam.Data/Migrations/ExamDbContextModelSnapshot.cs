@@ -491,6 +491,9 @@ namespace Exam.Data.Migrations
                     b.Property<DateTime>("ClosesAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime?>("AdmissionsClosedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("DurationMinutes")
                         .HasColumnType("int");
 

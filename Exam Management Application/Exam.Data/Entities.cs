@@ -188,6 +188,7 @@ public class ExamSession
     {
         get; set;
     }
+    public DateTime? AdmissionsClosedAt { get; set; }
     public DateTime? ActivatedAt
     {
         get; set;

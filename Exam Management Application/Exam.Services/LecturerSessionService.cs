@@ -109,19 +109,37 @@ public sealed class LecturerSessionService(ExamDbContext db, TimeProvider clock)
     public Task ChangeStateAsync(int lecturer, int id, string action) => WriteAsync(async () =>
     {
         var session = await LoadAsync(lecturer, id);
-        if (action is "postpone" or "cancel")
+        if (action == "cancelDraft")
+        {
+            if (session.Status != "Draft" || session.HasOpened ||
+                await db.Attempts.AnyAsync(a => a.SessionId == id))
+                throw new BusinessException("Chỉ hủy được đợt nháp chưa có lượt thi.", 409);
+            session.Status = "Cancelled";
+            return true;
+        }
+        if (action == "closeAdmissions")
+        {
+            if (session.Status != "Active" || session.AdmissionsClosedAt != null || session.ClosesAt <= Now)
+                throw new BusinessException("Đợt thi không còn nhận thí sinh mới hoặc đã đóng nhận thí sinh.", 409);
+            session.AdmissionsClosedAt = Now;
+            return true;
+        }
+        if (action == "cancel")
+        {
+            if (session.Status != "Active" || session.HasOpened ||
+                await db.Attempts.AnyAsync(a => a.SessionId == id))
+                throw new BusinessException("Không thể hủy đợt vì đã có thí sinh bắt đầu làm bài.", 409);
+            session.Status = "Cancelled";
+            return true;
+        }
+        if (action == "postpone")
         {
             if (session.Status != "Active" || session.HasOpened || Now >= session.OpensAt ||
                 await db.Attempts.AnyAsync(a => a.SessionId == id))
-                throw new BusinessException("Chỉ hoãn hoặc hủy đợt đã kích hoạt trước giờ mở lần đầu.", 409);
-            if (action == "postpone")
-            {
-                await db.SessionCandidates.Where(c => c.SessionId == id).ExecuteDeleteAsync();
-                session.ActivatedAt = null;
-                session.Status = "Draft";
-            }
-            else
-                session.Status = "Cancelled";
+                throw new BusinessException("Chỉ hoãn đợt đã kích hoạt trước giờ mở lần đầu.", 409);
+            await db.SessionCandidates.Where(c => c.SessionId == id).ExecuteDeleteAsync();
+            session.ActivatedAt = null;
+            session.Status = "Draft";
             return true;
         }
         if (action != "activate")

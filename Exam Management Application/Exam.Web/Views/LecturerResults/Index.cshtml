@@ -47,6 +47,16 @@
             <div class="col-6 col-lg-3"><dt>Đã kết thúc</dt><dd class="h4 mb-0">@Model.Statistics.Finished</dd></div>
         </dl>
     </div>
+    var sessionState = current?["status"] switch
+    {
+        "Draft" => "Nháp",
+        "Scheduled" => "Sắp mở",
+        "Open" => "Đang mở",
+        "Closed" => "Đã đóng nhận thí sinh",
+        "Cancelled" => "Đã hủy",
+        _ => "Không xác định"
+    };
+    <p><strong>Trạng thái đợt thi:</strong> @sessionState</p>
     <p>@(published ? "Đã công bố" : "Chưa công bố")</p>
     <div class="action-row mb-3">
         @if (!published && canPublish)
