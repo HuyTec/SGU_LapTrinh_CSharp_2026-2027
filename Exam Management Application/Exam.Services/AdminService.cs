@@ -98,7 +98,10 @@ public class AdminService(ExamDbContext db, UserManager<AppUser> users, TimeProv
     }
     public async Task EnsureSessionReadAsync(int uid, string role, int id)
     {
-        await Session(uid, role, id);
+        if (!await db.ExamSessions.AnyAsync(s => s.Id == id))
+            throw new BusinessException("Không tìm thấy đợt thi.", 404);
+        if (role != "Lecturer" || !await LecturerSessionAccess.Readable(db, uid, Now).AnyAsync(s => s.Id == id))
+            throw Denied();
     }
     static Dictionary<string, object?> D(params (string key, object? value)[] v) => v.ToDictionary(x => x.key, x => x.value);
     public async Task<AdminPageDto> ListAsync(int uid, string role, string resource, string? search, int page, int size, int? exactId = null, int? subjectId = null, int? topicId = null, string? difficulty = null, bool? isActive = null, string? accountRole = null)
@@ -187,16 +190,16 @@ public class AdminService(ExamDbContext db, UserManager<AppUser> users, TimeProv
                 rows = (await db.Exams.Include(x => x.Questions).Include(x => x.Subject).Where(x => ids.Contains(x.SubjectId)).ToListAsync()).Select(x => D(("id", x.Id), ("title", x.Title), ("subjectId", x.SubjectId), ("subject", x.Subject.Name), ("status", x.Status), ("questionIds", x.Questions.Select(q => q.QuestionId).ToArray()), ("pointsPerQuestion", x.Questions.FirstOrDefault()?.Points ?? 1), ("questionPoints", x.Questions.ToDictionary(q => q.QuestionId.ToString(), q => q.Points)))).ToList();
                 break;
             case "sessions":
-                var sessionRows = await db.ExamSessions.Include(x => x.Exam).Where(x => x.ManagedBy == uid && ids.Contains(x.Exam.SubjectId)).ToListAsync();
+                var sessionRows = await LecturerSessionAccess.Readable(db, uid, Now).Include(x => x.Exam).ToListAsync();
                 var sessionNow = Now;
                 var runningSessions = await ExamService.RunningSessionIdsAsync(db, sessionRows.Select(s => s.Id), sessionNow);
-                rows = sessionRows.Select(x => D(("id", x.Id), ("examId", x.ExamId), ("exam", x.Exam.Title), ("title", x.Title), ("opensAt", x.OpensAt), ("closesAt", x.ClosesAt), ("durationMinutes", x.DurationMinutes), ("status", ExamService.SessionState(x, sessionNow, runningSessions.Contains(x.Id))), ("shuffleQuestions", x.ShuffleQuestions), ("shuffleOptions", x.ShuffleOptions), ("reviewPolicy", x.ReviewPolicy), ("published", x.Published),("publishedAt",x.PublishedAt))).ToList();
+                rows = sessionRows.Select(x => D(("id", x.Id), ("examId", x.ExamId), ("exam", x.Exam.Title), ("title", x.Title), ("opensAt", x.OpensAt), ("closesAt", x.ClosesAt), ("durationMinutes", x.DurationMinutes), ("status", ExamService.SessionState(x, sessionNow, runningSessions.Contains(x.Id))), ("shuffleQuestions", x.ShuffleQuestions), ("shuffleOptions", x.ShuffleOptions), ("reviewPolicy", x.ReviewPolicy), ("published", x.Published),("publishedAt",x.PublishedAt), ("canPublish", ids.Contains(x.Exam.SubjectId)))).ToList();
                 break;
             case "candidates":
                 rows = (await db.SessionCandidates.Include(x => x.Student).Include(x => x.Session).Where(x => x.Session.ManagedBy == uid && ids.Contains(x.Session.Exam.SubjectId)).ToListAsync()).Select(x => D(("id", x.Id), ("sessionId", x.SessionId), ("session", x.Session.Title), ("studentId", x.StudentId), ("student", x.Student.FullName))).ToList();
                 break;
             case "monitor":
-                rows = await MonitorRowsAsync(uid, ids);
+                rows = await MonitorRowsAsync(uid);
                 break;
             default:
                 throw new BusinessException("Danh mục không tồn tại.", 404);
@@ -212,14 +215,14 @@ public class AdminService(ExamDbContext db, UserManager<AppUser> users, TimeProv
     public async Task<IReadOnlyList<Dictionary<string, object?>>> SessionMonitorAsync(int uid, string role, int id)
     {
         await EnsureSessionReadAsync(uid, role, id);
-        return await MonitorRowsAsync(uid, await SubjectIds(uid), id);
+        return await MonitorRowsAsync(uid, id);
     }
 
-    private async Task<List<Dictionary<string, object?>>> MonitorRowsAsync(int uid, List<int> ids, int? onlySessionId = null)
+    private async Task<List<Dictionary<string, object?>>> MonitorRowsAsync(int uid, int? onlySessionId = null)
     {
         List<Dictionary<string, object?>> rows = [];
 
-        var monitored = await db.ExamSessions.Where(x => x.ManagedBy == uid && ids.Contains(x.Exam.SubjectId) && (onlySessionId == null || x.Id == onlySessionId)).ToListAsync();
+        var monitored = await LecturerSessionAccess.Readable(db, uid, Now).Where(x => onlySessionId == null || x.Id == onlySessionId).ToListAsync();
         var sessionIds = monitored.Select(x => x.Id).ToList();
         if (sessionIds.Count == 0) return [];
         var activeStudents = from user in db.Users
@@ -654,6 +657,11 @@ public class AdminService(ExamDbContext db, UserManager<AppUser> users, TimeProv
         if (resource != "sessions")
             throw Denied();
         Role(role, "Lecturer");
+        if (action is "activate" or "postpone" or "cancel" or "cancelDraft" or "closeAdmissions")
+        {
+            await new LecturerSessionService(db, clock).ChangeStateAsync(uid, id, action);
+            return;
+        }
         await db.Database.CreateExecutionStrategy().ExecuteAsync(async () =>
         {
             db.ChangeTracker.Clear();
@@ -661,24 +669,6 @@ public class AdminService(ExamDbContext db, UserManager<AppUser> users, TimeProv
             var s = await Session(uid, role, id);
             switch (action)
             {
-                case "activate":
-                    if (!await db.Subjects.AnyAsync(x => x.Id == s.Exam.SubjectId && x.IsActive))
-                        throw new BusinessException("Môn học đã ngừng dùng.");
-                    if (s.Status != "Draft" || s.HasOpened || s.ClosesAt <= Now || s.OpensAt >= s.ClosesAt || s.DurationMinutes <= 0 || s.Exam.Status != "Ready")
-                        throw new BusinessException("Đợt không đủ điều kiện kích hoạt.");
-                    var candidates = await db.SessionCandidates.Where(x => x.SessionId == id).ToListAsync();
-                    if (candidates.Count == 0) throw new BusinessException("Chưa phân công thí sinh.");
-                    foreach (var candidate in candidates) await ValidateCandidate(s, candidate.StudentId);
-                    s.Status = "Active";
-                    break;
-                case "postpone":
-                case "cancel":
-                    if (s.HasOpened || Now >= s.OpensAt || await db.Attempts.AnyAsync(a => a.SessionId == id))
-                        throw new BusinessException("Chỉ hoãn/hủy trước lần mở đầu.");
-                    if (action == "postpone")
-                        s.AdmissionsClosedAt = null;
-                    s.Status = action == "cancel" ? "Cancelled" : "Draft";
-                    break;
                 case "publish":
                     if (s.Status != "Active")
                         throw new BusinessException("Chỉ đợt đã kích hoạt mới có thể công bố kết quả.");
@@ -729,7 +719,15 @@ public class AdminService(ExamDbContext db, UserManager<AppUser> users, TimeProv
                 break;
             case "assignments":
                 Role(role, "Administrator");
-                db.Remove(await db.LecturerSubjects.FindAsync(id) ?? throw new BusinessException("Không thấy phân công.", 404));
+                var assignment = await db.LecturerSubjects.FindAsync(id) ?? throw new BusinessException("Không thấy phân công.", 404);
+                if (await LecturerSessionAccess.Unfinished(db, Now).AnyAsync(s =>
+                    s.ManagedBy == assignment.LecturerId && s.Exam.SubjectId == assignment.SubjectId))
+                    throw new BusinessException("Giảng viên còn đợt thi chưa kết thúc. Hãy xử lý các đợt này trước khi xóa phân công.", 409);
+                if (await db.ExamSessions.AnyAsync(s => s.ManagedBy == assignment.LecturerId
+                    && s.Exam.SubjectId == assignment.SubjectId && s.Status == "Active" && !s.Published
+                    && db.Attempts.Any(a => a.SessionId == s.Id)))
+                    throw new BusinessException("Đợt thi đã có bài làm nhưng chưa công bố kết quả. Hãy công bố kết quả trước khi xóa phân công.", 409);
+                db.Remove(assignment);
                 break;
             case "topics":
                 var t = await db.Topics.FindAsync(id) ?? throw new BusinessException("Không thấy chủ đề.", 404);

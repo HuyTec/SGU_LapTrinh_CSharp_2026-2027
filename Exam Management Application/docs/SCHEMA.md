@@ -80,3 +80,9 @@ Migration `20261113090207_StudentClassAdmission` thêm các bảng lớp và mã
 Trước khi áp dụng lên DB dùng chung, xác minh bản sao lưu có thể phục hồi vào DB riêng. Chạy migration trên bản phục hồi và đối chiếu theo ID lượt, đợt, chủ sở hữu, trạng thái, thời hạn, câu trả lời và điểm. Nếu đã có lượt tạo theo lớp mà thiếu dòng tương ứng trong `SessionCandidates`, migration xuống phiên bản cũ sẽ không thể khôi phục FK ghép. Dùng bản sao lưu đã xác minh để phục hồi khi cần.
 
 Ngày 13/11/2026, thử trên SQL Server Express cục bộ với dữ liệu mẫu ở phiên bản `StaffRegistrationApproval`. Bản sao lưu `COPY_ONLY` qua kiểm tra checksum và phục hồi vào DB riêng. Chạy `docs/schema.sql` hai lần trên bản phục hồi. Kết quả đối chiếu khớp 2/2 lượt (một đang làm, một đã nộp), gồm ID, đợt, chủ sở hữu, trạng thái, mốc thời gian, bản chụp đề, câu trả lời và điểm. Cả 3 dòng phân công cũ còn nguyên và có 0 liên kết lớp phát sinh. Bộ `Exam.Tests` chạy trên SQL Server đạt 30/30, gồm kiểm tra từ chối tạo lượt chỉ từ danh sách cũ và chống trùng đợt–lớp, mã vào thi.
+
+## Dựng CSDL bằng `schema.sql`
+
+`schema.sql` được sinh bằng `dotnet ef migrations script --idempotent --project .\Exam.Data --startup-project .\Exam.Web --output .\docs\schema.sql` và phải sinh lại mỗi khi thêm migration. Mỗi migration chỉ chạy khi chưa có trong `__EFMigrationsHistory`, nên chạy lặp an toàn. Chạy bằng SSMS hoặc `sqlcmd -I`: lược đồ có chỉ mục lọc nên cần `QUOTED_IDENTIFIER ON`, trong khi `sqlcmd` mặc định tắt thiết lập này.
+
+Ngày 21/11/2026, chạy `schema.sql` hai lần liên tiếp trên CSDL trống (SQL Server 2022 Docker, `sqlcmd -I -b`): cả hai lần không lỗi. CSDL có 11 migration, 28 bảng (kể cả `__EFMigrationsHistory`) và cột `ExamSessions.AdmissionsClosedAt`.
