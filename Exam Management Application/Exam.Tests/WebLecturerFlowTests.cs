@@ -174,10 +174,12 @@ public partial class ClassRegistrationTests
                     ["ClosesAt"] = now.AddHours(7).AddMinutes(4).ToString("yyyy-MM-ddTHH:mm", CultureInfo.InvariantCulture),
                     ["DurationMinutes"] = "20", ["ReviewPolicy"] = "ScoreOnly", ["ClassIds"] = examClass.Id.ToString() });
             var session = await Db.ExamSessions.SingleAsync(e => e.ExamId == paper.Id);
+            Assert.Contains("value=\"cancelDraft\"", await staff.GetStringAsync("/LecturerSessions"));
             await PostForm(staff, $"/LecturerSessions/ChangeState/{session.Id}", "/LecturerSessions",
                 new() { ["command"] = "activate" });
             Db.ChangeTracker.Clear();
             Assert.Equal("Active", (await Db.ExamSessions.SingleAsync(e => e.Id == session.Id)).Status);
+            Assert.Contains("value=\"closeAdmissions\"", await staff.GetStringAsync("/LecturerSessions"));
             var publicationPage = WebUtility.HtmlDecode(await staff.GetStringAsync($"/LecturerResults?id={session.Id}"));
             Assert.Contains("Công bố ngay", publicationPage);
             await PostForm(staff, $"/LecturerResults/Publish/{session.Id}", $"/LecturerResults?id={session.Id}",
@@ -199,6 +201,9 @@ public partial class ClassRegistrationTests
             Assert.Contains("HTTP Session", detail);
             await PostForm(pupil, $"/Sessions/Start/{session.Id}", $"/Sessions/Details/{session.Id}", new());
             var ownAttempt = await Db.Attempts.SingleAsync(a => a.SessionId == session.Id && a.StudentId == student.Id);
+            var assignmentId = await Db.LecturerSubjects.Where(a => a.LecturerId == teacher.Id && a.SubjectId == subject.Id)
+                .Select(a => a.Id).SingleAsync();
+            Assert.Equal(HttpStatusCode.Conflict, (await desktop.DeleteAsync($"/api/admin/assignments/{assignmentId}")).StatusCode);
             var takePage = await pupil.GetStringAsync($"/Attempts/Take/{ownAttempt.Id}");
             var answerToken = Regex.Match(takePage, "name=\"__RequestVerificationToken\"[^>]*value=\"([^\"]+)\"");
             Assert.True(answerToken.Success);
@@ -222,6 +227,15 @@ public partial class ClassRegistrationTests
             Assert.DoesNotContain("Đáp án đã chọn:", resultPage);
             Assert.DoesNotContain("review-correct", resultPage);
             Assert.DoesNotContain("Đáp án đúng:", resultPage);
+            await PostForm(staff, "/LecturerSessions/Edit", "/LecturerSessions/Edit",
+                new() { ["Title"] = "HTTP Cancel draft", ["ExamId"] = paper.Id.ToString(),
+                    ["OpensAt"] = now.AddHours(8).ToString("yyyy-MM-ddTHH:mm", CultureInfo.InvariantCulture),
+                    ["ClosesAt"] = now.AddHours(9).ToString("yyyy-MM-ddTHH:mm", CultureInfo.InvariantCulture),
+                    ["DurationMinutes"] = "20", ["ReviewPolicy"] = "ScoreOnly", ["ClassIds"] = examClass.Id.ToString() });
+            var cancelDraftId = await Db.ExamSessions.Where(s => s.Title == "HTTP Cancel draft").Select(s => s.Id).SingleAsync();
+            await PostForm(staff, $"/LecturerSessions/ChangeState/{cancelDraftId}", "/LecturerSessions",
+                new() { ["command"] = "cancelDraft" });
+            Assert.Equal("Cancelled", (await Db.ExamSessions.AsNoTracking().SingleAsync(s => s.Id == cancelDraftId)).Status);
             Assert.Contains("Phần xem lại bài sẽ mở", resultPage);
             await PostForm(staff, $"/LecturerSessions/ChangeState/{session.Id}", "/LecturerSessions",
                 new() { ["command"] = "closeAdmissions" });
@@ -236,6 +250,11 @@ public partial class ClassRegistrationTests
             Assert.Equal(HttpStatusCode.NotFound, (await pupil.GetAsync("/StudentClasses/Details/2147483647")).StatusCode);
             Assert.NotEqual(HttpStatusCode.OK, (await pupil.GetAsync("/LecturerClasses")).StatusCode);
             Assert.Equal(HttpStatusCode.OK, (await staff.GetAsync($"/LecturerResults?id={session.Id}")).StatusCode);
+            Assert.Equal(HttpStatusCode.NoContent, (await desktop.DeleteAsync($"/api/admin/assignments/{assignmentId}")).StatusCode);
+            Assert.Equal(HttpStatusCode.OK, (await staff.GetAsync($"/LecturerResults?id={session.Id}")).StatusCode);
+            Assert.Equal(HttpStatusCode.OK, (await staff.GetAsync($"/LecturerResults/Export/{session.Id}")).StatusCode);
+            Assert.Contains("HTTP Session", await staff.GetStringAsync("/LecturerSessions"));
+            Assert.Equal(HttpStatusCode.NotFound, (await staff.GetAsync($"/LecturerSessions/Edit/{session.Id}")).StatusCode);
             Assert.Equal(HttpStatusCode.Conflict, (await desktop.DeleteAsync($"/api/admin/classes/{examClass.Id}")).StatusCode);
             using var stoppedClass = await desktop.PutAsJsonAsync($"/api/admin/classes/{examClass.Id}",
                 new { values = new { code = examClass.Code, name = "Updated class", subjectId = subject.Id, isActive = false } });

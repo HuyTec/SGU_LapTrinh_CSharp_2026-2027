@@ -16,7 +16,7 @@
 {
     var current = Model.Sessions.SingleOrDefault(s => Equals(s["id"], id));
     var published = current?["published"] is true;
-    var canPublish = current?["status"] is "Scheduled" or "Open" or "Closed" or "Completed";
+    var canPublish = current?["canPublish"] is true && current?["status"] is ("Scheduled" or "Open" or "Closed" or "Completed");
     var sessionState = current?["status"] switch
     {
         "Draft" => "Nháp",

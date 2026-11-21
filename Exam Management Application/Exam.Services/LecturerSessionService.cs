@@ -8,7 +8,7 @@ namespace Exam.Services;
 
 public sealed record SessionDraft(string Title, int ExamId, DateTime OpensAt, DateTime ClosesAt, int DurationMinutes,
     bool ShuffleQuestions, bool ShuffleOptions, string ReviewPolicy, int[] ClassIds);
-public sealed record LecturerSessionRow(int Id, string Title, string Paper, string State, string? Code, bool CanEdit, bool CanWithdraw);
+public sealed record LecturerSessionRow(int Id, string Title, string Paper, string State, string? Code, bool CanEdit, bool CanWithdraw, bool CanCloseAdmissions = false);
 public sealed record SessionPaperChoice(int Id, int SubjectId, string Label);
 public sealed record SessionClassChoice(int Id, int SubjectId, string Label);
 public sealed record SessionEditorData(SessionDraft? Draft, IReadOnlyList<SessionPaperChoice> Papers, IReadOnlyList<SessionClassChoice> Classes);
@@ -23,12 +23,15 @@ public sealed class LecturerSessionService(ExamDbContext db, TimeProvider clock)
     public async Task<IReadOnlyList<LecturerSessionRow>> ListAsync(int lecturer)
     {
         var now = Now;
-        var rows = await Owned(lecturer).AsNoTracking().Include(s => s.Exam)
+        var rows = await LecturerSessionAccess.Readable(db, lecturer, now).AsNoTracking().Include(s => s.Exam)
             .OrderByDescending(s => s.OpensAt).ThenByDescending(s => s.Id).ToListAsync();
         var running = await ExamService.RunningSessionIdsAsync(db, rows.Select(s => s.Id), now);
+        var assignedSubjects = await db.LecturerSubjects.Where(a => a.LecturerId == lecturer)
+            .Select(a => a.SubjectId).ToListAsync();
         return rows.Select(s => new LecturerSessionRow(s.Id, s.Title, s.Exam.Title, ExamService.SessionState(s, now, running.Contains(s.Id)),
-                ExamService.SessionState(s, now) is "Scheduled" or "Open" ? s.AccessCode : null, s.Status == "Draft" && !s.HasOpened,
-                s.Status == "Active" && !s.HasOpened && s.OpensAt > now))
+                ExamService.SessionState(s, now) is "Scheduled" or "Open" ? s.AccessCode : null, assignedSubjects.Contains(s.Exam.SubjectId) && s.Status == "Draft" && !s.HasOpened,
+                assignedSubjects.Contains(s.Exam.SubjectId) && s.Status == "Active" && !s.HasOpened && s.OpensAt > now,
+                assignedSubjects.Contains(s.Exam.SubjectId) && s.Status == "Active" && s.AdmissionsClosedAt == null && s.ClosesAt > now))
             .Where(s => s.State != "Cancelled")
             .ToList();
     }
@@ -173,6 +176,8 @@ public sealed class LecturerSessionService(ExamDbContext db, TimeProvider clock)
                                 join role in db.Roles on userRole.RoleId equals role.Id
                                 where user.IsActive && role.NormalizedName == "STUDENT"
                                 select studentId).Distinct().ToListAsync();
+        if (studentIds.Count == 0)
+            throw new BusinessException("Không có thí sinh hợp lệ trong các lớp đã chọn. Thêm thí sinh đang hoạt động vào lớp trước khi kích hoạt.", 409);
         if (session.Exam.Questions.Count == 0 || session.Exam.Questions.Any(q => q.Question.Options.Count < 2 || q.Question.Options.Count(o => o.IsCorrect) != 1))
             throw new BusinessException("Đề không còn đủ câu hỏi hoặc phương án hợp lệ. Hãy kiểm tra lại đề trước khi kích hoạt.", 409);
         if (await db.SessionQuestions.AnyAsync(q => q.SessionId == id))
