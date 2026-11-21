@@ -8,31 +8,31 @@ Nguồn chính xác có thể dựng lại: `Exam.Data/ExamDbContext.cs`, `Exam.
 
 ## Bảng và trách nhiệm
 
-| Bảng              | Khóa / liên kết quan trọng                                                                        | Nội dung                                                                                                                             |
-| ----------------- | ------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| Users             | UserID int; username chuẩn hóa duy nhất; StudentCode duy nhất khi khác null                       | Identity user, họ tên, trạng thái, mã thí sinh                                                                                       |
-| Roles             | RoleID int; tên vai trò chuẩn hóa duy nhất                                                        | Student, Lecturer, Administrator                                                                                                     |
-| UserRoles         | PK(UserID, RoleID)                                                                                | Một người có nhiều vai trò; Desktop chỉ cho Administrator đăng nhập; Web dùng vai trò Student hoặc Lecturer                          |
-| Subjects          | Id int; Code duy nhất                                                                             | Môn học, trạng thái hoạt động                                                                                                        |
-| LecturerSubjects  | Id; UQ(LecturerId, SubjectId), FK Users/Subjects                                                  | Phạm vi quản lý của giảng viên                                                                                                       |
-| Topics            | Id; UQ(SubjectId, Name), FK Subjects                                                              | Chủ đề theo môn                                                                                                                      |
-| Questions         | Id; FK TopicId/CreatedBy                                                                          | Nội dung, độ khó Easy/Medium/Hard, ngừng sử dụng                                                                                     |
-| AnswerOptions     | Id; FK QuestionId; UQ vị trí, unique filtered IsCorrect                                           | Các phương án và tối đa một đáp án đúng; service kiểm tra đủ phương án                                                               |
-| Exams             | Id; FK SubjectId/CreatedBy                                                                        | Đề Draft/Ready                                                                                                                       |
-| ExamQuestions     | Id; FK ExamId/QuestionId; UQ câu và vị trí trong đề                                               | Điểm từng câu > 0 khi xác nhận Ready; điểm bài quy về thang 10 theo tỉ lệ trọng số (ExamRules.Score)                                 |
-| ExamSessions      | Id; FK ExamId/ManagedBy; UQ AccessCode khi khác NULL; CHECK lịch/thời lượng/trạng thái/chính sách | Nháp/kích hoạt/hủy; Open/Closed được tính từ giờ server; ActivatedAt lưu thời điểm chốt danh sách, PublishedAt lưu thời điểm công bố |
-| Classes           | Id; FK SubjectId; UQ(SubjectId, Code)                                                             | Lớp theo môn và trạng thái hoạt động                                                                                                 |
-| ClassStudents     | PK(ClassId, StudentId); FK Classes và Users                                                       | Thành viên lớp                                                                                                                       |
-| SessionClasses    | PK(SessionId, ClassId); FK ExamSessions và Classes                                                | Liên kết đợt thi với lớp được gán                                                                                                    |
-| SessionCandidates | Id; UQ(SessionId, StudentId); FK ExamSessions và Users                                            | Danh sách thí sinh được chốt khi kích hoạt, cũng giữ các dòng lịch sử từ luồng cũ                                                    |
-| SessionQuestions  | Id; FK SessionId/SourceQuestionId; UQ thứ tự trong đợt                                            | Snapshot câu hỏi, điểm và thứ tự được tạo cùng lúc kích hoạt đợt                                                                     |
-| SessionOptions    | Id; FK SessionQuestionId; UQ thứ tự và tối đa một đáp án đúng                                     | Snapshot nội dung, đáp án đúng và thứ tự phương án tại thời điểm kích hoạt                                                           |
-| Attempts          | Id bigint; UQ(SessionId, StudentId); FK trực tiếp ExamSessions và Users                           | Bắt đầu, Deadline, trạng thái, SubmittedAt, EndReason                                                                                |
-| AttemptQuestions  | Id bigint; FK AttemptId và SourceQuestionId; UQ thứ tự trong lượt                                 | Snapshot nội dung, điểm và thứ tự                                                                                                    |
-| AttemptOptions    | Id bigint; FK AttemptQuestionId; alternate key(AttemptQuestionId, Id)                             | Snapshot phương án, đáp án và thứ tự                                                                                                 |
-| Responses         | Id bigint; unique FK AttemptQuestionId; FK ghép tới AttemptOptions                                | Đáp án chọn, IsFlagged và SavedAt; không được chọn phương án của câu khác                                                            |
-| ExamResults       | Id bigint; unique FK AttemptId; CHECK Score 0..10                                                 | Score decimal(5,2), CorrectCount, GradedAt                                                                                           |
-| AuthSessions      | Id GUID; FK UserId                                                                                | Hạn phiên và cờ thu hồi, kiểm tra ở máy chủ trên từng request                                                                        |
+| Bảng | Khóa / liên kết quan trọng | Nội dung |
+|---|---|---|
+| Users | UserID int; username chuẩn hóa duy nhất; StudentCode duy nhất khi khác null | Identity user, họ tên, trạng thái, mã thí sinh |
+| Roles | RoleID int; tên vai trò chuẩn hóa duy nhất | Student, Lecturer, Administrator |
+| UserRoles | PK(UserID, RoleID) | Một người có nhiều vai trò; Desktop chỉ cho Administrator đăng nhập; Web dùng vai trò Student hoặc Lecturer |
+| Subjects | Id int; Code duy nhất | Môn học, trạng thái hoạt động |
+| LecturerSubjects | Id; UQ(LecturerId, SubjectId), FK Users/Subjects | Phạm vi quản lý của giảng viên |
+| Topics | Id; UQ(SubjectId, Name), FK Subjects | Chủ đề theo môn |
+| Questions | Id; FK TopicId/CreatedBy | Nội dung, độ khó Easy/Medium/Hard, ngừng sử dụng |
+| AnswerOptions | Id; FK QuestionId; UQ vị trí, unique filtered IsCorrect | Các phương án và tối đa một đáp án đúng; service kiểm tra đủ phương án |
+| Exams | Id; FK SubjectId/CreatedBy | Đề Draft/Ready |
+| ExamQuestions | Id; FK ExamId/QuestionId; UQ câu và vị trí trong đề | Điểm từng câu > 0 khi xác nhận Ready; điểm bài quy về thang 10 theo tỉ lệ trọng số (ExamRules.Score) |
+| ExamSessions | Id; FK ExamId/ManagedBy; UQ AccessCode khi khác NULL; CHECK lịch/thời lượng/trạng thái/chính sách | Nháp/kích hoạt/hủy; Open/Closed được tính từ giờ server; ActivatedAt lưu thời điểm chốt danh sách, PublishedAt lưu thời điểm công bố |
+| Classes | Id; FK SubjectId; UQ(SubjectId, Code) | Lớp theo môn và trạng thái hoạt động |
+| ClassStudents | PK(ClassId, StudentId); FK Classes và Users | Thành viên lớp |
+| SessionClasses | PK(SessionId, ClassId); FK ExamSessions và Classes | Liên kết đợt thi với lớp được gán |
+| SessionCandidates | Id; UQ(SessionId, StudentId); FK ExamSessions và Users | Danh sách thí sinh được chốt khi kích hoạt, cũng giữ các dòng lịch sử từ luồng cũ |
+| SessionQuestions | Id; FK SessionId/SourceQuestionId; UQ thứ tự trong đợt | Snapshot câu hỏi, điểm và thứ tự được tạo cùng lúc kích hoạt đợt |
+| SessionOptions | Id; FK SessionQuestionId; UQ thứ tự và tối đa một đáp án đúng | Snapshot nội dung, đáp án đúng và thứ tự phương án tại thời điểm kích hoạt |
+| Attempts | Id bigint; UQ(SessionId, StudentId); FK trực tiếp ExamSessions và Users | Bắt đầu, Deadline, trạng thái, SubmittedAt, EndReason |
+| AttemptQuestions | Id bigint; FK AttemptId và SourceQuestionId; UQ thứ tự trong lượt | Snapshot nội dung, điểm và thứ tự |
+| AttemptOptions | Id bigint; FK AttemptQuestionId; alternate key(AttemptQuestionId, Id) | Snapshot phương án, đáp án và thứ tự |
+| Responses | Id bigint; unique FK AttemptQuestionId; FK ghép tới AttemptOptions | Đáp án chọn, IsFlagged và SavedAt; không được chọn phương án của câu khác |
+| ExamResults | Id bigint; unique FK AttemptId; CHECK Score 0..10 | Score decimal(5,2), CorrectCount, GradedAt |
+| AuthSessions | Id GUID; FK UserId | Hạn phiên và cờ thu hồi, kiểm tra ở máy chủ trên từng request |
 
 Bốn bảng kỹ thuật Identity mặc định (`AspNetUserClaims`, `AspNetRoleClaims`, `AspNetUserLogins`, `AspNetUserTokens`) không chứa tài khoản nghiệp vụ song song. `__EFMigrationsHistory` chỉ ghi migration đã áp dụng. Không có bảng `AspNetUsers` hoặc `AspNetRoles` riêng.
 
