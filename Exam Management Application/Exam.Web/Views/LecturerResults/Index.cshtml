@@ -2,21 +2,51 @@
 @{ ViewData["Title"] = "Theo dõi và kết quả"; }
 <h1>Theo dõi và kết quả</h1>
 <form method="get" class="surface mb-3">
-    <label for="id" class="form-label">Đợt thi</label>
-    <select id="id" name="id" class="form-select mb-3" required>
-        <option value="">Chọn đợt thi</option>
-        @foreach (var session in Model.Sessions)
-        {
-            <option value="@session["id"]" selected="@(Equals(session["id"], Model.SessionId))">@session["title"]</option>
-        }
-    </select>
+    <div class="row g-3 mb-3">
+        <div class="col-12 col-lg-4">
+            <label for="id" class="form-label">Đợt thi</label>
+            <select id="id" name="id" class="form-select" required>
+                <option value="">Chọn đợt thi</option>
+                @foreach (var session in Model.Sessions)
+                {
+                    <option value="@session["id"]" selected="@(Equals(session["id"], Model.SessionId))">@session["title"]</option>
+                }
+            </select>
+        </div>
+        <div class="col-12 col-md-6 col-lg-4">
+            <label for="student-search" class="form-label">Thí sinh</label>
+            <input id="student-search" name="search" value="@Model.Search" class="form-control" placeholder="Tên hoặc mã thí sinh" />
+        </div>
+        <div class="col-12 col-md-6 col-lg-4">
+            <label for="participation-status" class="form-label">Tình trạng tham gia</label>
+            <select id="participation-status" name="status" class="form-select">
+                <option value="">Tất cả</option>
+                <option value="NotStarted" selected="@(string.Equals(Model.Status, "NotStarted", StringComparison.OrdinalIgnoreCase))">Chưa tham gia</option>
+                <option value="InProgress" selected="@(string.Equals(Model.Status, "InProgress", StringComparison.OrdinalIgnoreCase))">Đang làm</option>
+                <option value="Submitted" selected="@(string.Equals(Model.Status, "Submitted", StringComparison.OrdinalIgnoreCase))">Đã kết thúc</option>
+            </select>
+        </div>
+    </div>
     <button type="submit" class="btn btn-primary">Xem kết quả</button>
+    @if (Model.SessionId is int selectedId && Model.HasFilters)
+    {
+        <a asp-action="Index" asp-route-id="@selectedId" class="btn btn-outline-secondary">Xóa bộ lọc</a>
+    }
 </form>
 @if (Model.SessionId is int id)
 {
     var current = Model.Sessions.SingleOrDefault(s => Equals(s["id"], id));
     var published = current?["published"] is true;
-    var canPublish = current?["canPublish"] is true && current?["status"] is ("Scheduled" or "Open" or "Closed" or "Completed");
+    <div class="surface mb-3">
+        <h2 class="h5">Thống kê cả đợt</h2>
+        <dl class="row g-3 mb-0">
+            <div class="col-6 col-lg-3"><dt>Tổng thí sinh</dt><dd class="h4 mb-0">@Model.Statistics.Total</dd></div>
+            <div class="col-6 col-lg-3"><dt>Chưa tham gia</dt><dd class="h4 mb-0">@Model.Statistics.NotStarted</dd></div>
+            <div class="col-6 col-lg-3"><dt>Đang làm</dt><dd class="h4 mb-0">@Model.Statistics.InProgress</dd></div>
+            <div class="col-6 col-lg-3"><dt>Đã kết thúc</dt><dd class="h4 mb-0">@Model.Statistics.Finished</dd></div>
+        </dl>
+    </div>
+    var canPublish = current?["status"] is "Scheduled" or "Open" or "Closed" or "Completed";
     var sessionState = current?["status"] switch
     {
         "Draft" => "Nháp",
@@ -32,7 +62,7 @@
     <div class="action-row mb-3">
         @if (!published && canPublish)
         {
-            <form asp-action="Publish" asp-route-id="@id" method="post" onsubmit="return confirm('Bật công bố ngay? Thí sinh xem kết quả của mình khi bài được chấm xong.');">
+            <form asp-action="Publish" asp-route-id="@id" asp-route-search="@Model.Search" asp-route-status="@Model.Status" method="post" onsubmit="return confirm('Bật công bố ngay? Thí sinh xem kết quả của mình khi bài được chấm xong.');">
                 <label for="reviewPolicy" class="form-label">Nội dung thí sinh được xem</label>
                 <select id="reviewPolicy" name="reviewPolicy" class="form-select mb-2">
                     <option value="Answers" selected="@(current?["reviewPolicy"] is not "CorrectAnswers")">Điểm và lựa chọn đã trả lời</option>
@@ -43,8 +73,8 @@
                 <button type="submit" class="btn btn-primary">Công bố ngay</button>
             </form>
         }
-        <a asp-action="Export" asp-route-id="@id" class="btn btn-outline-primary">Xuất CSV</a>
-        <a asp-action="Export" asp-route-id="@id" asp-route-xlsx="true" class="btn btn-outline-primary">Xuất XLSX</a>
+        <a asp-action="Export" asp-route-id="@id" asp-route-search="@Model.Search" asp-route-status="@Model.Status" class="btn btn-outline-primary">@(Model.HasFilters ? "Xuất CSV (theo bộ lọc)" : "Xuất CSV")</a>
+        <a asp-action="Export" asp-route-id="@id" asp-route-search="@Model.Search" asp-route-status="@Model.Status" asp-route-xlsx="true" class="btn btn-outline-primary">@(Model.HasFilters ? "Xuất XLSX (theo bộ lọc)" : "Xuất XLSX")</a>
     </div>
     @if (published)
     {
@@ -53,17 +83,27 @@
     }
     @if (Model.Rows.Count == 0)
     {
-        <p>Chưa có thí sinh trong đợt này.</p>
+        <p>@(Model.Statistics.Total == 0 ? "Chưa có thí sinh trong đợt này." : "Không có thí sinh phù hợp với bộ lọc.")</p>
     }
     else
     {
+        @if (Model.HasFilters)
+        {
+            <p class="muted">Hiển thị @Model.Rows.Count/@Model.Statistics.Total thí sinh.</p>
+        }
         <div class="table-responsive">
             <table class="table">
                 <thead><tr><th>Mã thí sinh</th><th>Họ tên</th><th>Trạng thái</th><th>Điểm</th><th>Nộp lúc (UTC+7)</th></tr></thead>
                 <tbody>
                 @foreach (var row in Model.Rows)
                 {
-                    var status = row["status"] switch { "InProgress" => "Đang làm", "Submitted" when row["score"] is null => "Chờ chấm", "Submitted" => "Đã chấm", _ => "Chưa bắt đầu" };
+                    var status = row["status"] switch
+                    {
+                        "InProgress" => "Đang làm",
+                        "Submitted" when row["score"] is null => "Đã kết thúc (chờ chấm)",
+                        "Submitted" => "Đã kết thúc (đã chấm)",
+                        _ => "Chưa tham gia"
+                    };
                     <tr><td>@row["studentCode"]</td><td>@row["student"]</td><td>@status</td><td>@(row["score"] ?? "—")</td>
                     <td>@(row["submittedAt"] is DateTime submitted ? submitted.AddHours(7).ToString("dd/MM/yyyy HH:mm") : "—")</td></tr>
                 }

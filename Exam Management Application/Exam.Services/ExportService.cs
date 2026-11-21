@@ -6,9 +6,9 @@ namespace Exam.Services;
 
 public class ExportService(AdminService admin)
 {
-    public async Task<byte[]> ExportAsync(int uid, string role, int sid, bool xlsx)
+    public async Task<byte[]> ExportAsync(int uid, string role, int sid, bool xlsx, string? search = null, string? status = null)
     {
-        var rows = await admin.SessionMonitorAsync(uid, role, sid);
+        var rows = ResultStatistics.Filter(await admin.SessionMonitorAsync(uid, role, sid), search, status);
         string[] cols = ["session", "studentCode", "student", "status", "score", "submittedAt"];
         string[] labels = ["Đợt thi", "Mã thí sinh", "Họ tên", "Trạng thái", "Điểm", "Nộp lúc (UTC)"];
         string Safe(object? value)
